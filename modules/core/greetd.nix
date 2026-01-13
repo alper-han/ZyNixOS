@@ -35,7 +35,7 @@
             --remember-session \
             --asterisks \
             --theme "border=magenta;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red;greet=magenta" \
-            --cmd "uwsm start hyprland-uwsm.desktop"
+            --cmd "uwsm start hyprland.desktop"
         '';
       };
     };
