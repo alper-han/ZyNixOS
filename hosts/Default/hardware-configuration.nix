@@ -31,6 +31,7 @@
   boot.extraModulePackages = [
     config.boot.kernelPackages.zenergy
   ];
+  boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
   boot.blacklistedKernelModules = [ ];
 
   fileSystems."/" = {

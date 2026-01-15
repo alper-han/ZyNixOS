@@ -2,13 +2,13 @@
 {
 
   environment.systemPackages = with pkgs; [
+    rustdesk
+    jellyfin-desktop
     # kdiskmark
     # qbittorrent
     # mission-center
     # remmina # rdp&vnc
-    rustdesk # remote desktop client
     # jellyfin-mpv-shim
-    jellyfin-desktop
 
     # Terminal
     # yt-dlp
@@ -25,7 +25,5 @@
     dotnet-sdk_10
     dotnet-runtime_10
     dotnet-ef
-
-
   ];
 }
