@@ -102,6 +102,7 @@
             # T = "script-binding generate-thumbnails";
           };
           config = {
+            hwdec = "auto-safe";
             osc = "yes";
             resume-playback-check-mtime = true;
             # ao = "alsa";

@@ -169,8 +169,8 @@ in
             "cpu" = {
               interval = 10;
               format = "󰍛 {usage}%";
-              format-warning = "󰀨 {usage}%";
-              format-critical = "󰀨 {usage}%";
+              format-warning = "󰍛 {usage}%";
+              format-critical = "󰍛 {usage}%";
               min-length = 8;
               max-length = 8;
               states = {

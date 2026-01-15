@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   home-manager.sharedModules = [
     (_: {
@@ -15,8 +15,6 @@
           # cursor_trail_decay = "0.08 0.3"; # Animation speed
           # cursor_trail_start_threshold = "4";
           strip_trailing_spaces = "smart";
-          macos_option_as_alt = "yes";
-          macos_quit_when_last_window_closed = true;
           copy_on_select = "yes";
           confirm_os_window_close = 0;
           scrollback_lines = 10000;

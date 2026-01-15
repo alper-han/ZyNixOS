@@ -66,16 +66,10 @@ in
   "privacy.query_stripping.enabled" = lock-true;
   "privacy.query_stripping.enabled.pbmode" = lock-true;
 
-  # Clear on shutdown (Only locks the options to true. Manually enable in firefox settings)
-  "privacy.sanitize.sanitizeOnShutdown" = lock-true;
-  "privacy.clearOnShutdown.cache" = lock-true;
-  "privacy.clearOnShutdown.cookies" = lock-true;
-  "privacy.clearOnShutdown.downloads" = lock-true;
-  "privacy.clearOnShutdown.formdata" = lock-true;
-  "privacy.clearOnShutdown.history" = lock-true;
-  "privacy.clearOnShutdown.offlineApps" = lock-true;
-  "privacy.clearOnShutdown.sessions" = lock-true;
-  "privacy.clearOnShutdown.siteSettings" = lock-true;
+  "browser.safebrowsing.phishing.enabled" = lock-true;
+  "browser.safebrowsing.malware.enabled" = lock-true;
+  "browser.safebrowsing.downloads.enabled" = lock-true;
+  "media.videocontrols.picture-in-picture.auto-pip" = true;
 
   # Block telemetry
   "toolkit.telemetry.enabled" = lock-false;
