@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   inputs,
   host,
   ...
@@ -16,7 +17,11 @@ in
 {
   imports = [ inputs.home-manager.nixosModules.home-manager ];
   programs.dconf.enable = true; # Enable dconf for home-manager
-  programs.${shell}.enable = true;
+  programs.${shell} = {
+    enable = true;
+  } // lib.optionalAttrs (shell == "zsh") {
+    enableGlobalCompInit = false; # Disable global compinit - we lazy load it
+  };
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
@@ -58,11 +63,8 @@ in
       isNormalUser = true;
       initialPassword = "123";
       extraGroups = [
-        "wheel" # sudo access
+        "wheel"
         "networkmanager"
-        "libvirtd"
-        "kvm"
-        "adbusers"
       ];
       shell = pkgs.${shell};
     };

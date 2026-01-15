@@ -17,7 +17,7 @@
 
     # Userspace CPU Scheduler for Improved Latency for Gaming (Hardware Specific)
     scx = {
-      enable = true;
+      enable = false;
       package = pkgs.scx.full; # scx.rustscheds or scx.full
       scheduler = "scx_lavd"; # scx_lavd verified good for gaming
     };

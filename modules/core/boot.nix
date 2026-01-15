@@ -18,7 +18,13 @@
       "btrfs"
     ];
     tmp.cleanOnBoot = true;
-    kernelPackages = pkgs.linuxPackages_lqx; # _latest, _zen, _lqx, _xanmod_latest, _hardened, _rt, _OTHER_CHANNEL, etc.
+
+    # CachyOS Kernel Options (via xddxdd/nix-cachyos-kernel):
+    # pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto (generic x86_64)
+    # pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4 (AMD Zen4)
+    # Other variants: _latest, _zen, _lqx, _xanmod_latest, _hardened, _rt
+    kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto;
+    
     kernelParams = [
       "preempt=full" # lower latency but less throughput
       "quiet"

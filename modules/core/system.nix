@@ -46,10 +46,10 @@ in
       auto-optimise-store = true; # May make rebuilds longer but less size
       trusted-users = [ "root" "@wheel" ];
       substituters = [
-        "https://cache.nixos.org/"
-        "https://nix-community.cachix.org/"
+        "https://cache.nixos.org"
+        "https://nix-community.cachix.org"
         "https://cachix.cachix.org"
-        "https://nix-gaming.cachix.org/"
+        "https://nix-gaming.cachix.org"
         "https://hyprland.cachix.org"
         "https://cuda-maintainers.cachix.org"
         # "https://nixpkgs-wayland.cachix.org"

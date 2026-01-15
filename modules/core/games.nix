@@ -29,6 +29,7 @@ in
     # steam-run
     # wineWowPackages.staging
     # gamescope
+    # protonup-qt # Used to manually download CachyOS Proton v4
   ];
   programs = {
     gamemode.enable = true;

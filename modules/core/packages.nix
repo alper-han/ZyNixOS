@@ -3,7 +3,6 @@
   programs = {
     # fuse.userAllowOther = true;
     mtr.enable = true;
-    hyprlock.enable = true;
   };
 
   environment.systemPackages = with pkgs; [
@@ -16,6 +15,7 @@
     fzf # Fuzzy Finder
     fd # Better Find
     git # Git
+    zoxide # Fast directory jumping (z/cd replacement)
     gh # Github Authentication Client
     libjxl # Support for JXL Images
     microfetch # Small fetch (Blazingly fast)
