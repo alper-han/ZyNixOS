@@ -18,6 +18,10 @@
       url = "github:hyprwm/hyprqt6engine";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-cachyos-kernel = {
+      url = "github:xddxdd/nix-cachyos-kernel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -64,6 +68,11 @@
         nixpkgs.lib.nixosSystem {
           modules = [
             ./hosts/${host}/configuration.nix
+            {
+              nixpkgs.overlays = [
+                inputs.nix-cachyos-kernel.overlays.default
+              ];
+            }
           ];
           specialArgs = {
             overlays = import ./overlays { inherit inputs host; };
