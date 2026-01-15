@@ -30,6 +30,17 @@
    </div>
 </h1>
 
+<div align="center">
+   <img src="screenshots/1.png" width="95%">
+   <br>
+   <br>
+   <img src="screenshots/2.png" width="95%">
+   <br>
+   <br>
+   <img src="screenshots/3.png" width="95%">
+</div>
+
+
 ## Table of Contents
 
 - [Installation](#installation)
