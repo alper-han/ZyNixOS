@@ -15,6 +15,7 @@ in
     LIBVA_DRIVER_NAME = "nvidia";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     __GL_MaxFramesAllowed = "1"; # Reduces input lag
+    __GL_SYNC_TO_VBLANK = "0"; # Disable VSync for lower input lag (works with allow_tearing)
   };
 
   # Load nvidia driver for Xorg and Wayland
