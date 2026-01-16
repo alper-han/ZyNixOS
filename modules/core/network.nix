@@ -57,22 +57,22 @@ in
       "net.ipv4.tcp_pacing_ss_ratio" = 200;
       "net.ipv4.tcp_pacing_ca_ratio" = 120;
 
-      # Buffer optimization (1Gbps Optimized) - COMMENTED OUT FOR KERNEL 6.18+ AUTO-TUNING
-      # "net.ipv4.tcp_rmem" = "4096 87380 67108864";
-      # "net.ipv4.tcp_wmem" = "4096 65536 67108864";
-      # "net.core.wmem_max" = 67108864;
-      # "net.core.rmem_max" = 67108864;
-      # "net.core.wmem_default" = 65536;
-      # "net.core.rmem_default" = 87380;
+      # Buffer optimization (1Gbps Optimized)
+      "net.ipv4.tcp_rmem" = "4096 131072 67108864";
+      "net.ipv4.tcp_wmem" = "4096 65536 67108864";
+      "net.core.wmem_max" = 67108864;
+      "net.core.rmem_max" = 67108864;
+      "net.core.wmem_default" = 1048576;
+      "net.core.rmem_default" = 1048576;
 
       # Queue management
       "net.core.default_qdisc" = "fq";
-      "net.core.netdev_max_backlog" = 1000;
+      "net.core.netdev_max_backlog" = 16384;
       "net.core.somaxconn" = 2048;
 
-      # Netdev budget (Kernel 6.x)
-      # "net.core.netdev_budget" = 600;
-      # "net.core.netdev_budget_usecs" = 8000;
+      # Netdev budget
+      "net.core.netdev_budget" = 600;
+      "net.core.netdev_budget_usecs" = 8000;
 
       # Kernel Security Hardening (2026 Standards)
       "kernel.kptr_restrict" = 2;              # Hide kernel pointers (Exploit mitigation)
