@@ -27,7 +27,7 @@ in
     # ../../modules/core/nix-ld.nix
     ../../modules/core/users.nix
     # ../../modules/core/flatpak.nix
-    # ../../modules/core/virtualisation.nix
+    ../../modules/core/virtualisation.nix
 
     # Optional
     ../../modules/hardware/video/${vars.videoDriver}.nix # Enable gpu drivers defined in variables.nix
@@ -35,11 +35,11 @@ in
     ../../modules/programs/browser/${vars.browser} # Set browser defined in variables.nix
     ../../modules/programs/terminal/${vars.terminal} # Set terminal defined in variables.nix
     ../../modules/programs/editor/${vars.editor} # Set editor defined in variables.nix
-    # ../../modules/programs/cli/${vars.tuiFileManager} # Set file-manager defined in variables.nix
+    ../../modules/programs/cli/${vars.tuiFileManager} # Set file-manager defined in variables.nix
     # ../../modules/programs/cli/tmux
     ../../modules/programs/cli/direnv
-    # ../../modules/programs/cli/lazygit
-    # ../../modules/programs/cli/cava
+    ../../modules/programs/cli/lazygit
+    ../../modules/programs/cli/cava
     ../../modules/programs/cli/btop
     ../../modules/programs/cli/fastfetch
     ../../modules/programs/media/discord
@@ -52,7 +52,7 @@ in
     # ../../modules/programs/misc/tlp
     # ../../modules/programs/misc/zapret
     ../../modules/programs/misc/thunar
-    # ../../modules/programs/misc/lact # GPU fan, clock and power configuration
+    ../../modules/programs/misc/lact # GPU fan, clock and power configuration
     ../../modules/programs/misc/crossmacro
     ../../modules/programs/misc/kde-connect
     # ../../modules/programs/misc/duplicati
