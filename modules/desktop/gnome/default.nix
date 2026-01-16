@@ -9,6 +9,7 @@
     gnome.gnome-initial-setup.enable = false;
     gnome.games.enable = false;
     tlp.enable = lib.mkForce false; # gnome has builtin power management
+    auto-cpufreq.enable = lib.mkForce false; # gnome has builtin power management
   };
 
   environment.gnome.excludePackages = with pkgs; [

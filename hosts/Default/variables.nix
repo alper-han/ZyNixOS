@@ -17,6 +17,8 @@
   videoDriver = "nvidia"; # CRITICAL: Choose your GPU driver (nvidia, amdgpu, intel)
   hostname = "NixOS"; # Your system hostname
   networkInterface = "eno1"; # Primary network interface (use 'ip link' to find yours)
+  isLaptop = false; # Set to true for laptops (enables power management)
+  powerManager = "cpufreq"; # Options: "cpufreq", "tlp", "none" (only works when isLaptop = true)
 
   # Localization
   locale = "en_US.UTF-8"; # System locale

@@ -1,5 +1,7 @@
-{ ... }:
+{ lib, ... }:
 {
+  services.power-profiles-daemon.enable = lib.mkForce false;
+
   services.auto-cpufreq = {
     enable = true;
     settings = {
@@ -8,8 +10,7 @@
         turbo = "auto";
       };
       battery = {
-        governor = "schedutil";
-        scaling_max_freq = 3800000;
+        governor = "schedutil"; # or powersave
         turbo = "never";
       };
     };

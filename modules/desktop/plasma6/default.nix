@@ -23,6 +23,7 @@ in
       enableQt5Integration = true;
     };
     tlp.enable = lib.mkForce false; # plasma has builtin power management
+    auto-cpufreq.enable = lib.mkForce false; # plasma has builtin power management
   };
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
