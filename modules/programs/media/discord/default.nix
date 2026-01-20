@@ -349,6 +349,7 @@
       {
         home.packages = with pkgs; [
           # discord
+          # equibop
           vesktop
           curl
         ];
@@ -356,7 +357,7 @@
         home.activation.setupDiscord = lib.mkAfter ''
           export PATH=${pkgs.curl}/bin:$PATH
 
-          for APP in Vencord vesktop; do
+          for APP in Vencord vesktop equibop; do
             # Theme
             THEME_DIR="$HOME/.config/$APP/themes"
             THEME_FILE="$THEME_DIR/theme.css"

@@ -19,6 +19,10 @@
       withSystemVencord = false;
       withMiddleClickScroll = true;
     };
+    equibop = prev.equibop.override {
+      withTTS = false;
+      withMiddleClickScroll = true;
+    };
     discord = prev.discord.override {
       withVencord = true;
       withOpenASAR = true;
