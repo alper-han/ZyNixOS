@@ -118,6 +118,8 @@ let
 
       extraPreBwrapCmds = ''
         mkdir -p ~/.local/share/DaVinciResolve/Extras || exit 1
+        mkdir -p ~/.local/share/DaVinciResolve/logs || exit 1
+        mkdir -p ~/.local/share/DaVinciResolve/configs || exit 1
       '';
 
       extraBwrapArgs = [
@@ -125,6 +127,7 @@ let
       ];
 
       runScript = "${lib.getExe pkgs.bash} ${pkgs.writeText "davinci-wrapper" ''
+        export QT_QPA_PLATFORM=xcb
         export QT_XKB_CONFIG_ROOT="${pkgs.xkeyboard_config}/share/X11/xkb"
         export QT_PLUGIN_PATH="${davinci-patched}/libs/plugins:$QT_PLUGIN_PATH"
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/usr/lib32:${davinci-patched}/libs
