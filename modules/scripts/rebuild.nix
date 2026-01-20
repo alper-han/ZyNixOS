@@ -33,8 +33,16 @@ pkgs.writeShellScriptBin "rebuild" ''
 
   sudo git -C "$flake" add hosts/${host}/hardware-configuration.nix
 
+  # Save current system for nvd comparison
+  CURRENT_SYSTEM=$(readlink -f /run/current-system)
+
   # nh os switch --hostname "${host}"
   sudo nixos-rebuild switch --flake "$flake#${host}"
+
+  # Show package changes with nvd
+  echo
+  echo -e "''${GREEN}=== Package Changes ===''${NC}"
+  ${pkgs.nvd}/bin/nvd diff "$CURRENT_SYSTEM" /run/current-system
 
   echo
   read -rsn1 -p"$(echo -e "''${GREEN}Press any key to continue''${NC}")"
