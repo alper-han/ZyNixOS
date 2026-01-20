@@ -19,13 +19,13 @@
     gh # Github Authentication Client
     libjxl # Support for JXL Images
     microfetch # Small fetch (Blazingly fast)
-    nix-prefetch-scripts # Find Hashes/Revisions of Nix Packages
+    # nix-prefetch-scripts # Not used - nix flake prefetch is preferred
     ripgrep # Improved Grep
     tldr # Improved Man
     unrar # Tool For Handling .rar Files
     unzip # Tool For Handling .zip Files
     file
-    patchelf
+    # patchelf # Binary patching - only needed in dev-shells
     android-tools
     ncdu # Disk Usage Analyzer With Ncurses Interface # or use gdu
     # nvtopPackages.full

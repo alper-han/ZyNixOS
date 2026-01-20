@@ -1,26 +1,20 @@
 { pkgs, ... }:
 {
-
   environment.systemPackages = with pkgs; [
     rustdesk
     jellyfin-desktop
+    jellyfin-mpv-shim
     # kdiskmark
     # qbittorrent
     # mission-center
     # remmina # rdp&vnc
-    # jellyfin-mpv-shim
 
-    # Terminal
-    # yt-dlp
-
-    # DEV
     github-desktop
-
     # code-cursor
+    # hoppscotch
+    claude-code
     antigravity-fhs
     sqlitebrowser # db
-    # hoppscotch
-
     jetbrains.rider # dotnet
     dotnet-sdk_10
     dotnet-runtime_10
