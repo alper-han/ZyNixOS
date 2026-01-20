@@ -99,16 +99,13 @@ in
             swappy
             libnotify
             brightnessctl
-            networkmanagerapplet
             pamixer
             pavucontrol
             playerctl
             wtype
             wl-clipboard
-            xdotool
             yad
             # socat # for and autowaybar.sh
-            jq # for and autowaybar.sh zoom
             bc # zoom
             wl-clip-persist
             rose-pine-hyprcursor

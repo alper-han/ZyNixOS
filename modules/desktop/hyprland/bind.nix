@@ -6,6 +6,16 @@
 }:
 let
   inherit (lib) getExe getExe';
+
+  # Import script modules
+  keyboardswitch = pkgs.callPackage ./scripts/keyboardswitch.nix { };
+  gamemode = pkgs.callPackage ./scripts/gamemode.nix { };
+  clipmanager = pkgs.callPackage ./scripts/clipmanager.nix { };
+  rofimusic = pkgs.callPackage ./scripts/rofimusic.nix { };
+  screen-record = pkgs.callPackage ./scripts/screen-record.nix { };
+  screenshot = pkgs.callPackage ./scripts/screenshot.nix { };
+  zoom = pkgs.callPackage ./scripts/zoom.nix { };
+  keybinds-yad = pkgs.callPackage ./scripts/keybinds-yad.nix { };
 in
 {
   "$mainMod" = "SUPER";
@@ -36,17 +46,17 @@ in
   # Main keybindings
   bind = [
     # === Keybinds Help Menu ===
-    "$mainMod, question, exec, ${./scripts/keybinds.sh}"
-    "$mainMod, slash, exec, ${./scripts/keybinds.sh}"
-    "$mainMod CTRL, K, exec, ${./scripts/keybinds.sh}"
+    "$mainMod, question, exec, ${getExe keybinds-yad}"
+    "$mainMod, slash, exec, ${getExe keybinds-yad}"
+    "$mainMod CTRL, K, exec, ${getExe keybinds-yad}"
 
     # === Night Mode ===
     "$mainMod, F9, exec, ${getExe pkgs.hyprsunset} --temperature 3500"
     "$mainMod, F10, exec, pkill hyprsunset"
 
     # === Window/Session Actions ===
-    "$mainMod, Q, exec, ${./scripts/dontkillsteam.sh}"
-    "ALT, F4, exec, ${./scripts/dontkillsteam.sh}"
+    "$mainMod, Q, killactive"
+    "ALT, F4, forcekillactive"
     "$mainMod, delete, exit"
     "$mainMod, W, togglefloating"
     "$mainMod SHIFT, G, togglegroup"
@@ -74,20 +84,20 @@ in
     "$mainMod, Z, exec, launcher emoji"
     "$mainMod SHIFT, T, exec, launcher tmux"
     "$mainMod, G, exec, launcher games"
-    "$mainMod ALT, K, exec, ${./scripts/keyboardswitch.sh}"
+    "$mainMod ALT, K, exec, ${getExe keyboardswitch}"
     "$mainMod SHIFT, N, exec, swaync-client -t -sw"
     "$mainMod SHIFT, Q, exec, swaync-client -t -sw"
-    "$mainMod ALT, G, exec, ${./scripts/gamemode.sh}"
-    "$mainMod, V, exec, ${./scripts/ClipManager.sh}"
-    "$mainMod SHIFT, M, exec, ${./scripts/rofimusic.sh}"
+    "$mainMod ALT, G, exec, ${getExe gamemode}"
+    "$mainMod, V, exec, ${getExe clipmanager}"
+    "$mainMod SHIFT, M, exec, ${getExe rofimusic}"
 
     # === Screenshot/Screencapture ===
-    "$mainMod SHIFT, R, exec, ${./scripts/screen-record.sh} a"
-    "$mainMod CTRL, R, exec, ${./scripts/screen-record.sh} m"
-    "$mainMod, P, exec, ${./scripts/screenshot.sh} s"
-    "$mainMod CTRL, P, exec, ${./scripts/screenshot.sh} sf"
-    "$mainMod, print, exec, ${./scripts/screenshot.sh} m"
-    "$mainMod ALT, P, exec, ${./scripts/screenshot.sh} p"
+    "$mainMod SHIFT, R, exec, ${getExe screen-record} a"
+    "$mainMod CTRL, R, exec, ${getExe screen-record} m"
+    "$mainMod, P, exec, ${getExe screenshot} s"
+    "$mainMod CTRL, P, exec, ${getExe screenshot} sf"
+    "$mainMod, print, exec, ${getExe screenshot} m"
+    "$mainMod ALT, P, exec, ${getExe screenshot} p"
 
     # === Media Controls ===
     ",xf86Sleep, exec, systemctl suspend"
@@ -153,8 +163,8 @@ in
     "$mainMod SHIFT $CONTROL, J, movewindow, d"
 
     # === Zoom ===
-    "$mainMod CTRL, mouse_down, exec, ${./scripts/zoom.sh} in"
-    "$mainMod CTRL, mouse_up, exec, ${./scripts/zoom.sh} out"
+    "$mainMod CTRL, mouse_down, exec, ${getExe zoom} in"
+    "$mainMod CTRL, mouse_up, exec, ${getExe zoom} out"
 
     # === Special Workspace (Scratchpad) ===
     "$mainMod CTRL, S, movetoworkspacesilent, special"

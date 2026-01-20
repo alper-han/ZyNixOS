@@ -1,7 +1,7 @@
 { host, pkgs, ... }:
 let
   inherit (import ../../../../../hosts/${host}/variables.nix) terminal;
-
+  gpuinfo = pkgs.callPackage ../../scripts/gpuinfo.nix { };
 in
 {
   home-manager.sharedModules = [
@@ -504,10 +504,10 @@ in
             "custom/gpuinfo" = {
               min-length = 7;
               max-length = 7;
-              exec = "${../../scripts/gpuinfo.sh}";
+              exec = "${gpuinfo}/bin/gpuinfo";
               return-type = "json";
               format = "{0}";
-              on-click = "${../../scripts/gpuinfo.sh} --toggle";
+              on-click = "${gpuinfo}/bin/gpuinfo --toggle";
               interval = 10;
               tooltip = true;
             };
