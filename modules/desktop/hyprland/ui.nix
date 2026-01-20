@@ -27,7 +27,7 @@
       vibrancy = 0.1696;
       popups = false;
       new_optimizations = true;
-      ignore_opacity = true;
+      ignore_opacity = false;
       xray = false;
     };
   };
