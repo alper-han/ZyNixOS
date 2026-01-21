@@ -1,0 +1,4 @@
+# GitHub linguist overrides - Show repo as Nix
+*.envrc linguist-vendored
+*.sh linguist-vendored
+*.rasi linguist-vendored
