@@ -28,6 +28,8 @@ let
     (import ./extract.nix scriptArgs)
     (import ./driverinfo.nix scriptArgs)
     (import ./underwatt.nix scriptArgs)
+    (import ./update-devshells.nix scriptArgs)
+    (import ./change-devshells-source.nix scriptArgs)
     # Add new scripts here as you create them
   ];
 in
