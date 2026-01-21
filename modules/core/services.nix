@@ -25,6 +25,13 @@
     blueman.enable = true; # Bluetooth Support
     tumbler.enable = true; # Image/video preview
     logind.settings.Login.KillUserProcesses = true; # logout kill user process
+    speechd.enable = false;
+
+    # Disabled unnecessary services
+    printing.enable = false;       # CUPS printing service
+    avahi.enable = false;          # mDNS/Bonjour
+    geoclue2.enable = false;       # Location service
+    fwupd.enable = false;          # Firmware update daemon
 
     pulseaudio.enable = false;
     pipewire = {
