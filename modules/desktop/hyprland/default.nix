@@ -107,7 +107,6 @@ in
             yad
             # socat # for and autowaybar.sh
             bc # zoom
-            wl-clip-persist
             rose-pine-hyprcursor
           ];
 
@@ -148,6 +147,7 @@ in
           #test later systemd.user.targets.hyprland-session.Unit.Wants = [ "xdg-desktop-autostart.target" ];
           wayland.windowManager.hyprland = {
             enable = true;
+            package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
             plugins = [ ];
             systemd.enable = false; # Disabled to avoid conflicts with UWSM
             settings =

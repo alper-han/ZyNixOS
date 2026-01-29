@@ -124,7 +124,6 @@ in
     # === General Rules ===
     "tile on, match:title (.*)(Godot)(.*)$"
     "suppress_event maximize, match:class .*"
-    "maximize on, match:class ^(libreoffice.*)$"
     "center on, match:title ^(splash)$"
 
     # === Opacity Rules (Grouped via Nix) ===
@@ -159,9 +158,6 @@ in
     "idle_inhibit focus, match:class ^(jellyfin|resolve|DaVinci Resolve)$"
     "idle_inhibit focus, match:title ^(YouTube Music)$"
     "idle_inhibit fullscreen, match:class ^(firefox)$"
-
-    # === Maximize on Start ===
-    "maximize on, match:class ^(jetbrains-.*)$"
 
     # === DaVinci Resolve Special Windows (Float) ===
     # Project Manager and loader should float, not maximize
