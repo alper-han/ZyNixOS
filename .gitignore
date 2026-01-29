@@ -2,6 +2,12 @@
 target
 result
 result-*
+output-*
+dev-shells/*/flake.lock
+
+.vscode
+*.log
+*.tmp
 
 [Bb]ackup
 [Bb]ackup/*
