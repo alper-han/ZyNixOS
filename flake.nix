@@ -70,7 +70,7 @@
             ./hosts/${host}/configuration.nix
             {
               nixpkgs.overlays = [
-                inputs.nix-cachyos-kernel.overlays.default
+                inputs.nix-cachyos-kernel.overlays.pinned
               ];
             }
           ];
