@@ -2,8 +2,8 @@
 {
   environment.systemPackages = with pkgs; [
     rustdesk
-    jellyfin-desktop
-    jellyfin-mpv-shim
+    # jellyfin-desktop
+    # jellyfin-mpv-shim
     # kdiskmark
     # qbittorrent
     # mission-center
@@ -12,8 +12,8 @@
     github-desktop
     # code-cursor
     # hoppscotch
+    # antigravity-fhs
     claude-code
-    antigravity-fhs
     sqlitebrowser # db
     jetbrains.rider # dotnet
     dotnet-sdk_10
