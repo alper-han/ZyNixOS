@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   # Services to start
   services = {
@@ -25,7 +25,7 @@
     blueman.enable = true; # Bluetooth Support
     tumbler.enable = true; # Image/video preview
     logind.settings.Login.KillUserProcesses = true; # logout kill user process
-    speechd.enable = false;
+    speechd.enable = lib.mkForce false;
 
     # Disabled unnecessary services
     printing.enable = false;       # CUPS printing service

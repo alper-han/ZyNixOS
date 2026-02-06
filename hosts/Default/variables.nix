@@ -15,6 +15,7 @@
 
   # Hardware Configuration
   videoDriver = "nvidia"; # CRITICAL: Choose your GPU driver (nvidia, amdgpu, intel)
+  bluetoothSupport = true; # Whether your motherboard supports bluetooth
   hostname = "NixOS"; # Your system hostname
   networkInterface = "eno1"; # Primary network interface (use 'ip link' to find yours)
   isLaptop = false; # Set to true for laptops (enables power management)

@@ -4,15 +4,15 @@
   ...
 }:
 let
-  inherit (import ../../hosts/${host}/variables.nix) hostname;
+  inherit (import ../../hosts/${host}/variables.nix) hostname bluetoothSupport;
 in
 {
   hardware = {
     graphics.enable = true;
     enableRedistributableFirmware = true;
     bluetooth = {
-      enable = true;
-      powerOnBoot = true;
+      enable = bluetoothSupport;
+      powerOnBoot = bluetoothSupport;
       settings = {
         General = {
           Name = hostname;
