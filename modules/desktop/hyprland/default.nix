@@ -107,7 +107,6 @@ in
             yad
             # socat # for and autowaybar.sh
             bc # zoom
-            rose-pine-hyprcursor
           ];
 
           xdg.configFile."hypr/icons" = {
@@ -138,9 +137,9 @@ in
             export QT_QPA_PLATFORMTHEME=hyprqt6engine
             export QT_AUTO_SCREEN_SCALE_FACTOR=1
             export QT_ENABLE_HIGHDPI_SCALING=1
-            export HYPRCURSOR_THEME=rose-pine-hyprcursor
+            export HYPRCURSOR_THEME=catppuccin-mocha-mauve-cursors
             export HYPRCURSOR_SIZE=${toString config.home.pointerCursor.size}
-            export XCURSOR_THEME=rose-pine-hyprcursor
+            export XCURSOR_THEME=catppuccin-mocha-mauve-cursors
             export XCURSOR_SIZE=${toString config.home.pointerCursor.size}
           '';
 

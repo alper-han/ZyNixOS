@@ -29,6 +29,6 @@ in
     "uwsm app -- rm '$XDG_CACHE_HOME/cliphist/db'" # Clear clipboard
     "uwsm app -- ${getExe batterynotify}" # battery notification
     "uwsm app -- kdeconnect-indicator"
-    "hyprctl setcursor rose-pine-hyprcursor 24"
+    "hyprctl setcursor catppuccin-mocha-mauve-cursors 24"
   ];
 }
