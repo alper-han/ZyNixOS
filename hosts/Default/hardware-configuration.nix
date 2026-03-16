@@ -27,6 +27,8 @@
   boot.kernelParams = [
     "amd_pstate=active"
     "8250.nr_uarts=0"
+    "nowatchdog"
+    "nmi_watchdog=0"
   ];
   boot.extraModulePackages = [
     config.boot.kernelPackages.zenergy

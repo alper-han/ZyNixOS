@@ -8,6 +8,7 @@ let
 in
 {
   hardware = {
+    enableAllFirmware = false;
     graphics.enable = true;
     enableRedistributableFirmware = true;
     bluetooth = {
