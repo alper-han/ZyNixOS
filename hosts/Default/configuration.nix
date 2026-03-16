@@ -20,6 +20,7 @@ in
     ../../modules/core/packages.nix
     ../../modules/core/${vars.displayManager}.nix # Set display-manager defined in variables.nix
     ../../modules/core/security.nix
+    ../../modules/core/ananicy.nix
     ../../modules/core/services.nix
     ../../modules/core/system.nix
     ../../modules/core/users.nix
