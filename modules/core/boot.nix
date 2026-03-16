@@ -78,7 +78,7 @@
 
     plymouth = {
       enable = true;
-      font = "${pkgs.jetbrains-mono}/share/fonts/truetype/JetBrainsMono-Regular.ttf";
+      font = "${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSans.ttf";
       themePackages = [ pkgs.catppuccin-plymouth ];
       theme = "catppuccin-macchiato";
     };
