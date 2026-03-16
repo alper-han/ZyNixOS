@@ -22,19 +22,19 @@
       vulkan-loader
       
       # Xorg & GUI
-      xorg.libX11
-      xorg.libXcursor
-      xorg.libXrandr
-      xorg.libXext
-      xorg.libXi
-      xorg.libICE
-      xorg.libSM
-      xorg.libXcomposite
-      xorg.libXtst
-      xorg.libXdamage
-      xorg.libXfixes
-      xorg.libxcb
-      xorg.libxshmfence
+      libx11
+      libxcursor
+      libxrandr
+      libxext
+      libxi
+      libice
+      libsm
+      libxcomposite
+      libxtst
+      libxdamage
+      libxfixes
+      libxcb
+      libxshmfence
       gtk3
       glib
       cairo
