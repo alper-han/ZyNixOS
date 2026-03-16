@@ -98,6 +98,7 @@ pkgs.writeShellScriptBin "keybinds-yad" ''
     "SUPER CTRL S" "Move to scratchpad" "movetoworkspacesilent special" \
     "SUPER S" "Toggle scratchpad workspace" "togglespecialworkspace" \
     "SUPER Tab" "Cycle next window" "cyclenext" \
+    "SUPER X" "Toggle dwindle split direction" "layoutmsg togglesplit" \
     "SUPER CTRL →" "Switch to next workspace" "workspace r+1" \
     "SUPER CTRL ←" "Switch to previous workspace" "workspace r-1" \
     "SUPER CTRL ↓" "Go to first empty workspace" "workspace empty" \

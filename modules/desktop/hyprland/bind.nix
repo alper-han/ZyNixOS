@@ -112,6 +112,7 @@ in
     # === Window Navigation ===
     "$mainMod, Tab, cyclenext"
     "$mainMod, Tab, bringactivetotop"
+    "$mainMod, X, layoutmsg, togglesplit"
 
     # Workspace navigation (relative)
     "$mainMod CTRL, right, workspace, r+1"

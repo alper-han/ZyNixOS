@@ -153,6 +153,10 @@ in
     "min_size 1 1, match:class ^(steam)$"
     "float on, center on, match:title ^(Steam)$, match:class ^()$"
 
+    # === Portal Dialogs (GTK) ===
+    "no_blur on, match:class ^(Xdg-desktop-portal-gtk)$"
+    "border_size 0, match:class ^(Xdg-desktop-portal-gtk)$"
+
     # === Idle Inhibit (Prevent sleep while media playing) ===
     "idle_inhibit focus, match:class ^(mpv|vlc|celluloid|com.github.rafostar.Clapper)$"
     "idle_inhibit focus, match:class ^(jellyfin|resolve|DaVinci Resolve)$"
@@ -171,7 +175,7 @@ in
     "size 600 800, match:class ^(blueman-manager)$"
     "size 1200 800, match:class ^(rustdesk|RustDesk)$"
     "size 900 650, match:class ^(easyeffects|com.github.wwmm.easyeffects)$"
-    "size 800 600, match:class ^(swappy)$"
+    # "size 800 600, match:class ^(swappy)$"
     "size 400 300, match:class ^(hyprpicker)$"
     "size 1100 700, match:class ^(sqlitebrowser|DB Browser for SQLite)$"
     "size 1000 700, match:class ^(virt-manager)$"
