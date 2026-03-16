@@ -45,7 +45,7 @@ in
       imports = [ inputs.plasma-manager.homeModules.plasma-manager ];
       programs.plasma = {
         enable = true;
-        immutableByDefault = true;
+        overrideConfig = false;
         krunner.activateWhenTypingOnDesktop = false;
         workspace = {
           clickItemTo = "select"; # select, open
