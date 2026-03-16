@@ -9,11 +9,15 @@
     # mission-center
     # remmina # rdp&vnc
 
+    # ffmpeg-full
+    # chromium
     github-desktop
     # code-cursor
     # hoppscotch
     # antigravity-fhs
-    claude-code
+    # claude-code
+    # opencode
+    codex
     sqlitebrowser # db
     jetbrains.rider # dotnet
     dotnet-sdk_10

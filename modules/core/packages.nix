@@ -25,6 +25,7 @@
     unrar # Tool For Handling .rar Files
     unzip # Tool For Handling .zip Files
     file
+    xxd
     # patchelf # Binary patching - only needed in dev-shells
     android-tools
     ncdu # Disk Usage Analyzer With Ncurses Interface # or use gdu
@@ -57,7 +58,7 @@
     # v4l-utils # Used For Things Like OBS Virtual Camera
     # warp-terminal # Terminal with AI support build in
     # waypaper # Change wallpaper
-    # wget # Tool For Fetching Files With Links
+    wget # Tool For Fetching Files With Links
     # ytmdl # Tool For Downloading Audio From YouTube
     # devenv
     # devbox

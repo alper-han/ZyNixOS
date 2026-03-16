@@ -27,7 +27,7 @@ in
     # prismlauncher
 
     # steam-run
-    # wineWowPackages.staging
+    # wineWow64Packages.staging
     # gamescope
     # protonup-qt # Used to manually download CachyOS Proton v4
   ];
