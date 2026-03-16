@@ -19,8 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-cachyos-kernel = {
-      url = "github:xddxdd/nix-cachyos-kernel";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:xddxdd/nix-cachyos-kernel/release";
     };
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
@@ -45,6 +44,7 @@
     };
     crossmacro = {
       url = "github:alper-han/crossmacro";
+      # url = "path:/home/zynix/CrossMacro";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-davinci-20-2-3.url = "github:NixOS/nixpkgs/4652ba995a945108fb891191c1e910b9a6ed9064";
