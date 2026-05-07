@@ -4,7 +4,7 @@ pkgs.writeShellScriptBin "autowaybar" ''
 
   check_workspace_empty() {
     active_workspace=$(${pkgs.hyprland}/bin/hyprctl activeworkspace -j | ${pkgs.jq}/bin/jq '.id')
-    clients=$(${pkgs.hyprland}/bin/hyprctl clients -j | ${pkgs.jq}/bin/jq "[.[] | select(.workspace.id == $active_workspace)]")
+    clients=$(${pkgs.hyprland}/bin/hyprctl clients -j | ${pkgs.jq}/bin/jq --argjson active_workspace "$active_workspace" '[.[] | select(.workspace.id == $active_workspace)]')
     [ "$(echo "$clients" | ${pkgs.jq}/bin/jq 'length')" -eq 0 ]
   }
 

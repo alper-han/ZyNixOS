@@ -1,21 +1,115 @@
 # Hyprland Keybindings and Mouse Actions
-# Usage: import ./bind.nix { inherit lib pkgs; }
+# Usage: import ./bind.nix { inherit lib pkgs host; }
 {
   lib,
   pkgs,
+  host,
 }:
 let
-  inherit (lib) getExe getExe';
+  inherit (lib) getExe;
+  inherit (import ../../../hosts/${host}/variables.nix) bar;
 
   # Import script modules
+  clipmanager = pkgs.callPackage ./scripts/clipmanager.nix { };
   keyboardswitch = pkgs.callPackage ./scripts/keyboardswitch.nix { };
   gamemode = pkgs.callPackage ./scripts/gamemode.nix { };
-  clipmanager = pkgs.callPackage ./scripts/clipmanager.nix { };
   rofimusic = pkgs.callPackage ./scripts/rofimusic.nix { };
-  screen-record = pkgs.callPackage ./scripts/screen-record.nix { };
+  screenRecord = pkgs.callPackage ./scripts/screen-record.nix { };
   screenshot = pkgs.callPackage ./scripts/screenshot.nix { };
   zoom = pkgs.callPackage ./scripts/zoom.nix { };
-  keybinds-yad = pkgs.callPackage ./scripts/keybinds-yad.nix { };
+  keybinds-yad = pkgs.callPackage ./scripts/keybinds-yad.nix { inherit host; };
+
+  app = "uwsm app --";
+  backgroundApp = "uwsm app -s b --";
+  serviceApp = "uwsm app -s s --";
+  caelestia = "${app} caelestia";
+  launcher = "${app} launcher";
+
+  barToggle = ''pkill -x "waybar|caelestia-shell|quickshell" || ${serviceApp} ${bar}'';
+  clipmanagerCmd = "${app} ${getExe clipmanager}";
+  gamemodeCmd = getExe gamemode;
+  keybindsYadCmd = "${app} ${getExe keybinds-yad}";
+  keyboardswitchCmd = getExe keyboardswitch;
+  nightModeCmd = "${backgroundApp} ${getExe pkgs.hyprsunset} --temperature 3500";
+  pearCmd = "${app} ${getExe pkgs.pear-desktop}";
+  rofimusicCmd = "${app} ${getExe rofimusic}";
+  screenRecordCmd = "${app} ${getExe screenRecord}";
+  screenshotCmd = "${app} ${getExe screenshot}";
+  zoomCmd = getExe zoom;
+
+  caelestiaBinds = {
+    brightness = [
+      ",XF86MonBrightnessDown,global,caelestia:brightnessDown"
+      ",XF86MonBrightnessUp,global,caelestia:brightnessUp"
+    ];
+    session = [
+      "$mainMod ALT, L, global, caelestia:lock"
+      "$mainMod, backspace, global, caelestia:session"
+    ];
+    launcher = [
+      "$mainMod, A, global, caelestia:launcher"
+      "$mainMod, SPACE, global, caelestia:showall"
+      "$mainMod SHIFT, I, global, caelestia:controlCenter"
+      "$mainMod SHIFT, D, global, caelestia:dashboard"
+      "$mainMod SHIFT, U, global, caelestia:utilities"
+      "$mainMod, Z, exec, pkill -x fuzzel || ${caelestia} emoji -p"
+      "$mainMod SHIFT, N, global, caelestia:sidebar"
+      "$mainMod SHIFT, Q, global, caelestia:clearNotifs"
+      "$mainMod, V, exec, pkill -x fuzzel || ${caelestia} clipboard"
+    ];
+    screenshot = [
+      "$mainMod SHIFT, R, exec, ${caelestia} record -r -s"
+      "$mainMod CTRL, R, exec, ${caelestia} record -s"
+      "$mainMod, P, global, caelestia:screenshotClip"
+      "$mainMod CTRL, P, global, caelestia:screenshotFreezeClip"
+      "$mainMod, print, exec, ${caelestia} screenshot"
+      "$mainMod CTRL, print, exec, ${screenshotCmd} m"
+    ];
+    media = [
+      ",XF86AudioPlay,global,caelestia:mediaToggle"
+      ",XF86AudioPause,global,caelestia:mediaToggle"
+      ",XF86AudioStop,global,caelestia:mediaStop"
+      ",xf86AudioNext,global,caelestia:mediaNext"
+      ",xf86AudioPrev,global,caelestia:mediaPrev"
+    ];
+  };
+
+  waybarBinds = {
+    brightness = [
+      ",XF86MonBrightnessDown,exec,brightnessctl set 1%-"
+      ",XF86MonBrightnessUp,exec,brightnessctl set +1%"
+    ];
+    session = [
+      "$mainMod ALT, L, exec, hyprlock"
+      "$mainMod, backspace, exec, pkill -x wlogout || ${app} wlogout -b 4"
+    ];
+    launcher = [
+      "$mainMod, A, exec, ${launcher} drun"
+      "$mainMod, SPACE, exec, ${launcher} drun"
+      "$mainMod SHIFT, W, exec, ${launcher} wallpaper"
+      "$mainMod, Z, exec, ${launcher} emoji"
+      "$mainMod SHIFT, N, exec, swaync-client -t -sw"
+      "$mainMod SHIFT, Q, exec, swaync-client -t -sw"
+      "$mainMod, V, exec, ${clipmanagerCmd}"
+    ];
+    screenshot = [
+      "$mainMod SHIFT, R, exec, ${screenRecordCmd} a"
+      "$mainMod CTRL, R, exec, ${screenRecordCmd} m"
+      "$mainMod, P, exec, ${screenshotCmd} s"
+      "$mainMod CTRL, P, exec, ${screenshotCmd} sf"
+      "$mainMod, print, exec, ${screenshotCmd} m"
+      "$mainMod ALT, P, exec, ${screenshotCmd} p"
+    ];
+    media = [
+      ",XF86AudioPlay,exec,playerctl play-pause"
+      ",XF86AudioPause,exec,playerctl play-pause"
+      ",XF86AudioStop,exec,playerctl stop"
+      ",xf86AudioNext,exec,playerctl next"
+      ",xf86AudioPrev,exec,playerctl previous"
+    ];
+  };
+
+  selectedBarBinds = if bar == "caelestia-shell" then caelestiaBinds else waybarBinds;
 in
 {
   "$mainMod" = "SUPER";
@@ -35,9 +129,9 @@ in
     "$mainMod SHIFT, j, resizeactive, 0 30"
 
     # Brightness controls
-    ",XF86MonBrightnessDown,exec,brightnessctl set 1%-"
-    ",XF86MonBrightnessUp,exec,brightnessctl set +1%"
-
+  ]
+  ++ selectedBarBinds.brightness
+  ++ [
     # Volume controls
     ",XF86AudioLowerVolume,exec,pamixer -d 1"
     ",XF86AudioRaiseVolume,exec,pamixer -i 1"
@@ -46,12 +140,12 @@ in
   # Main keybindings
   bind = [
     # === Keybinds Help Menu ===
-    "$mainMod, question, exec, ${getExe keybinds-yad}"
-    "$mainMod, slash, exec, ${getExe keybinds-yad}"
-    "$mainMod CTRL, K, exec, ${getExe keybinds-yad}"
+    "$mainMod, question, exec, ${keybindsYadCmd}"
+    "$mainMod, slash, exec, ${keybindsYadCmd}"
+    "$mainMod CTRL, K, exec, ${keybindsYadCmd}"
 
     # === Night Mode ===
-    "$mainMod, F9, exec, ${getExe pkgs.hyprsunset} --temperature 3500"
+    "$mainMod, F9, exec, ${nightModeCmd}"
     "$mainMod, F10, exec, pkill hyprsunset"
 
     # === Window/Session Actions ===
@@ -61,9 +155,10 @@ in
     "$mainMod, W, togglefloating"
     "$mainMod SHIFT, G, togglegroup"
     "ALT, return, fullscreen"
-    "$mainMod ALT, L, exec, hyprlock"
-    "$mainMod, backspace, exec, pkill -x wlogout || wlogout -b 4"
-    "$CONTROL, ESCAPE, exec, pkill waybar || waybar"
+  ]
+  ++ selectedBarBinds.session
+  ++ [
+    "CTRL, ESCAPE, exec, ${barToggle}"
 
     # === Applications ===
     # Note: $term, $editor, $fileManager, $browser are defined in default.nix settings
@@ -72,43 +167,33 @@ in
     "$mainMod, E, exec, $fileManager"
     "$mainMod, C, exec, $editor"
     "$mainMod, F, exec, $browser"
-    "$mainMod SHIFT, S, exec, spotify"
-    "$mainMod SHIFT, Y, exec, pear-desktop"
-    "$CONTROL ALT, DELETE, exec, $term -e '${getExe pkgs.btop}'"
+    "$mainMod SHIFT, S, exec, uwsm app -- spotify"
+    "$mainMod SHIFT, Y, exec, ${pearCmd}"
+    "CTRL ALT, DELETE, exec, $term -e '${getExe pkgs.btop}'"
     "$mainMod CTRL, C, exec, hyprpicker --autocopy --format=hex"
 
     # === Launchers ===
-    "$mainMod, A, exec, launcher drun"
-    "$mainMod, SPACE, exec, launcher drun"
-    "$mainMod SHIFT, W, exec, launcher wallpaper"
-    "$mainMod, Z, exec, launcher emoji"
-    "$mainMod SHIFT, T, exec, launcher tmux"
-    "$mainMod, G, exec, launcher games"
-    "$mainMod ALT, K, exec, ${getExe keyboardswitch}"
-    "$mainMod SHIFT, N, exec, swaync-client -t -sw"
-    "$mainMod SHIFT, Q, exec, swaync-client -t -sw"
-    "$mainMod ALT, G, exec, ${getExe gamemode}"
-    "$mainMod, V, exec, ${getExe clipmanager}"
-    "$mainMod SHIFT, M, exec, ${getExe rofimusic}"
+  ]
+  ++ selectedBarBinds.launcher
+  ++ [
+    "$mainMod SHIFT, T, exec, ${launcher} tmux"
+    "$mainMod, G, exec, ${launcher} games"
+    "$mainMod ALT, K, exec, ${keyboardswitchCmd}"
+    "$mainMod ALT, G, exec, ${gamemodeCmd}"
+    "$mainMod SHIFT, M, exec, ${rofimusicCmd}"
 
     # === Screenshot/Screencapture ===
-    "$mainMod SHIFT, R, exec, ${getExe screen-record} a"
-    "$mainMod CTRL, R, exec, ${getExe screen-record} m"
-    "$mainMod, P, exec, ${getExe screenshot} s"
-    "$mainMod CTRL, P, exec, ${getExe screenshot} sf"
-    "$mainMod, print, exec, ${getExe screenshot} m"
-    "$mainMod ALT, P, exec, ${getExe screenshot} p"
-
+  ]
+  ++ selectedBarBinds.screenshot
+  ++ [
     # === Media Controls ===
     ",xf86Sleep, exec, systemctl suspend"
     ",XF86AudioMicMute,exec,pamixer --default-source -t"
     "$mainMod,M,exec,pamixer --default-source -t"
     ",XF86AudioMute,exec,pamixer -t"
-    ",XF86AudioPlay,exec,playerctl play-pause"
-    ",XF86AudioPause,exec,playerctl play-pause"
-    ",xf86AudioNext,exec,playerctl next"
-    ",xf86AudioPrev,exec,playerctl previous"
-
+  ]
+  ++ selectedBarBinds.media
+  ++ [
     # === Window Navigation ===
     "$mainMod, Tab, cyclenext"
     "$mainMod, Tab, bringactivetotop"
@@ -152,20 +237,20 @@ in
     "$mainMod CTRL ALT, left, movetoworkspace, r-1"
 
     # Move window in current workspace (arrow keys)
-    "$mainMod SHIFT $CONTROL, left, movewindow, l"
-    "$mainMod SHIFT $CONTROL, right, movewindow, r"
-    "$mainMod SHIFT $CONTROL, up, movewindow, u"
-    "$mainMod SHIFT $CONTROL, down, movewindow, d"
+    "$mainMod SHIFT CTRL, left, movewindow, l"
+    "$mainMod SHIFT CTRL, right, movewindow, r"
+    "$mainMod SHIFT CTRL, up, movewindow, u"
+    "$mainMod SHIFT CTRL, down, movewindow, d"
 
     # Move window in current workspace (HJKL)
-    "$mainMod SHIFT $CONTROL, H, movewindow, l"
-    "$mainMod SHIFT $CONTROL, L, movewindow, r"
-    "$mainMod SHIFT $CONTROL, K, movewindow, u"
-    "$mainMod SHIFT $CONTROL, J, movewindow, d"
+    "$mainMod SHIFT CTRL, H, movewindow, l"
+    "$mainMod SHIFT CTRL, L, movewindow, r"
+    "$mainMod SHIFT CTRL, K, movewindow, u"
+    "$mainMod SHIFT CTRL, J, movewindow, d"
 
     # === Zoom ===
-    "$mainMod CTRL, mouse_down, exec, ${getExe zoom} in"
-    "$mainMod CTRL, mouse_up, exec, ${getExe zoom} out"
+    "$mainMod CTRL, mouse_down, exec, ${zoomCmd} in"
+    "$mainMod CTRL, mouse_up, exec, ${zoomCmd} out"
 
     # === Special Workspace (Scratchpad) ===
     "$mainMod CTRL, S, movetoworkspacesilent, special"
@@ -185,7 +270,7 @@ in
           let
             c = (x + 1) / 10;
           in
-          builtins.toString (x + 1 - (c * 10));
+          toString (x + 1 - (c * 10));
       in
       [
         "$mainMod, ${ws}, workspace, ${toString (x + 1)}"
