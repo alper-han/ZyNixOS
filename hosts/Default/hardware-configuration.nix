@@ -33,18 +33,7 @@
   boot.extraModulePackages = [
     config.boot.kernelPackages.zenergy
   ];
-  boot.kernelPackages = let
-    cachyoszen4 = pkgs.cachyosKernels.linux-cachyos-latest-lto-zen4.override {
-      pname = "linux-cachyos-latest-zen4-lto-bbr3";
-      lto = "full";
-      processorOpt = "zen4";
-      bbr3 = true;
-      extraMakeFlags = [
-        "NIX_CC_WRAPPER_SUPPRESS_TARGET_WARNING=1"
-        "KCFLAGS=-Wno-error"
-      ];
-    };
-  in lib.mkForce (pkgs.linuxKernel.packagesFor cachyoszen4);
+  boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
   boot.blacklistedKernelModules = [ ];
 
   fileSystems."/" = {
