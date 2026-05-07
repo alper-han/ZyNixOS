@@ -4,10 +4,7 @@
     (_: {
       programs.btop = {
         enable = true;
-        package = pkgs.btop.override {
-          rocmSupport = false; # Disabled - NVIDIA system, no AMD GPU
-          cudaSupport = true;
-        };
+        package = pkgs.btop;
         settings = {
           color_theme = "catppuccin-mocha";
           show_gpu_info = "on";

@@ -2,8 +2,17 @@
 {
   home-manager.sharedModules = [
     (
-      { config, ... }:
+      { config, lib, ... }:
+      let
+        screenshotDirectory = "${config.xdg.userDirs.pictures}/Screenshots/mpv";
+      in
       {
+        home.packages = [ pkgs.yt-dlp ];
+
+        home.activation.createMpvScreenshotDirectory = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          ${pkgs.coreutils}/bin/mkdir -p "${screenshotDirectory}"
+        '';
+
         programs.mpv = {
           enable = true;
           scripts = with pkgs.mpvScripts; [
@@ -113,8 +122,9 @@
             wayland-edge-pixels-touch = 0;
             screenshot-format = "webp";
             screenshot-webp-lossless = true;
-            screenshot-directory = "${config.home.homeDirectory}/Pictures/Screenshots/mpv";
+            screenshot-directory = screenshotDirectory;
             screenshot-sw = true;
+            script-opts = "ytdl_hook-ytdl_path=${pkgs.yt-dlp}/bin/yt-dlp";
             # cache-dir = "${config.xdg.cacheHome}/mpv";
             input-default-bindings = false;
           };

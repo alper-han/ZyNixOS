@@ -1,9 +1,18 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   home-manager.sharedModules = [
     (
-      { config, ... }:
+      { config, lib, ... }:
       let
+        apps = [
+          "Vencord"
+          "vesktop"
+          "equibop"
+        ];
+        themeFile = pkgs.fetchurl {
+          url = "https://raw.githubusercontent.com/alper-han/discord-css/refs/heads/main/theme.css";
+          hash = "sha256-you8qGKpO5Czb6FLsYLveQVXGjRWiaaBjRYNvH2OEjg=";
+        };
         discordSettings = {
           autoUpdate = false;
           autoUpdateNotification = false;
@@ -345,39 +354,50 @@
           winCtrlQ = false;
           winNativeTitleBar = false;
         };
+        defaultSettingsFile = pkgs.writeText "discord-settings.json" (builtins.toJSON discordSettings);
+        settingsPath = app: "${config.xdg.configHome}/${app}/settings/settings.json";
+        legacyWritableSettingsPath = app: "${config.xdg.configHome}/${app}/settings/settings.user.json";
       in
       {
-        home.packages = with pkgs; [
-          # discord
-          # equibop
-          vesktop
-          curl
-        ];
+        home.packages = with pkgs; [ vesktop ];
 
-        home.activation.setupDiscord = lib.mkAfter ''
-          export PATH=${pkgs.curl}/bin:$PATH
+        home.activation.setupDiscordSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          ${builtins.concatStringsSep "\n" (
+            map (app: ''
+              settings_file="${settingsPath app}"
+              legacy_settings_file="${legacyWritableSettingsPath app}"
 
-          for APP in Vencord vesktop equibop; do
-            # Theme
-            THEME_DIR="$HOME/.config/$APP/themes"
-            THEME_FILE="$THEME_DIR/theme.css"
-            if ! [ -f "$THEME_FILE" ]; then
-              echo "$APP theme not found. Downloading..."
-              mkdir -p "$THEME_DIR"
-              curl -sSfL "https://raw.githubusercontent.com/alper-han/discord-css/refs/heads/main/theme.css" -o "$THEME_FILE"
-            fi
+              if [ -L "$settings_file" ]; then
+                linked_target="$(${pkgs.coreutils}/bin/readlink "$settings_file")"
+                rm "$settings_file"
 
-            # Settings
-            SETTING_DIR="$HOME/.config/$APP/settings"
-            SETTING_FILE="$SETTING_DIR/settings.json"
-            if ! [ -f "$SETTING_FILE" ]; then
-              echo "$APP settings.json not found. Creating initial settings..."
-              mkdir -p "$SETTING_DIR"
-              echo '${builtins.toJSON discordSettings}' > "$SETTING_FILE"
-            fi
-          done
+                if [ -f "$legacy_settings_file" ]; then
+                  cp "$legacy_settings_file" "$settings_file"
+                elif [ -n "$linked_target" ] && [ -f "$linked_target" ]; then
+                  cp "$linked_target" "$settings_file"
+                else
+                  cp ${defaultSettingsFile} "$settings_file"
+                fi
+              elif ! [ -f "$settings_file" ]; then
+                mkdir -p "$(dirname "$settings_file")"
+                if [ -f "$legacy_settings_file" ]; then
+                  cp "$legacy_settings_file" "$settings_file"
+                else
+                  cp ${defaultSettingsFile} "$settings_file"
+                fi
+              fi
+
+              chmod u+w "$settings_file"
+            '') apps
+          )}
         '';
 
+        xdg.configFile = builtins.listToAttrs (
+          map (app: {
+            name = "${app}/themes/theme.css";
+            value.source = themeFile;
+          }) apps
+        );
       }
     )
   ];
