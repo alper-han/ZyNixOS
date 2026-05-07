@@ -271,7 +271,7 @@ in
 
                 # Debug settings
                 debug = {
-                  disable_logs = true;
+                  disable_logs = false;
                   enable_stdout_logs = false;
                 };
               }

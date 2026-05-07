@@ -290,7 +290,7 @@ let
         configLoaded = true;
         dndChanged = true;
         gameModeChanged = true;
-        kbLayoutChanged = true;
+        kbLayoutChanged = false;
         kbLimit = true;
         numLockChanged = false;
         vpnChanged = false;
