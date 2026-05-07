@@ -12,6 +12,8 @@ let
   ];
 in
 {
+  imports = [ ./protonmail-bridge.nix ];
+
   programs.thunderbird = {
     enable = true;
     policies = {
