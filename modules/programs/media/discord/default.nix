@@ -359,7 +359,10 @@
         legacyWritableSettingsPath = app: "${config.xdg.configHome}/${app}/settings/settings.user.json";
       in
       {
-        home.packages = with pkgs; [ vesktop ];
+        home.packages = with pkgs; [
+          discord
+          vesktop
+        ];
 
         home.activation.setupDiscordSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           ${builtins.concatStringsSep "\n" (
