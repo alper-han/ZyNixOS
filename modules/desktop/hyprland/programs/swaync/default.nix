@@ -1,5 +1,11 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  host,
+  lib,
+  ...
+}:
 let
+  inherit (import ../../../../../hosts/${host}/variables.nix) isLaptop;
   gamemode = pkgs.callPackage ../../scripts/gamemode.nix { };
   togglepowermode = pkgs.callPackage ../../scripts/togglepowermode.nix { };
 in
@@ -26,7 +32,7 @@ in
           timeout-critical = 0;
           fit-to-screen = false;
           control-center-width = 400;
-          control-center-height = 940;
+          control-center-height = 750;
           notification-window-width = 375;
           keyboard-shortcuts = true;
           image-visibility = "when-available";
@@ -34,16 +40,18 @@ in
           hide-on-clear = false;
           hide-on-action = true;
           script-fail-notify = true;
-          widgets = [
-            "title"
-            "dnd"
-            "menubar#desktop"
-            "backlight"
-            "volume"
-            "mpris"
-            "notifications"
-            "buttons-grid"
-          ];
+          widgets =
+            [
+              "title"
+              "dnd"
+              "menubar#desktop"
+            ]
+            ++ lib.optional isLaptop "backlight"
+            ++ [
+              "volume"
+              "notifications"
+              "buttons-grid"
+            ];
           widget-config = {
             title = {
               text = " Quick settings";
@@ -57,11 +65,11 @@ in
                 actions = [
                   {
                     label = "Whole screen";
-                    command = "sh -c 'swaync-client -cp; sleep 1; grimblast copysave output \"/tmp/screenshot.png\"; swappy -f \"/tmp/screenshot.png\"'";
+                    command = "sh -c 'swaync-client -cp; sleep 1; grimblast copysave output \"/tmp/screenshot.png\"; uwsm app -- swappy -f \"/tmp/screenshot.png\"'";
                   }
                   {
                     label = "Whole window / Select region";
-                    command = "sh -c 'swaync-client -cp; grimblast copysave area \"/tmp/screenshot.png\"; swappy -f \"/tmp/screenshot.png\"'";
+                    command = "sh -c 'swaync-client -cp; grimblast copysave area \"/tmp/screenshot.png\"; uwsm app -- swappy -f \"/tmp/screenshot.png\"'";
                   }
                 ];
               };
@@ -87,7 +95,7 @@ in
                   }
                   {
                     label = "  Lock";
-                    command = "hyprlock";
+                    command = "uwsm app -- hyprlock";
                   }
                 ];
               };
@@ -106,6 +114,7 @@ in
             dnd = {
               text = " Do Not Disturb";
             };
+            # Kept configured for easy re-enable, but intentionally disabled in widgets.
             mpris = {
               image-size = 96;
               image-radius = 4;
@@ -137,7 +146,7 @@ in
                 {
                   label = "";
                   type = "toggle";
-                  command = "blueman-manager";
+                  command = "uwsm app -- blueman-manager";
                   update-command = "rfkill list bluetooth | grep -q 'Soft blocked: no' && echo true || echo false";
                 }
 
@@ -158,7 +167,7 @@ in
                 {
                   label = "󰤄";
                   type = "toggle";
-                  command = "sh -c '${pkgs.procps}/bin/pgrep -x hyprsunset >/dev/null && ${pkgs.procps}/bin/pkill hyprsunset || nohup ${pkgs.hyprsunset}/bin/hyprsunset --temperature 3500 > /tmp/hyprsunset_output.log 2>&1 &'";
+                  command = "sh -c '${pkgs.procps}/bin/pgrep -x hyprsunset >/dev/null && ${pkgs.procps}/bin/pkill hyprsunset || uwsm app -s b -- ${pkgs.hyprsunset}/bin/hyprsunset --temperature 3500'";
                   update-command = "pidof hyprsunset >/dev/null && echo true || echo false";
                 }
 
@@ -168,12 +177,21 @@ in
                   type = "toggle";
                   update-command = "systemctl --user is-active --quiet hypridle.service && echo false || echo true";
                 }
-
+              ]
+              ++ [
                 {
                   label = "";
-                  type = "toggle";
-                  command = "${togglepowermode}/bin/togglepowermode";
-                  update-command = "test -f \"$HOME/.config/hypr/power_mode\" && grep -q \"^powersave$\" \"$HOME/.config/hypr/power_mode\" && echo true || echo false";
+                  type = if isLaptop then "toggle" else "normal";
+                  command =
+                    if isLaptop then
+                      "${togglepowermode}/bin/togglepowermode"
+                    else
+                      "${pkgs.coreutils}/bin/true";
+                  update-command =
+                    if isLaptop then
+                      "test -f \"$HOME/.config/hypr/power_mode\" && grep -q \"^powersave$\" \"$HOME/.config/hypr/power_mode\" && echo true || echo false"
+                    else
+                      "echo false";
                 }
               ];
             };
@@ -584,6 +602,21 @@ in
            .widget-buttons-grid > flowbox > flowboxchild > button:hover {
             background: alpha(@mantle, .80);
           }
+
+          ${lib.optionalString (!isLaptop) ''
+            .widget-buttons-grid > flowbox > flowboxchild:last-child {
+              background: alpha(@mantle, .50);
+              opacity: 0.55;
+            }
+
+            .widget-buttons-grid > flowbox > flowboxchild:last-child > button {
+              color: alpha(@text, 0.55);
+            }
+
+            .widget-buttons-grid > flowbox > flowboxchild:last-child > button:hover {
+              background: transparent;
+            }
+          ''}
 
           .widget-mpris {
             padding: 8px;

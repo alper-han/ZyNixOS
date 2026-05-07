@@ -9,14 +9,13 @@
 
 /*****----- Configuration -----*****/
 configuration {
-	modi:                       "drun";
     show-icons:                 true;
     display-drun:               " ";
     display-run:                "";
     display-filebrowser:        "";
     display-window:             "";
 	drun-display-format:        "{name} [<span weight='light' size='small'><i>({generic})</i></span>]";
-	window-format:              "{w} · {c} · {t}";
+	window-format:              "{c} · {t}";
 }
 
 /*****----- Global Properties -----*****/

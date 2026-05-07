@@ -1,6 +1,6 @@
 {
   # ---------- General setting ----------
-  modi = "drun,run,filebrowser,window";
+  modes = "drun,run,filebrowser,window";
   case-sensitive = false;
   cycle = true;
   filter = "";
@@ -31,14 +31,14 @@
   drun-reload-desktop-cache = false;
 
   # ---------- Run settings ----------
-  run-command = "{cmd}";
+  run-command = "uwsm app -- {cmd}";
   run-list-command = "";
   run-shell-command = "{terminal} -e {cmd}";
 
   # ---------- Window switcher settings ----------
-  window-match-fields = "title,class,role,name,desktop";
-  window-command = "wmctrl -i -R {window}";
-  window-format = "{w} - {c} - {t:0}";
+  window-match-fields = "title,class";
+  window-command = "true";
+  window-format = "{c} - {t}";
   window-thumbnail = false;
 
   # ---------- Combi settings ----------
@@ -62,7 +62,6 @@
   display-filebrowser = "Files";
 
   # ---------- Misc setting ----------
-  terminal = "rofi-sensible-terminal";
   sort = false;
   threads = 0;
   click-to-exit = true;

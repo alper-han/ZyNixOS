@@ -1,6 +1,9 @@
-{ host, pkgs, ... }:
+{ host, pkgs, lib, ... }:
 let
-  inherit (import ../../../../../hosts/${host}/variables.nix) terminal;
+  inherit (import ../../../../../hosts/${host}/variables.nix)
+    terminal
+    isLaptop
+    ;
   gpuinfo = pkgs.callPackage ../../scripts/gpuinfo.nix { };
 in
 {
@@ -10,7 +13,7 @@ in
         enable = true;
         systemd = {
           enable = false;
-          target = "hyprland-session.target";
+          targets = [ "hyprland-session.target" ];
         };
         settings = [
           {
@@ -57,19 +60,28 @@ in
               "custom/system_update"
               "custom/right_div-5"
             ];
-            modules-right = [
-              "mpris"
-              "custom/left_div-6"
-              "group/wireplumber"
-              "wireplumber#output"
-              "custom/left_div-7"
-              "backlight"
-              "custom/left_div-8"
-              "battery"
-              "custom/left_inv-2"
-              "custom/notification"
-              "custom/power_menu"
-            ];
+            modules-right =
+              [
+                "mpris"
+                "custom/left_div-6"
+                "group/wireplumber"
+                "wireplumber#output"
+                "custom/left_div-7"
+              ]
+              ++ lib.optionals isLaptop [
+                "backlight"
+              ]
+              ++ [
+                "custom/left_div-8"
+              ]
+              ++ lib.optionals isLaptop [
+                "battery"
+              ]
+              ++ [
+                "custom/left_inv-2"
+                "custom/notification"
+                "custom/power_menu"
+              ];
 
             "group/user" = {
               orientation = "horizontal";
@@ -242,7 +254,7 @@ in
               ];
               min-length = 1;
               max-length = 1;
-              on-click = "nm-connection-editor";
+              on-click = "uwsm app -- nm-connection-editor";
               tooltip-format = "Gateway: {gwaddr}";
               tooltip-format-ethernet = "Interface: {ifname}";
               tooltip-format-wifi = "Network: {essid}\nIP Addr: {ipaddr}/{cidr}\nStrength: {signalStrength}%\nFrequency: {frequency} GHz";
@@ -257,7 +269,7 @@ in
               format-connected = "󰂱";
               min-length = 1;
               max-length = 1;
-              on-click = "blueman-manager";
+              on-click = "uwsm app -- blueman-manager";
               on-click-right = "bluetoothctl power off && notify-send 'Bluetooth Off' -i 'network-bluetooth-inactive' -r 1925";
               tooltip-format = "Device Addr: {device_address}";
               tooltip-format-disabled = "Bluetooth Disabled";
@@ -271,13 +283,14 @@ in
 
             "custom/system_update" = {
               format = "";
-              on-click = "${terminal} -e rebuild";
+              on-click = "uwsm app -- ${terminal} -e rebuild";
               min-length = 1;
               max-length = 1;
               tooltip = false;
             };
 
             "mpris" = {
+              player = "playerctld";
               format = "{player_icon} {title} - {artist}";
               format-paused = "{status_icon} {title} - {artist}";
               tooltip-format = "Playing: {title} - {artist}";
@@ -329,7 +342,7 @@ in
                 headset = "󰋎";
                 headset-muted = "󰋐";
               };
-              on-click = "pavucontrol -t 3";
+              on-click = "uwsm app -- pavucontrol -t 3";
               on-scroll-up = "wpctl set-volume -l 1.0 @DEFAULT_SINK@ 1%+";
               on-scroll-down = "wpctl set-volume @DEFAULT_SINK@ 1%-";
               tooltip-format = "{icon} {node_name} // {volume}%";
@@ -432,7 +445,7 @@ in
 
             "custom/power_menu" = {
               format = "";
-              on-click = "pkill -x wlogout || wlogout -b 4";
+              on-click = "pkill -x wlogout || uwsm app -- wlogout -b 4";
               tooltip-format = "Power Menu";
             };
 

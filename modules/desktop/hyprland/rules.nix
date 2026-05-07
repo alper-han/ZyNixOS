@@ -7,17 +7,20 @@ let
 
   # --- Application Lists ---
 
-  # Browser instances (Opacity 1.0)
+  # Browser instances (1.00 active / 1.00 inactive)
   browserApps = [
-    "firefox" "Brave-browser" "floorp" "zen" "zen-beta"
+    "[Ff]irefox"
+    "[Ff]loorp"
+    "[Zz]en(-beta|-browser)?"
+    "[Bb]rave-browser(-beta|-dev|-unstable)?"
   ];
 
   # High Opacity Apps (0.90 active / 0.80 inactive)
   # Editors, Auth agents, Launchers, Discord, Media Apps
   highOpacityApps = [
     "Emacs" "obsidian" "gcr-prompter" "Hyprland Polkit Agent"
-    "Lutris" "lutris" "net.lutris.Lutris"
-    "discord" "vesktop" "WebCord"
+    "[Ll]utris" "net.lutris.Lutris"
+    "[Dd]iscord" "[Vv]esktop" "[Ww]eb[Cc]ord"
     "com.github.rafostar.Clapper"
     # Video Editing / Media Production
     "resolve" # DaVinci Resolve class name
@@ -43,15 +46,15 @@ let
     # Coding
     "VSCodium" "codium-url-handler" "code" "code-url-handler" "nvim-wrapper"
     # Terminals
-    "kitty" "alacritty" "Alacritty" "org.wezfurlong.wezterm"
+    "kitty" "[Aa]lacritty" "org.wezfurlong.wezterm"
     # File Managers
-    "org.gnome.Nautilus" "Thunar" "thunar" "pcmanfm" "thunar-volman-settings"
-    "org.kde.dolphin" "tuiFileManager" "org.gnome.FileRoller" "org.kde.ark"
+    "org.gnome.Nautilus" "[Tt]hunar" "pcmanfm" "thunar-volman-settings"
+    "org.kde.dolphin" "fileManager" "file-roller" "org.gnome.FileRoller" "org.kde.ark"
     "peazip" "PeaZip"
     # System & Tools
     "org.kde.polkit-kde-authentication-agent-1" "gnome-disks" "io.github.ilya_zlobintsev.LACT"
-    "Steam" "steam" "steamwebhelper" "hu.kramo.Cartridges"
-    "Spotify" "spotify" "Kvantum Manager" "nwg-look" "qt5ct" "qt6ct"
+    "[Ss]team" "steamwebhelper" "hu.kramo.Cartridges"
+    "[Ss]potify" "Kvantum Manager" "nwg-look" "qt5ct" "qt6ct"
     "Signal" "com.github.tchx84.Flatseal" "com.obsproject.Studio"
     "gnome-boxes" "app.drey.Warp" "net.davidotek.pupgui2"
     "io.gitlab.theevilskeleton.Upscaler" "yad"
@@ -108,6 +111,7 @@ let
   # Game definitions (Regex for classes)
   gameApps = [
     "steam_app_.*" "gamescope" "Waydroid" "osu!" ".*\\.exe" "pathofexilesteam\\.exe"
+    "com.libretro.RetroArch" "RetroArch" "retroarch"
   ];
 
 in
@@ -130,6 +134,7 @@ in
     "opacity 1.00 1.00, match:class ${mkRegex browserApps}"
     "opacity 0.90 0.80, match:class ${mkRegex highOpacityApps}"
     "opacity 0.80 0.70, match:class ${mkRegex mediumOpacityApps}"
+    "opacity 0.80 0.70, match:class ^(Xdg-desktop-portal-gtk|Xdg-desktop-portal-kde)$"
     "opacity 0.80 0.70, match:title (.*)(Spotify)(.*)$" # Special title match for Spotify
 
     # === Floating Rules ===
@@ -152,6 +157,10 @@ in
     # Steam: Fix menus and tooltips
     "min_size 1 1, match:class ^(steam)$"
     "float on, center on, match:title ^(Steam)$, match:class ^()$"
+
+    # Thunar file operation dialog should float instead of joining tiling layout.
+    "float on, center on, match:class ^(thunar)$, match:title ^(File Operation Progress)$"
+    "size 500 100, match:class ^(thunar)$, match:title ^(File Operation Progress)$"
 
     # === Portal Dialogs (GTK) ===
     "no_blur on, match:class ^(Xdg-desktop-portal-gtk)$"
@@ -182,5 +191,12 @@ in
     "size 900 600, match:class ^(virt-viewer|remote-viewer)$"
     "size 800 600, match:class ^(gnome-tweaks|org.gnome.tweaks)$"
     "size 1000 700, match:class ^(Duplicati|duplicati)$"
+
+    # Xwayland tooltips/menus/dialogs often inherit the parent app class.
+    # Force floating Xwayland surfaces to stay fully opaque so app opacity
+    # rules do not turn transient popups into blurred/translucent boxes.
+    "opacity 1.00 override 1.00 override 1.00 override, match:xwayland true, match:float true"
+    "opaque on, match:xwayland true, match:float true"
+    "no_blur on, match:xwayland true, match:float true"
   ];
 }
