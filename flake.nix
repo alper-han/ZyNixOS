@@ -1,6 +1,5 @@
 {
   description = "A simple flake for an atomic system";
-
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
@@ -13,9 +12,14 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?rev=eff3bfe261e90b8950b59379ca7815f735a7aab6&submodules=1";
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     hyprqt6engine = {
       url = "github:hyprwm/hyprqt6engine";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-cachyos-kernel = {
@@ -44,7 +48,6 @@
     };
     crossmacro = {
       url = "github:alper-han/crossmacro";
-      # url = "path:/home/zynix/CrossMacro";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-davinci-20-2-3.url = "github:NixOS/nixpkgs/4652ba995a945108fb891191c1e910b9a6ed9064";

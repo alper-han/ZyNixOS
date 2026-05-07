@@ -15,10 +15,6 @@ rec {
     path = ./clojure;
     description = "Clojure development environment";
   };
-  csharp = {
-    path = ./csharp;
-    description = "C# development environment";
-  };
   cue = {
     path = ./cue;
     description = "Cue development environment";
@@ -135,10 +131,6 @@ rec {
     path = ./rust;
     description = "Rust development environment";
   };
-  rust-toolchain = {
-    path = ./rust-toolchain;
-    description = "Rust development environment with Rust version defined by a rust-toolchain.toml file";
-  };
   scala = {
     path = ./scala;
     description = "Scala development environment";
@@ -167,5 +159,5 @@ rec {
   # Aliases
   c = c-cpp;
   cpp = c-cpp;
-  rt = rust-toolchain;
+  rt = rust;
 }
