@@ -4,34 +4,49 @@
     (
       { config, ... }:
       {
+        programs.zoxide = {
+          enable = true;
+          enableZshIntegration = true;
+        };
+
         programs.zsh = {
           enable = true;
-          autosuggestion.enable = false; # Loaded lazily via zsh-defer
-          syntaxHighlighting.enable = false; # Loaded lazily via zsh-defer
-          enableCompletion = false; # Loaded lazily via zsh-defer
+          autosuggestion.enable = true;
+          syntaxHighlighting.enable = true;
+          enableCompletion = true;
           history.size = 100000;
           history.path = "\${XDG_DATA_HOME}/zsh/history";
           dotDir = "${config.xdg.configHome}/zsh";
-          plugins = [
-            {
-              name = "nix-zsh-completions";
-              src = pkgs.nix-zsh-completions;
-            }
-          ];
-          initContent = ''
+          initContent = lib.mkMerge [
+            (lib.mkOrder 550 ''
             fpath=(${pkgs.nix-zsh-completions}/share/zsh/site-functions $fpath)
 
-            # Source zsh-defer first, then use it for lazy loading
-            source ${pkgs.zsh-defer}/share/zsh-defer/zsh-defer.plugin.zsh
+            # Completion styles are configured before Home Manager runs compinit.
+            zstyle ":completion:*" menu no
+            zstyle ":completion:*" list-colors "''${(s.:.)LS_COLORS}"
+            zstyle ":completion:*" verbose yes
+            zstyle ":completion:*:descriptions" format "%F{yellow}-- %d --%f"
+            zstyle ":completion:*:messages" format "%F{purple}-- %d --%f"
+            zstyle ":completion:*:warnings" format "%F{red}-- no matches found --%f"
+            zstyle ":completion:*" group-name ""
+            zstyle ":completion:*:*:-command-:*:*" group-order aliases builtins functions commands
+            zstyle ":completion:*" matcher-list "m:{a-zA-Z}={A-Za-z}" "r:|[._-]=* r:|=*" "l:|=* r:|=*"
+            zstyle ":completion:*" extra-verbose yes
+            zstyle ":completion:*" use-cache on
+            zstyle ":completion:*" cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
+            zstyle ":completion:*" file-list all
+            zstyle ":completion:*:options" description yes
+            zstyle ":completion:*:options" auto-description "%d"
+            '')
 
-            # Lazy load heavy components with zsh-defer for faster startup
-            zsh-defer -c 'autoload -Uz compinit && compinit -C'
-            zsh-defer -c 'source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
-            zsh-defer -c 'source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh'
-            zsh-defer -c 'source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh'
-            zsh-defer -c 'source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh; bindkey "^[[A" history-substring-search-up; bindkey "^[[B" history-substring-search-down'
-            zsh-defer -c 'eval "$(direnv hook zsh)"' 2>/dev/null
-            zsh-defer -c 'eval "$(zoxide init zsh)"' 2>/dev/null
+            (lib.mkOrder 650 ''
+            # fzf-tab must load after compinit and before widget-wrapping plugins.
+            source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+            '')
+
+            (lib.mkOrder 1000 ''
+            # Keep history substring search available, but do not own arrow keys for now.
+            source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
             # Sudo widget (double ESC to prepend sudo - replaces oh-my-zsh sudo plugin)
             sudo-command-line() {
@@ -49,7 +64,7 @@
             bindkey '^a' beginning-of-line
             bindkey '^e' end-of-line
 
-            # options
+            # Options
             unsetopt menu_complete
             unsetopt flowcontrol
 
@@ -66,25 +81,76 @@
             setopt inc_append_history
             setopt share_history
 
-            # Lazy load completion styles (depends on compinit)
-            zsh-defer -c '
-              zstyle ":completion:*" menu select
-              zstyle ":completion:*" list-colors "''${(s.:.)LS_COLORS}"
-              zstyle ":completion:*" verbose yes
-              zstyle ":completion:*:descriptions" format "%F{yellow}-- %d --%f"
-              zstyle ":completion:*:messages" format "%F{purple}-- %d --%f"
-              zstyle ":completion:*:warnings" format "%F{red}-- no matches found --%f"
-              zstyle ":completion:*" group-name ""
-              zstyle ":completion:*:*:-command-:*:*" group-order aliases builtins functions commands
-              zstyle ":completion:*" matcher-list "m:{a-zA-Z}={A-Za-z}" "r:|[._-]=* r:|=*" "l:|=* r:|=*"
-              zstyle ":completion:*" extra-verbose yes
-              zstyle ":completion:*" use-cache on
-              zstyle ":completion:*" cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
-              zstyle ":completion:*" file-list all
-              zstyle ":completion:*:options" description yes
-              zstyle ":completion:*:options" auto-description "%d"
-            '
-          '';
+            lf() {
+              local tmp dir
+              tmp="$(mktemp)" || return
+              ${pkgs.lf}/bin/lf -last-dir-path="$tmp" "$@"
+              if [[ -f $tmp ]]; then
+                dir="$(<"$tmp")"
+                rm -f "$tmp"
+                if [[ -d $dir && $dir != "$PWD" ]]; then
+                  cd "$dir"
+                fi
+              fi
+            }
+
+            fnew() {
+              if [[ $# -ne 2 ]]; then
+                print -u2 "usage: fnew <template> <directory>"
+                return 2
+              fi
+              if [[ -d $2 ]]; then
+                print -u2 "Directory \"$2\" already exists!"
+                return 1
+              fi
+              nix flake new "$2" --template ${self}/dev-shells#$1
+              cd "$2"
+              direnv allow
+            }
+
+            finit() {
+              if [[ $# -ne 1 ]]; then
+                print -u2 "usage: finit <template>"
+                return 2
+              fi
+              nix flake init --template ${self}/dev-shells#$1
+              direnv allow
+            }
+
+            cdown() {
+              if [[ $# -ne 1 || $1 != <-> ]]; then
+                print -u2 "usage: cdown <seconds>"
+                return 2
+              fi
+              local n=$1
+              while (( n > 0 )); do
+                echo "$n" | ${pkgs.figlet}/bin/figlet -c | ${pkgs.lolcat}/bin/lolcat
+                sleep 1
+                (( --n ))
+              done
+              return 0
+            }
+
+            tms() {
+              local session
+              session="$(tmux ls -F '#{session_name}: #{session_path} (#{session_windows} windows)' 2>/dev/null | fzf | cut -d: -f1)"
+              [[ -n $session ]] || return
+              tmux attach -t "$session"
+            }
+
+            find-store-path() {
+              if [[ $# -ne 1 ]]; then
+                print -u2 "usage: find-store-path <package>"
+                return 2
+              fi
+              nix-shell -p "$1" --command "nix eval -f \"<nixpkgs>\" --raw $1"
+            }
+
+            update-input() {
+              nix flake update "$@"
+            }
+            '')
+          ];
           envExtra = ''
             # Defaults
             export XMONAD_CONFIG_DIR="''${XDG_CONFIG_HOME:-$HOME/.config}/xmonad" # xmonad.hs is expected to stay here
@@ -101,54 +167,16 @@
             G = "| grep";
           };
           shellAliases = {
-            lf = ''
-                {
-                  tmp="$(mktemp)"
-                  # `command` is needed in case `lfcd` is aliased to `lf`
-                  command lf -last-dir-path="$tmp" "$@"
-                  if [ -f "$tmp" ]; then
-                      dir="$(cat "$tmp")"
-                      rm -f "$tmp"
-                      if [ -d "$dir" ]; then
-                          if [ "$dir" != "$(pwd)" ]; then
-                              cd "$dir"
-                          fi
-                      fi
-                  fi
-              }
-            '';
-            fnew = ''
-              if [ -d "$2" ]; then
-                echo "Directory \"$2\" already exists!"
-                return 1
-              fi
-              nix flake new $2 --template ${self}/dev-shells#$1
-              cd $2
-              direnv allow
-            '';
-
-            finit = ''
-              nix flake init --template ${self}/dev-shells#$1
-              direnv allow
-            '';
-            cdown = ''
-              N=$1
-              while [[ $((--N)) -gt  0 ]]
-                do
-                  echo "$N" |  figlet -c | lolcat &&  sleep 1
-              done
-            '';
             cls = "clear";
             tml = "tmux list-sessions";
             tma = "tmux attach";
-            tms = "tmux attach -t $(tmux ls -F '#{session_name}: #{session_path} (#{session_windows} windows)' | fzf | cut -d: -f1)";
             l = "${pkgs.eza}/bin/eza -lh  --icons=auto"; # long list
             ls = "${pkgs.eza}/bin/eza -1   --icons=auto"; # short list
             ll = "${pkgs.eza}/bin/eza -lha --icons=auto --sort=name --group-directories-first"; # long list all
             ld = "${pkgs.eza}/bin/eza -lhD --icons=auto"; # long list dirs
             tree = "${pkgs.eza}/bin/eza --icons=auto --tree"; # dir tree
-            vc = "code --disable-gpu"; # gui code editor
-            nv = "nvim";
+            vc = "$EDITOR"; # configured gui/code editor
+            nv = "$EDITOR";
             nf = "${pkgs.microfetch}/bin/microfetch";
             ff = ''${pkgs.fastfetch}/bin/fastfetch --logo "$(find ~/.config/fastfetch/pngs/ -name '*.png' | shuf -n 1)"'';
             cp = "cp -iv";
@@ -162,8 +190,6 @@
 
             # Nixos
             list-gens = "nixos-rebuild list-generations";
-            find-store-path = ''function { nix-shell -p $1 --command "nix eval -f \"<nixpkgs>\" --raw $1" }'';
-            update-input = "nix flake update $@";
             sysup = "nix flake update --flake ~/ZyNixOS && rebuild";
 
             # Directory Shortcuts.
