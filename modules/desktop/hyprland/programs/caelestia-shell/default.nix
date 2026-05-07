@@ -64,6 +64,11 @@ let
             timeout = 300;
             idleAction = "lock";
           }
+          {
+            timeout = 360;
+            idleAction = "dpms off";
+            returnAction = "dpms on";
+          }
         ];
       };
     };
