@@ -1,12 +1,4 @@
-{
-  pkgs,
-  lib,
-  host,
-  ...
-}:
-let
-  inherit (import ../../hosts/${host}/variables.nix) networkInterface;
-in
+{ pkgs, lib, ... }:
 {
   nixpkgs.config.allowUnfreePredicate =
     pkg:
@@ -19,7 +11,7 @@ in
     enable = true;
     enable32Bit = true;
   };
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = [
     # lutris
     # heroic
     # bottles
@@ -30,13 +22,14 @@ in
     # wineWow64Packages.staging
     # gamescope
     # protonup-qt # Used to manually download CachyOS Proton v4
+    # protonplus
   ];
   programs = {
-    gamemode.enable = true;
+    gamemode.enable = lib.mkForce false;
     steam = {
       enable = true;
-      remotePlay.openFirewall = true;
-      dedicatedServer.openFirewall = true;
+      remotePlay.openFirewall = false;
+      dedicatedServer.openFirewall = false;
       extraCompatPackages = [ pkgs.proton-ge-bin ];
       gamescopeSession = {
         enable = true;
@@ -65,7 +58,7 @@ in
   (_: {
     programs.mangohud = {
       enable = true;
-      enableSessionWide = true;
+      enableSessionWide = false;
       settingsPerApplication = {
         mpv = {
           no_display = true;
@@ -73,7 +66,7 @@ in
       };
       settings = {
         no_display = true;
-        fps_limit = [240 165 144 120 60 30 0];
+        fps_limit = [0 144 60];
         fps_limit_method = "early";
         vsync = 1;
         gl_vsync = 0;
@@ -117,13 +110,13 @@ in
 
         # System information
         ram = true;
-        gamemode = true;
+        gamemode = false;
         display_server = true;
         engine_version = true;
         dx_api = true;
         wine = true;
         winesync = true;
-        network = networkInterface;
+        network = true;
       };
     };
   })

@@ -3,14 +3,21 @@ let
   inherit (import ../../hosts/${host}/variables.nix) hostname;
 in
 {
-
   networking = {
     hostName = "${hostname}";
-    networkmanager.enable = true;
-    networkmanager.wifi.powersave = false;
-    
+    networkmanager = {
+      enable = true;
+      wifi.powersave = false;
+      plugins = with pkgs; [
+        networkmanager-openvpn
+      ];
+    };
+
     firewall = {
       enable = true;
+      # Loose reverse-path filtering keeps spoofing protection while allowing
+      # VPNs, policy routing, and tunnel interfaces to use asymmetric paths.
+      checkReversePath = "loose";
       allowedTCPPorts = [ ];
       allowedUDPPorts = [ ];
       allowPing = true;
@@ -18,8 +25,6 @@ in
   };
 
   boot = {
-    kernelModules = [ "ifb" "tcp_bbr" ];
-
     kernel.sysctl = {
       # Virtual Memory Tweaks (64GB RAM Optimization)
       "vm.swappiness" = 10;                     # Delay swapping as long as possible
@@ -27,12 +32,12 @@ in
       "vm.dirty_bytes" = 536870912;             # 512MB dirty cache cap (prevents IO stutter)
       "vm.dirty_background_bytes" = 268435456;  # 256MB background writeback start
 
-      # TCP hardening
+      # Network hardening
       "kernel.sysrq" = 0;
-      "net.ipv4.conf.default.rp_filter" = 1;
-      "net.ipv4.conf.all.rp_filter" = 1;
       "net.ipv4.conf.default.send_redirects" = 0;
+      "net.ipv4.conf.all.send_redirects" = 0;
       "net.ipv4.conf.default.accept_redirects" = 0;
+      "net.ipv4.conf.all.accept_redirects" = 0;
       "net.ipv4.conf.all.secure_redirects" = 0;
       "net.ipv4.conf.default.secure_redirects" = 0;
       "net.ipv6.conf.all.accept_redirects" = 0;
@@ -40,41 +45,30 @@ in
       "net.ipv4.tcp_syncookies" = 1;
       "net.ipv4.tcp_rfc1337" = 1;
 
-      # BBR + ECN optimization (Kernel 6.x)
+      # BBR + ECN optimization for modern kernels. BBR relies on fq below for
+      # pacing; CAKE/SQM belongs on the router when it controls the bottleneck.
       "net.ipv4.tcp_congestion_control" = "bbr";
-      "net.ipv4.tcp_ecn" = 1;
+      "net.ipv4.tcp_ecn" = 2;
       "net.ipv4.tcp_ecn_fallback" = 1;
 
-      # TCP ultra low latency
-      "net.ipv4.tcp_fastopen" = 3;
-      "net.ipv4.tcp_fin_timeout" = 30;
-      "net.ipv4.tcp_window_scaling" = 1;
+      # TCP latency and reliability
+      "net.ipv4.tcp_fastopen" = 1;
       "net.ipv4.tcp_mtu_probing" = 1;
       "net.ipv4.tcp_slow_start_after_idle" = 0;
-      "net.ipv4.tcp_notsent_lowat" = 16384;
 
-      # BBR pacing (Kernel 6.x)
-      "net.ipv4.tcp_pacing_ss_ratio" = 200;
-      "net.ipv4.tcp_pacing_ca_ratio" = 120;
+      # Raise TCP/socket buffer ceilings for high-BDP apps without inflating
+      # every socket's default memory footprint on a desktop system.
+      "net.ipv4.tcp_rmem" = "4096 131072 33554432";
+      "net.ipv4.tcp_wmem" = "4096 65536 33554432";
+      "net.core.wmem_max" = 33554432;
+      "net.core.rmem_max" = 33554432;
 
-      # Buffer optimization (1Gbps Optimized)
-      "net.ipv4.tcp_rmem" = "4096 131072 67108864";
-      "net.ipv4.tcp_wmem" = "4096 65536 67108864";
-      "net.core.wmem_max" = 67108864;
-      "net.core.rmem_max" = 67108864;
-      "net.core.wmem_default" = 1048576;
-      "net.core.rmem_default" = 1048576;
-
-      # Queue management
+      # Queue management: fq is the host-side pacing qdisc for BBR. Do not use
+      # global CAKE here; shape at the router/gateway only if bufferbloat tests fail.
       "net.core.default_qdisc" = "fq";
-      "net.core.netdev_max_backlog" = 16384;
-      "net.core.somaxconn" = 2048;
+      "net.core.somaxconn" = 4096;
 
-      # Netdev budget
-      "net.core.netdev_budget" = 600;
-      "net.core.netdev_budget_usecs" = 8000;
-
-      # Kernel Security Hardening (2026 Standards)
+      # Kernel security hardening
       "kernel.kptr_restrict" = 2;              # Hide kernel pointers (Exploit mitigation)
       "kernel.dmesg_restrict" = 1;             # Restrict dmesg access (Info leak prevention)
       "kernel.printk" = "3 3 3 3";             # Restrict kernel logging (Info leak prevention)
@@ -84,7 +78,7 @@ in
       # BPF JIT compiler (performance boost & hardening)
       "net.core.bpf_jit_enable" = 1;
       "net.core.bpf_jit_harden" = 2;           # Strongest hardening (JIT Spraying protection)
-      "net.core.bpf_jit_kallsyms" = 1;
+      "net.core.bpf_jit_kallsyms" = 0;
 
       # IPv6
       "net.ipv6.conf.all.accept_ra" = 1;
@@ -92,7 +86,7 @@ in
   };
 
   imports = [
-    ./network-optimization.nix # network optimization
+    ./network-optimization.nix
   ];
 
   systemd.services.NetworkManager-wait-online.enable = false;
@@ -102,5 +96,8 @@ in
     networkmanagerapplet
     iproute2
     ethtool
+    openvpn
+    proton-vpn
+    wireguard-tools
   ];
 }
