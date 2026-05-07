@@ -1,5 +1,6 @@
 { pkgs, ... }:
 {
+
   environment.systemPackages = with pkgs; [
     rustdesk
     # jellyfin-desktop
@@ -12,14 +13,9 @@
     # ffmpeg-full
     # chromium
     github-desktop
-    # code-cursor
     # hoppscotch
-    # antigravity-fhs
-    # claude-code
-    # opencode
-    codex
     sqlitebrowser # db
-    jetbrains.rider # dotnet
+    rider-fhs # dotnet / Avalonia / native UI dev
     dotnet-sdk_10
     dotnet-runtime_10
     dotnet-ef
