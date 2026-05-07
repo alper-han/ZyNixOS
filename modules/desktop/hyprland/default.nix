@@ -34,10 +34,10 @@ in
     ./programs/${bar}
     ./programs/wlogout
     ./programs/rofi
-    ./programs/hyprlock
     # ./programs/dunst
   ]
   ++ lib.optional (bar != "caelestia-shell") ./programs/hypridle
+  ++ lib.optional (bar != "caelestia-shell") ./programs/hyprlock
   ++ lib.optional (bar != "caelestia-shell") ./programs/swaync;
 
   systemd.user.services.hyprpolkitagent = {

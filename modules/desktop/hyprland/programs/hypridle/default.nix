@@ -10,14 +10,14 @@ in
         settings = {
           general = {
             ignore_dbus_inhibit = false;
-            lock_cmd = "pidof hyprlock || uwsm app -- hyprlock";
-            unlock_cmd = "pkill --signal SIGUSR1 hyprlock";
+            lock_cmd = "pgrep -x hyprlock >/dev/null || uwsm app -- hyprlock";
+            unlock_cmd = "pkill --signal SIGUSR1 -x hyprlock";
             before_sleep_cmd = "loginctl lock-session";
             after_sleep_cmd = "hyprctl dispatch dpms on";
           };
           listener = [
             {
-              timeout = 600; # 10 Minutes
+              timeout = 300; # 5 Minutes
               on-timeout = "loginctl lock-session";
             }
             {

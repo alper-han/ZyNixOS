@@ -3,6 +3,13 @@ let
   inherit (import ../../../../../hosts/${host}/variables.nix) hyprlockWallpaper;
 in
 {
+  environment.etc."pam.d/hyprlock".text = ''
+    auth include login
+    account include login
+    password include login
+    session include login
+  '';
+
   home-manager.sharedModules = [
     (_: {
       programs.hyprlock = {
@@ -18,7 +25,6 @@ in
               color = "rgb(36, 39, 58)";
               path = "${../../../../themes/wallpapers/${hyprlockWallpaper}}";
 
-              new_optimizations = true;
               blur_size = 3;
               blur_passes = 2;
               noise = 0.0117;
@@ -39,7 +45,6 @@ in
               font_color = "rgb(198, 160, 246)";
               fail_color = "rgb(237, 135, 150)";
               fail_text = "<i>$FAIL <b>($ATTEMPTS)</b></i>";
-              fail_transition = 300;
               fade_on_empty = false;
               placeholder_text = "Password...";
               dots_size = 0.2;
