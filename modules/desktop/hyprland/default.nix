@@ -8,7 +8,6 @@
 let
   inherit (import ../../../hosts/${host}/variables.nix)
     browser
-    username
     terminal
     editor
     fileManager
@@ -18,6 +17,9 @@ let
     isLaptop
     defaultWallpaper
     ;
+
+  wallpapersDir = ../../themes/wallpapers;
+  defaultWallpaperPath = "${wallpapersDir}/${defaultWallpaper}";
 
   # Import sub-modules
   fileManagerScript = pkgs.callPackage ./scripts/file-manager.nix { inherit terminal; };
@@ -139,7 +141,7 @@ in
 
           systemd.user.tmpfiles.rules = lib.optionals (bar == "caelestia-shell") [
             "d %S/caelestia/wallpaper 0755 %u %g - -"
-            "f %S/caelestia/wallpaper/path.txt 0644 %u %g - /home/${username}/ZyNixOS/modules/themes/wallpapers/${defaultWallpaper}"
+            "f %S/caelestia/wallpaper/path.txt 0644 %u %g - ${defaultWallpaperPath}"
           ];
 
           xdg.configFile."hypr/xdph.conf".text = ''
@@ -164,7 +166,7 @@ in
             export HYPRCURSOR_SIZE=${toString config.home.pointerCursor.size}
             export XCURSOR_THEME=catppuccin-mocha-mauve-cursors
             export XCURSOR_SIZE=${toString config.home.pointerCursor.size}
-            export CAELESTIA_WALLPAPERS_DIR=/home/${username}/ZyNixOS/modules/themes/wallpapers
+            export CAELESTIA_WALLPAPERS_DIR=${wallpapersDir}
             export CAELESTIA_SCREENSHOTS_DIR=''${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots
             export CAELESTIA_RECORDINGS_DIR=''${XDG_VIDEOS_DIR:-$HOME/Videos}/Recordings
           '';

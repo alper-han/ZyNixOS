@@ -135,14 +135,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1778103027,
-        "narHash": "sha256-hz4ffXI5EyADMaFze2TzeocM2Yk8gUSAJjb+i5s4pic=",
-        "path": "/home/zynix/CrossMacro",
-        "type": "path"
+        "lastModified": 1778009893,
+        "narHash": "sha256-M+Mat8pYeUyzomuvDdHdTHbyquTBDqrHHObVixTM3is=",
+        "owner": "alper-han",
+        "repo": "crossmacro",
+        "rev": "fbe4fd52cd8b76449fc1f771fcc39834114540d5",
+        "type": "github"
       },
       "original": {
-        "path": "/home/zynix/CrossMacro",
-        "type": "path"
+        "owner": "alper-han",
+        "repo": "crossmacro",
+        "type": "github"
       }
     },
     "flake-compat": {

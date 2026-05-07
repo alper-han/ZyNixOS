@@ -12,9 +12,10 @@ let
     fileManager
     isLaptop
     terminal
-    username
     ;
   useTwelveHourClock = false;
+  wallpapersDir = ../../../../themes/wallpapers;
+  defaultWallpaperPath = "${wallpapersDir}/${defaultWallpaper}";
 
   favouriteApps = [
     "zen-beta"
@@ -88,6 +89,7 @@ let
 
     bar = {
       clock = {
+        background = true;
         showIcon = true;
         showDate = true;
       };
@@ -113,6 +115,7 @@ let
         perMonitorWorkspaces = true;
         activeIndicator = true;
         activeTrail = true;
+        occupiedBg = true;
         showWindows = true;
         shown = 10;
       };
@@ -213,7 +216,7 @@ let
     paths = {
       mediaGif = "root:/assets/bongocat.gif";
       sessionGif = "root:/assets/kurukuru.gif";
-      wallpaperDir = "/home/${username}/ZyNixOS/modules/themes/wallpapers";
+      wallpaperDir = "${wallpapersDir}";
     };
 
     services = {
@@ -401,7 +404,7 @@ in
             "${config.xdg.configHome}/caelestia/shell.json"
 
           mkdir -p "${config.xdg.stateHome}/caelestia/wallpaper"
-          default_wallpaper="/home/${username}/ZyNixOS/modules/themes/wallpapers/${defaultWallpaper}"
+          default_wallpaper="${defaultWallpaperPath}"
           if [ ! -s "${config.xdg.stateHome}/caelestia/wallpaper/path.txt" ]; then
             printf '%s' "$default_wallpaper" > \
               "${config.xdg.stateHome}/caelestia/wallpaper/path.txt"
