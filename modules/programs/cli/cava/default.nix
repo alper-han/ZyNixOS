@@ -1,8 +1,12 @@
-{ ... }:
+{ host, lib, ... }:
+let
+  inherit (import ../../../../hosts/${host}/variables.nix) bar;
+  caelestiaOwnsTheme = bar == "caelestia-shell";
+in
 {
   home-manager.sharedModules = [
     (_: {
-      programs.cava = {
+      programs.cava = lib.mkIf (!caelestiaOwnsTheme) {
         enable = true;
         settings = {
           general = {

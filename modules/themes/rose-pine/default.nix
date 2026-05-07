@@ -1,5 +1,14 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  inputs,
+  lib,
+  host,
+  ...
+}:
 let
+  inherit (import ../../../hosts/${host}/variables.nix) bar;
+  caelestiaOwnsTheme = bar == "caelestia-shell";
+
   # Choose the desired variant: "main", "moon", or "dawn"
   variant = "main";
 
@@ -28,7 +37,7 @@ in
         ];
 
         # GTK configuration
-        gtk = {
+        gtk = lib.mkIf (!caelestiaOwnsTheme) {
           enable = true;
           theme = {
             name = baseName;
@@ -46,18 +55,18 @@ in
           };
         };
 
-        home.sessionVariables = {
+        home.sessionVariables = lib.mkIf (!caelestiaOwnsTheme) {
           ADW_COLOR_SCHEME = "prefer-dark"; # Libadwaita
         };
 
         # Qt configuration with Kvantum
-        qt = {
+        qt = lib.mkIf (!caelestiaOwnsTheme) {
           enable = true;
           style.name = "kvantum";
         };
 
         # GNOME dark mode
-        dconf.settings = {
+        dconf.settings = lib.mkIf (!caelestiaOwnsTheme) {
           "org/gnome/desktop/interface" = {
             color-scheme = "prefer-dark";
           };
@@ -65,7 +74,7 @@ in
 
         # Pointer cursor
         home.pointerCursor = {
-          gtk.enable = true;
+          gtk.enable = !caelestiaOwnsTheme;
           x11.enable = true;
           package = pkgs.catppuccin-cursors.mochaMauve;
           name = "catppuccin-mocha-mauve-cursors";
@@ -90,40 +99,48 @@ in
             };
           };
           # Global KDE dark mode - triggers auto-detection in KTextEditor apps
-          "kdeglobals".source = (pkgs.formats.ini { }).generate "kdeglobals" {
-            General = {
-              ColorScheme = "BreezeDark";
-              widgetStyle = "kvantum";
+          "kdeglobals" = lib.mkIf (!caelestiaOwnsTheme) {
+            source = (pkgs.formats.ini { }).generate "kdeglobals" {
+              General = {
+                ColorScheme = "BreezeDark";
+                widgetStyle = "kvantum";
+              };
+              KDE.widgetStyle = "kvantum";
+              Icons.Theme = "rose-pine";
             };
-            KDE.widgetStyle = "kvantum";
-            Icons.Theme = "rose-pine";
           };
           # Kvantum configuration
-          "Kvantum/${kvantumThemeName}".source = kvantumThemeDir;
-          "Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini { }).generate "kvantum.kvconfig" {
-            General.theme = kvantumThemeName;
+          "Kvantum/${kvantumThemeName}" = lib.mkIf (!caelestiaOwnsTheme) {
+            source = kvantumThemeDir;
+          };
+          "Kvantum/kvantum.kvconfig" = lib.mkIf (!caelestiaOwnsTheme) {
+            source = (pkgs.formats.ini { }).generate "kvantum.kvconfig" {
+              General.theme = kvantumThemeName;
+            };
           };
           # GTK4 assets for consistency
-          "gtk-4.0/assets" = {
+          "gtk-4.0/assets" = lib.mkIf (!caelestiaOwnsTheme) {
             force = true;
             source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/assets";
           };
-          "gtk-4.0/gtk.css" = {
+          "gtk-4.0/gtk.css" = lib.mkIf (!caelestiaOwnsTheme) {
             force = true;
             source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk.css";
           };
-          "gtk-4.0/gtk-dark.css" = {
+          "gtk-4.0/gtk-dark.css" = lib.mkIf (!caelestiaOwnsTheme) {
             force = true;
             source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk-dark.css";
           };
           # hyprqt6engine config for Qt6/KDE app theming
-          "hypr/hyprqt6engine.conf".text = ''
-            theme {
-              style = kvantum
-              icon_theme = rose-pine
-              color_scheme = ${pkgs.kdePackages.breeze}/share/color-schemes/BreezeDark.colors
-            }
-          '';
+          "hypr/hyprqt6engine.conf" = lib.mkIf (!caelestiaOwnsTheme) {
+            text = ''
+              theme {
+                style = kvantum
+                icon_theme = rose-pine
+                color_scheme = ${pkgs.kdePackages.breeze}/share/color-schemes/BreezeDark.colors
+              }
+            '';
+          };
         };
       }
     )

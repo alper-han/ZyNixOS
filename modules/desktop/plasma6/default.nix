@@ -9,8 +9,6 @@ let
   inherit (import ../../../hosts/${host}/variables.nix)
     browser
     terminal
-    editor
-    games
     defaultWallpaper
     ;
 in
@@ -37,7 +35,8 @@ in
       flavour = [ "mocha" ];
       accents = [ "mauve" ];
     })
-    rose-pine-cursor
+    catppuccin-cursors.mochaMauve
+    papirus-icon-theme
   ];
 
   home-manager.sharedModules = [
@@ -51,12 +50,11 @@ in
           clickItemTo = "select"; # select, open
           lookAndFeel = "Catppuccin-Mocha-Mauve"; # Global Theme
           colorScheme = "CatppuccinMochaMauve";
-          theme = "default"; # Plasma Style
           cursor = {
             size = 24;
-            theme = "BreezeX-RosePine-Linux";
+            theme = "catppuccin-mocha-mauve-cursors";
           };
-          # iconTheme = "";
+          iconTheme = "Papirus-Dark";
           wallpaper = "${../../themes/wallpapers/${defaultWallpaper}}"; # TODO: Test webp
         };
         kwin = {
