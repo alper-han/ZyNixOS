@@ -34,35 +34,39 @@ in
     };
   };
 
-  systemd.coredump.extraConfig = ''
-      Storage=none
-      ProcessSizeMax=1G
-    '';
+  systemd.coredump.settings.Coredump = {
+    Storage = "none";
+    ProcessSizeMax = "1G";
+  };
 
   nix = {
     # Nix Package Manager Settings
     settings = {
-      download-buffer-size = 200000000;
       auto-optimise-store = true; # May make rebuilds longer but less size
-      trusted-users = [ "root" "@wheel" ];
+      trusted-users = [
+        "@wheel"
+      ];
       accept-flake-config = true;
       substituters = [
-        "https://cache.nixos.org"
+        # Primary upstream cache for xddxdd/nix-cachyos-kernel release branch.
+        "https://attic.xuyh0120.win/lantian"
         "https://nix-community.cachix.org"
         "https://cachix.cachix.org"
         "https://nix-gaming.cachix.org"
         "https://hyprland.cachix.org"
         "https://cuda-maintainers.cachix.org"
+        "https://attic.xuyh0120.win/lantian"
         # "https://nixpkgs-wayland.cachix.org"
         # "https://devenv.cachix.org"
       ];
       trusted-public-keys = [
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
         "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+        "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
         # "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
         # "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
@@ -71,15 +75,15 @@ in
         "flakes"
       ];
       use-xdg-base-directories = true;
-      warn-dirty = false;
-      keep-outputs = true;
-      keep-derivations = true;
+      warn-dirty = true;
+      keep-outputs = false;
+      keep-derivations = false;
     };
-    optimise.automatic = true;
     # package = pkgs.nixVersions.latest;
   };
   time.timeZone = "${timezone}";
   i18n.defaultLocale = "${locale}";
+  documentation.nixos.enable = false;
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "${locale}";
     LC_IDENTIFICATION = "${locale}";
@@ -107,7 +111,7 @@ in
 
   zramSwap = {
     enable = true;
-    memoryPercent = 100;
+    memoryPercent = 50;
     algorithm = "zstd";
     priority = 100;
   };

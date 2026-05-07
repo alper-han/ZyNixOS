@@ -3,8 +3,11 @@
   # I/O Scheduler Optimization (NVMe/SSD)
   # NVMe -> none (low latency), SATA SSD -> none
   services.udev.extraRules = ''
-    ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/scheduler}="none"
-    ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
+    # Only whole-disk block devices expose queue/scheduler; partitions do not.
+    ACTION=="add|change", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", KERNEL=="nvme[0-9]*n[0-9]*", TEST=="queue/scheduler", ATTR{queue/scheduler}="none"
+    ACTION=="add|change", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", TEST=="queue/scheduler", ATTR{queue/scheduler}="none"
+    # Optional Bluetooth workaround for the MediaTek USB device (13d3:3602):
+    # ACTION=="add|change", SUBSYSTEM=="usb", ATTR{idVendor}=="13d3", ATTR{idProduct}=="3602", TEST=="power/control", ATTR{power/control}="on"
   '';
 
   boot = {
@@ -27,6 +30,8 @@
     
     kernelParams = [
       "preempt=full" # lower latency but less throughput
+      "systemd.swap=0" # disable GPT auto-discovered disk swap, keep zram-only strategy
+      "zswap.enabled=0" # avoid double-compression path when zram is already enabled
       "quiet"
       "splash"
       "boot.shell_on_fail"
@@ -35,6 +40,11 @@
     ];
 
     kernelModules = [ "ntsync" ];
+
+    # Optional next-step test if Bluetooth audio still crackles after the BlueZ changes:
+    # extraModprobeConfig = ''
+    #   options btusb enable_autosuspend=n
+    # '';
 
     consoleLogLevel = 3;
     initrd = {

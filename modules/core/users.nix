@@ -61,7 +61,6 @@ in
     mutableUsers = true;
     users.${username} = {
       isNormalUser = true;
-      initialPassword = "123";
       extraGroups = [
         "wheel"
         "networkmanager"

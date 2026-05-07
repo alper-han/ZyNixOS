@@ -1,5 +1,14 @@
-{ pkgs, config, ... }:
-
+{ config, lib, pkgs, ... }:
+let
+  tuigreetArgs = [
+    "--time"
+    ''--time-format "%a, %d %b %Y - %H:%M"''
+    "--remember"
+    "--remember-session"
+    "--asterisks"
+    ''--theme "border=magenta;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red;greet=magenta"''
+  ] ++ lib.optional (config.services.displayManager.defaultSession == "hyprland-uwsm") ''--cmd "uwsm start hyprland.desktop"'';
+in
 {
 
   console.colors = [
@@ -27,23 +36,17 @@
     settings = {
       default_session = {
         user = "greeter";
-        command = ''
-          ${pkgs.tuigreet}/bin/tuigreet \
-            --time \
-            --time-format "%a, %d %b %Y - %H:%M" \
-            --remember \
-            --remember-session \
-            --asterisks \
-            --theme "border=magenta;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red;greet=magenta" \
-            --cmd "uwsm start hyprland.desktop"
-        '';
+        command = "${pkgs.tuigreet}/bin/tuigreet ${lib.concatStringsSep " " tuigreetArgs}";
       };
     };
   };
   environment.systemPackages = with pkgs; [ tuigreet ];
 
   security.pam.services.greetd = {
-    enableGnomeKeyring = true;
-    enableAppArmor = config.security.apparmor.enable;
+    # tuigreet + uwsm do not provide a reliable gkr-pam handoff here, so keep
+    # the keyring available via D-Bus activation instead of a noisy PAM hook.
+    enableGnomeKeyring = false;
+    # greetd runs unconfined here, so pam_apparmor only generates change_hat denials.
+    enableAppArmor = false;
   };
 }

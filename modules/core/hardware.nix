@@ -19,8 +19,11 @@ in
           Name = hostname;
           ControllerMode = "dual";
           FastConnectable = true;
-          Experimental = true;
-          KernelExperimental = true;
+          # MT7925 Bluetooth audio is more reliable without experimental LE audio.
+          Experimental = false;
+          # Experimental = true; # BlueZ userspace experimental features, including newer LE Audio paths.
+          # Omit KernelExperimental entirely unless you have a UUID list to pass.
+          # KernelExperimental = true; # Kernel-side experimental Bluetooth features for newer transports/codecs.
           JustWorksRepairing = "always";
           SecureConnections = "on";
         };
