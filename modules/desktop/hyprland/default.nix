@@ -7,6 +7,7 @@
 }:
 let
   inherit (import ../../../hosts/${host}/variables.nix)
+    username
     browser
     terminal
     editor
@@ -36,8 +37,8 @@ in
     ./programs/rofi
     # ./programs/dunst
   ]
-  ++ lib.optional (bar != "caelestia-shell") ./programs/hypridle
   ++ lib.optional (bar != "caelestia-shell") ./programs/hyprlock
+  ++ lib.optional (bar != "caelestia-shell") ./programs/hypridle
   ++ lib.optional (bar != "caelestia-shell") ./programs/swaync;
 
   systemd.user.services.hyprpolkitagent = {
@@ -140,8 +141,8 @@ in
           };
 
           systemd.user.tmpfiles.rules = lib.optionals (bar == "caelestia-shell") [
-            "d %S/caelestia/wallpaper 0755 %u %g - -"
-            "f %S/caelestia/wallpaper/path.txt 0644 %u %g - ${defaultWallpaperPath}"
+            "d %S/caelestia/wallpaper 0755 ${username} users - -"
+            "f %S/caelestia/wallpaper/path.txt 0644 ${username} users - ${defaultWallpaperPath}"
           ];
 
           xdg.configFile."hypr/xdph.conf".text = ''
