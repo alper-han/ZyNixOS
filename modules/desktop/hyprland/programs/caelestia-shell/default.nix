@@ -65,7 +65,7 @@ let
             idleAction = "lock";
           }
           {
-            timeout = 360;
+            timeout = 600;
             idleAction = "dpms off";
             returnAction = "dpms on";
           }
