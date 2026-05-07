@@ -8,30 +8,35 @@
 let
   inherit (import ../../../hosts/${host}/variables.nix)
     browser
+    username
     terminal
     editor
+    fileManager
+    bar
     kbdLayout
     kbdVariant
+    isLaptop
     defaultWallpaper
     ;
 
   # Import sub-modules
-  bindSettings = import ./bind.nix { inherit lib pkgs; };
+  fileManagerScript = pkgs.callPackage ./scripts/file-manager.nix { inherit terminal; };
+  bindSettings = import ./bind.nix { inherit lib pkgs host; };
   rulesSettings = import ./rules.nix { };
-  uiSettings = import ./ui.nix { };
+  uiSettings = import ./ui.nix { inherit bar; };
   monitorSettings = import ./monitor.nix { };
 in
 {
   imports = [
     ../../themes/Catppuccin # Catppuccin GTK and QT themes
-    ./programs/waybar
+    ./programs/${bar}
     ./programs/wlogout
     ./programs/rofi
-    ./programs/hypridle
     ./programs/hyprlock
-    ./programs/swaync
     # ./programs/dunst
-  ];
+  ]
+  ++ lib.optional (bar != "caelestia-shell") ./programs/hypridle
+  ++ lib.optional (bar != "caelestia-shell") ./programs/swaync;
 
   systemd.user.services.hyprpolkitagent = {
     description = "Hyprpolkitagent - Polkit authentication agent";
@@ -47,13 +52,15 @@ in
     };
   };
   services.displayManager.defaultSession = "hyprland-uwsm";
+  services.upower.enable = isLaptop;
 
   programs.hyprland = {
     enable = true;
     withUWSM = true;
     # Use Hyprland from flake input to leverage Cachix cache
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    portalPackage =
+      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
 
   home-manager.sharedModules =
@@ -64,9 +71,15 @@ in
       (
         { config, ... }:
         let
+          wallpaper = pkgs.callPackage ./scripts/wallpaper.nix { inherit defaultWallpaper; };
           # Import startup settings (needs config for cursor size)
           startupSettings = import ./startup.nix {
-            inherit lib pkgs config defaultWallpaper;
+            inherit
+              lib
+              pkgs
+              isLaptop
+              bar
+              ;
           };
         in
         {
@@ -88,34 +101,46 @@ in
             };
           };
 
-          home.packages = with pkgs; [
-            swww
-            hyprpicker
-            cliphist
-            wf-recorder
-            grim
-            grimblast
-            slurp
-            swappy
-            libnotify
-            brightnessctl
-            pamixer
-            pavucontrol
-            playerctl
-            wtype
-            wl-clipboard
-            yad
-            # socat # for and autowaybar.sh
-            bc # zoom
-          ];
+          home.packages =
+            (with pkgs; [
+              app2unit
+              brightnessctl
+              cliphist
+              fuzzel
+              gpu-screen-recorder
+              grim
+              grimblast
+              hyprpicker
+              libnotify
+              pamixer
+              pavucontrol
+              playerctl
+              slurp
+              swappy
+              wf-recorder
+              wl-clipboard
+              wtype
+              yad
+              # socat # for and autowaybar.sh
+              bc # zoom
+            ])
+            ++ lib.optional (bar != "caelestia-shell") pkgs.awww;
 
           xdg.configFile."hypr/icons" = {
             source = ./icons;
             recursive = true;
           };
 
-          # Set wallpaper
-          services.swww.enable = true;
+          # Set wallpaper. Caelestia owns the background/wallpaper layer when it is the active shell.
+          services.awww.enable = bar != "caelestia-shell";
+          systemd.user.services.awww = lib.mkIf (bar != "caelestia-shell") {
+            Service.ExecStartPost = [ "${getExe wallpaper}" ];
+          };
+
+          systemd.user.tmpfiles.rules = lib.optionals (bar == "caelestia-shell") [
+            "d %S/caelestia/wallpaper 0755 %u %g - -"
+            "f %S/caelestia/wallpaper/path.txt 0644 %u %g - /home/${username}/ZyNixOS/modules/themes/wallpapers/${defaultWallpaper}"
+          ];
 
           xdg.configFile."hypr/xdph.conf".text = ''
             screencopy {
@@ -126,13 +151,11 @@ in
 
           xdg.configFile."uwsm/env".text = ''
             export GDK_BACKEND=wayland,x11,*
-            export SDL_VIDEODRIVER=wayland
+            export SDL_VIDEODRIVER=wayland,x11
             export CLUTTER_BACKEND=wayland
-            export ELECTRON_OZONE_PLATFORM_HINT=wayland
+            export ELECTRON_OZONE_PLATFORM_HINT=auto
             export MOZ_ENABLE_WAYLAND=1
-            export OZONE_PLATFORM=wayland
-            export EGL_PLATFORM=wayland
-            export QT_QPA_PLATFORM=wayland;xcb
+            export QT_QPA_PLATFORM="wayland;xcb"
             export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
             export QT_QPA_PLATFORMTHEME=hyprqt6engine
             export QT_AUTO_SCREEN_SCALE_FACTOR=1
@@ -141,6 +164,9 @@ in
             export HYPRCURSOR_SIZE=${toString config.home.pointerCursor.size}
             export XCURSOR_THEME=catppuccin-mocha-mauve-cursors
             export XCURSOR_SIZE=${toString config.home.pointerCursor.size}
+            export CAELESTIA_WALLPAPERS_DIR=/home/${username}/ZyNixOS/modules/themes/wallpapers
+            export CAELESTIA_SCREENSHOTS_DIR=''${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots
+            export CAELESTIA_RECORDINGS_DIR=''${XDG_VIDEOS_DIR:-$HOME/Videos}/Recordings
           '';
 
           #test later systemd.user.targets.hyprland-session.Unit.Wants = [ "xdg-desktop-autostart.target" ];
@@ -152,17 +178,18 @@ in
             settings =
               # Application variables (used in keybindings)
               {
-                "$term" = "${getExe pkgs.${terminal}}";
-                "$editor" = "${getExe' (
-                  if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor}
-                ) editor}";
-                "$fileManager" = "thunar";
-                "$browser" = browser;
+                "$term" = "uwsm app -- ${getExe pkgs.${terminal}}";
+                "$editor" = "uwsm app -- ${
+                  getExe' (
+                    if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor}
+                  ) editor
+                }";
+                "$fileManager" = "uwsm app -- ${getExe fileManagerScript} ${fileManager}";
+                "$browser" = "uwsm app -- ${browser}";
 
                 # Input settings
                 input = {
                   kb_layout = "${kbdLayout}";
-                  kb_variant = "${kbdVariant}";
                   repeat_delay = 275; # or 212
                   repeat_rate = 35;
                   numlock_by_default = true;
@@ -175,13 +202,15 @@ in
 
                   sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
                   accel_profile = "flat";
+                }
+                // lib.optionalAttrs (kbdVariant != "") {
+                  kb_variant = "${kbdVariant}";
                 };
 
                 # Render settings
                 render = {
                   direct_scanout = 2; # 0 = off, 1 = on, 2 = auto (on with content type 'game' , It causes problems in some games)
-                  cm_fs_passthrough = 2;
-                  cm_auto_hdr = 1;
+                  cm_auto_hdr = 0;
                   # new_render_scheduling = true;
                 };
 
@@ -202,10 +231,9 @@ in
                   animate_mouse_windowdragging = true;
                   force_default_wallpaper = 0;
                   swallow_regex = "^(Alacritty|kitty)$";
-                  enable_swallow = true;
+                  enable_swallow = false;
                   disable_autoreload = true; # If true, the config will not reload automatically on save, and instead needs to be reloaded with hyprctl reload. Might save on battery.
                   disable_hyprland_guiutils_check = true;
-                  vfr = true; # always keep on
                   vrr = 2; # enable variable refresh rate (0=off, 1=on, 2=fullscreen only, 3 = fullscreen games/media)
                 };
 
@@ -228,7 +256,7 @@ in
 
                 # Dwindle layout settings
                 dwindle = {
-                  pseudotile = true;
+                  # pseudotile = true;
                   preserve_split = true;
                 };
 

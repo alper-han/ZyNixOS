@@ -1,15 +1,15 @@
 # Hyprland Visual Settings: Appearance, Decorations, Animations
-# Usage: import ./ui.nix { }
-{ }:
+# Usage: import ./ui.nix { inherit bar; }
+{ bar }:
 {
   # General appearance
   general = {
     gaps_in = 1;
-    gaps_out = 0;
+    gaps_out = if bar == "caelestia-shell" then 3 else 0;
     border_size = 1;
     "col.active_border" = "rgba(ca9ee6ff) rgba(f2d5cfff) 45deg";
     "col.inactive_border" = "rgba(b4befecc) rgba(6c7086cc) 45deg";
-    resize_on_border = true;
+    resize_on_border = false;
     layout = "dwindle"; # dwindle or master
     allow_tearing = true; # Allow tearing for games (use immediate window rules for specific games or all titles)
   };
@@ -17,7 +17,7 @@
   # Decoration (shadows, blur, rounding)
   decoration = {
     shadow.enabled = false;
-    rounding = 0;
+    rounding = if bar == "caelestia-shell" then 15 else 0;
     dim_special = 0.3;
     blur = {
       enabled = true;

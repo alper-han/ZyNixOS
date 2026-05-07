@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (import ../../hosts/${host}/variables.nix) terminal;
+  inherit (import ../../hosts/${host}/variables.nix) terminal bar;
 in
 let
   # Define your custom args once
@@ -17,6 +17,7 @@ let
       lib
       config
       terminal
+      bar
       ;
   };
 

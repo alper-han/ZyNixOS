@@ -58,10 +58,10 @@ pkgs.writeShellScriptBin "launcher" ''
     rofi_theme="''${XDG_CONFIG_HOME:-$HOME/.config}/rofi/launchers/type-4/style-4.rasi"
     r_override="entry{placeholder:'Search Tmux Sessions...';}listview{lines:15;}"
 
-    sessions=$(tmux ls -F '#{session_name}: #{session_path} (#{session_windows} windows)' |
+    sessions=$(tmux ls -F '#{session_name}: #{session_path} (#{session_windows} windows)' 2>/dev/null |
       rofi -dmenu -i -theme-str "$r_override" -theme "$rofi_theme" | cut -d: -f1)
     if [[ $sessions ]]; then
-      ${terminal} --hold -e tmux attach -t $sessions
+      uwsm app -- ${terminal} --hold -e tmux attach -t "$sessions"
     fi
     ;;
   wallpaper)
@@ -86,7 +86,7 @@ pkgs.writeShellScriptBin "launcher" ''
       | rofi_cmd)
     [ -z "$CHOICE" ] && exit 0
 
-    swww img "$WALLPAPER_DIR/$CHOICE" --transition-step 90 --transition-duration 1 --transition-fps 60 --transition-type wipe
+    ${lib.getExe pkgs.awww} img "$WALLPAPER_DIR/$CHOICE" --transition-step 90 --transition-duration 1 --transition-fps 60 --transition-type wipe
     ;;
   emoji)
     rofi_theme="''${XDG_CONFIG_HOME:-$HOME/.config}/rofi/launchers/type-4/style-4.rasi"
