@@ -12,8 +12,8 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?rev=eff3bfe261e90b8950b59379ca7815f735a7aab6&submodules=1";
-    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?rev=eff3bfe261e90b8950b59379ca7815f735a7aab6&submodules=1";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     hyprqt6engine = {
       url = "github:hyprwm/hyprqt6engine";
       inputs.nixpkgs.follows = "nixpkgs";
