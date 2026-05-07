@@ -2,6 +2,7 @@
   self,
   inputs,
   host,
+  lib,
   pkgs,
   overlays,
   ...
@@ -47,23 +48,21 @@ in
         "@wheel"
       ];
       accept-flake-config = true;
-      substituters = [
-        # Primary upstream cache for xddxdd/nix-cachyos-kernel release branch.
-        "https://attic.xuyh0120.win/lantian"
-        "https://nix-community.cachix.org"
-        "https://cachix.cachix.org"
-        "https://nix-gaming.cachix.org"
-        "https://hyprland.cachix.org"
-        "https://cuda-maintainers.cachix.org"
-        "https://attic.xuyh0120.win/lantian"
+      substituters = lib.mkForce [
+        "https://cache.nixos.org?priority=10"
+        "https://nix-community.cachix.org?priority=20"
+        "https://hyprland.cachix.org?priority=30"
+        "https://cachix.cachix.org?priority=40"
+        "https://cuda-maintainers.cachix.org?priority=60"
+        # Upstream cache for xddxdd/nix-cachyos-kernel release branch.
+        # Keep low priority because global substituters cannot be scoped per-package.
+        "https://attic.xuyh0120.win/lantian?priority=120"
         # "https://nixpkgs-wayland.cachix.org"
         # "https://devenv.cachix.org"
       ];
       trusted-public-keys = [
-        "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
-        "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
         "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
