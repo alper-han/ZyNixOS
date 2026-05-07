@@ -1,4 +1,6 @@
+{ lib, ... }:
 let
+  extensions = import ../extensions.nix { inherit lib; };
   lock-false = {
     Value = false;
     Status = "locked";
@@ -214,10 +216,7 @@ in
     newElementCount = 7;
     placements = {
       widget-overflow-fixed-list = [ ];
-      unified-extensions-area = [
-        "ublock0_raymondhill_net-browser-action"
-        "addon_darkreader_org-browser-action"
-      ];
+      unified-extensions-area = extensions."unified-extensions-area";
       nav-bar = [
         "back-button"
         "forward-button"
@@ -226,11 +225,7 @@ in
         # "developer-button"
         "downloads-button"
         "unified-extensions-button"
-
-        # Extensions
-        "ublock0_raymondhill_net-browser-action"
-        "addon_darkreader_org-browser-action"
-      ];
+      ] ++ extensions."nav-bar";
       toolbar-menubar = [ "menubar-items" ];
       TabsToolbar = [
         "firefox-view-button"
