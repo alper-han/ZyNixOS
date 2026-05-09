@@ -55,7 +55,7 @@
       "easeInOutCirc, 0.85, 0, 0.15, 1"
       "easeOutCirc, 0, 0.55, 0.45, 1"
       "easeOutExpo, 0.16, 1, 0.3, 1"
-      "zoomEase, 0.16, 1, 0.3, 1"  # Special bezier for Zoom
+      "zoomEase, 0.16, 1, 0.3, 1" # Special bezier for Zoom
     ];
     animation = [
       "windows, 1, 3, md3_decel, popin 60%"
@@ -66,7 +66,7 @@
       # "workspaces, 1, 7, fluent_decel, slidefade 15%"
       # "specialWorkspace, 1, 3, md3_decel, slidefadevert 15%"
       "specialWorkspace, 1, 3, md3_decel, slidevert"
-      "zoomFactor, 1, 6, zoomEase"  # Zoom animation - 600ms
+      "zoomFactor, 1, 6, zoomEase" # Zoom animation - 600ms
     ];
   };
 }

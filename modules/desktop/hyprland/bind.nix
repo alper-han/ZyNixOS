@@ -13,7 +13,6 @@ let
   clipmanager = pkgs.callPackage ./scripts/clipmanager.nix { };
   keyboardswitch = pkgs.callPackage ./scripts/keyboardswitch.nix { };
   gamemode = pkgs.callPackage ./scripts/gamemode.nix { };
-  rofimusic = pkgs.callPackage ./scripts/rofimusic.nix { };
   screenRecord = pkgs.callPackage ./scripts/screen-record.nix { };
   screenshot = pkgs.callPackage ./scripts/screenshot.nix { };
   zoom = pkgs.callPackage ./scripts/zoom.nix { };
@@ -24,6 +23,17 @@ let
   serviceApp = "uwsm app -s s --";
   caelestia = "${app} caelestia";
   launcher = "${app} launcher";
+  isCaelestia = bar == "caelestia-shell";
+  gamesCmd = if isCaelestia then "${app} caelestia shell games open" else "${launcher} games";
+  tmuxCmd = if isCaelestia then "${app} caelestia shell tmux open" else "${launcher} tmux";
+  musicCmd =
+    if isCaelestia then
+      "${app} caelestia shell music open"
+    else
+      let
+        rofimusic = pkgs.callPackage ./scripts/rofimusic.nix { };
+      in
+      "${app} ${getExe rofimusic}";
 
   barToggle = ''pkill -x "waybar|caelestia-shell|quickshell" || ${serviceApp} ${bar}'';
   clipmanagerCmd = "${app} ${getExe clipmanager}";
@@ -32,7 +42,6 @@ let
   keyboardswitchCmd = getExe keyboardswitch;
   nightModeCmd = "${backgroundApp} ${getExe pkgs.hyprsunset} --temperature 3500";
   pearCmd = "${app} ${getExe pkgs.pear-desktop}";
-  rofimusicCmd = "${app} ${getExe rofimusic}";
   screenRecordCmd = "${app} ${getExe screenRecord}";
   screenshotCmd = "${app} ${getExe screenshot}";
   zoomCmd = getExe zoom;
@@ -60,8 +69,8 @@ let
     screenshot = [
       "$mainMod SHIFT, R, exec, ${caelestia} record -r -s"
       "$mainMod CTRL, R, exec, ${caelestia} record -s"
-      "$mainMod, P, global, caelestia:screenshotClip"
-      "$mainMod CTRL, P, global, caelestia:screenshotFreezeClip"
+      "$mainMod, P, exec, ${caelestia} screenshot -r"
+      "$mainMod CTRL, P, exec, ${caelestia} screenshot -r -f"
       "$mainMod, print, exec, ${caelestia} screenshot"
       "$mainMod CTRL, print, exec, ${screenshotCmd} m"
     ];
@@ -97,8 +106,8 @@ let
       "$mainMod CTRL, R, exec, ${screenRecordCmd} m"
       "$mainMod, P, exec, ${screenshotCmd} s"
       "$mainMod CTRL, P, exec, ${screenshotCmd} sf"
-      "$mainMod, print, exec, ${screenshotCmd} m"
-      "$mainMod ALT, P, exec, ${screenshotCmd} p"
+      "$mainMod, print, exec, ${screenshotCmd} p"
+      "$mainMod CTRL, print, exec, ${screenshotCmd} m"
     ];
     media = [
       ",XF86AudioPlay,exec,playerctl play-pause"
@@ -109,7 +118,7 @@ let
     ];
   };
 
-  selectedBarBinds = if bar == "caelestia-shell" then caelestiaBinds else waybarBinds;
+  selectedBarBinds = if isCaelestia then caelestiaBinds else waybarBinds;
 in
 {
   "$mainMod" = "SUPER";
@@ -176,11 +185,13 @@ in
   ]
   ++ selectedBarBinds.launcher
   ++ [
-    "$mainMod SHIFT, T, exec, ${launcher} tmux"
-    "$mainMod, G, exec, ${launcher} games"
+    "$mainMod SHIFT, T, exec, ${tmuxCmd}"
+  ]
+  ++ [ "$mainMod, G, exec, ${gamesCmd}" ]
+  ++ [
     "$mainMod ALT, K, exec, ${keyboardswitchCmd}"
     "$mainMod ALT, G, exec, ${gamemodeCmd}"
-    "$mainMod SHIFT, M, exec, ${rofimusicCmd}"
+    "$mainMod SHIFT, M, exec, ${musicCmd}"
 
     # === Screenshot/Screencapture ===
   ]
