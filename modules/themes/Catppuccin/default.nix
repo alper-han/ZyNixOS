@@ -93,13 +93,13 @@ in
           # Global KDE dark mode - triggers auto-detection in KTextEditor apps
           "kdeglobals" = lib.mkIf (!caelestiaOwnsTheme) {
             source = (pkgs.formats.ini { }).generate "kdeglobals" {
-            General = {
-              ColorScheme = "BreezeDark";
-              widgetStyle = "kvantum";
+              General = {
+                ColorScheme = "BreezeDark";
+                widgetStyle = "kvantum";
+              };
+              KDE.widgetStyle = "kvantum";
+              Icons.Theme = "Papirus-Dark";
             };
-            KDE.widgetStyle = "kvantum";
-            Icons.Theme = "Papirus-Dark";
-          };
           };
           "gtk-4.0/assets" = lib.mkIf (!caelestiaOwnsTheme) {
             force = true;

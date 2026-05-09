@@ -31,8 +31,8 @@ in
           pkgs.rose-pine-gtk-theme
           pkgs.rose-pine-icon-theme
           pkgs.kdePackages.qtstyleplugin-kvantum
-          pkgs.kdePackages.qqc2-desktop-style  # Required for KDE Connect and QML apps
-          pkgs.kdePackages.breeze  # Provides Breeze Dark color scheme
+          pkgs.kdePackages.qqc2-desktop-style # Required for KDE Connect and QML apps
+          pkgs.kdePackages.breeze # Provides Breeze Dark color scheme
           inputs.hyprqt6engine.packages.${pkgs.stdenv.hostPlatform.system}.default
         ];
 
