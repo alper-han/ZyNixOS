@@ -5,5 +5,6 @@
   #  pokego = pkgs.callPackage ./pokego.nix { };
 
   rider-fhs = pkgs.callPackage ./jetbrains/rider-fhs.nix { };
-  rider-fhsWithPackages = extraTargetPkgs: pkgs.callPackage ./jetbrains/rider-fhs.nix { inherit extraTargetPkgs; };
+  rider-fhsWithPackages =
+    extraTargetPkgs: pkgs.callPackage ./jetbrains/rider-fhs.nix { inherit extraTargetPkgs; };
 }

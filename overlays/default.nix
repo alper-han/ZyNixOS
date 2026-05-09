@@ -49,7 +49,8 @@
         withKrisp = true;
       };
 
-      davinci-resolve-studio = inputs.nixpkgs-davinci-20-2-3.legacyPackages.${final.stdenv.hostPlatform.system}.davinci-resolve-studio;
+      davinci-resolve-studio =
+        inputs.nixpkgs-davinci-20-2-3.legacyPackages.${final.stdenv.hostPlatform.system}.davinci-resolve-studio;
 
       #    nvidia-vaapi-driver = prev.nvidia-vaapi-driver.overrideAttrs (oldAttrs: {
       #      src = /home/zynix/Downloads/encode/nvidia-vaapi-driver;

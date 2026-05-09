@@ -1,4 +1,9 @@
-{ pkgs, lib, extraTargetPkgs ? (_: [ ]), ... }:
+{
+  pkgs,
+  lib,
+  extraTargetPkgs ? (_: [ ]),
+  ...
+}:
 let
   product = pkgs.jetbrains.rider;
 in

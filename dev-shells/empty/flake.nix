@@ -40,7 +40,7 @@
             env = { };
 
             # Add any shell logic you want executed any time the environment is activated
-            shellHook = '''';
+            shellHook = "";
           };
         }
       );
