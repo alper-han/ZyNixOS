@@ -24,6 +24,7 @@ in
     ../../modules/core/services.nix
     ../../modules/core/system.nix
     ../../modules/core/users.nix
+    ../../modules/themes/wallpaper-bank.nix
     # ../../modules/core/ssh.nix
     # ../../modules/core/flatpak.nix
     # ../../modules/core/virtualisation.nix

@@ -29,6 +29,9 @@
     "8250.nr_uarts=0"
     "nowatchdog"
     "nmi_watchdog=0"
+
+    # MT7925 Bluetooth Fix
+    "usbcore.autosuspend=-1"
   ];
   boot.extraModulePackages = [
     config.boot.kernelPackages.zenergy
