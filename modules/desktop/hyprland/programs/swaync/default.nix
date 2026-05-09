@@ -40,18 +40,17 @@ in
           hide-on-clear = false;
           hide-on-action = true;
           script-fail-notify = true;
-          widgets =
-            [
-              "title"
-              "dnd"
-              "menubar#desktop"
-            ]
-            ++ lib.optional isLaptop "backlight"
-            ++ [
-              "volume"
-              "notifications"
-              "buttons-grid"
-            ];
+          widgets = [
+            "title"
+            "dnd"
+            "menubar#desktop"
+          ]
+          ++ lib.optional isLaptop "backlight"
+          ++ [
+            "volume"
+            "notifications"
+            "buttons-grid"
+          ];
           widget-config = {
             title = {
               text = " Quick settings";
@@ -120,7 +119,11 @@ in
               image-radius = 4;
               prioritize-by-state = true;
               autohide = true;
-              ignored-players = [ "playerctld" "Playerctld" "playerctl" ];
+              ignored-players = [
+                "playerctld"
+                "Playerctld"
+                "playerctl"
+              ];
             };
             notifications = {
               text = "Notifications";
@@ -183,10 +186,7 @@ in
                   label = "";
                   type = if isLaptop then "toggle" else "normal";
                   command =
-                    if isLaptop then
-                      "${togglepowermode}/bin/togglepowermode"
-                    else
-                      "${pkgs.coreutils}/bin/true";
+                    if isLaptop then "${togglepowermode}/bin/togglepowermode" else "${pkgs.coreutils}/bin/true";
                   update-command =
                     if isLaptop then
                       "test -f \"$HOME/.config/hypr/power_mode\" && grep -q \"^powersave$\" \"$HOME/.config/hypr/power_mode\" && echo true || echo false"

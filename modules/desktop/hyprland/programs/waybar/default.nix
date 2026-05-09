@@ -1,4 +1,9 @@
-{ host, pkgs, lib, ... }:
+{
+  host,
+  pkgs,
+  lib,
+  ...
+}:
 let
   inherit (import ../../../../../hosts/${host}/variables.nix)
     terminal
@@ -60,28 +65,27 @@ in
               "custom/system_update"
               "custom/right_div-5"
             ];
-            modules-right =
-              [
-                "mpris"
-                "custom/left_div-6"
-                "group/wireplumber"
-                "wireplumber#output"
-                "custom/left_div-7"
-              ]
-              ++ lib.optionals isLaptop [
-                "backlight"
-              ]
-              ++ [
-                "custom/left_div-8"
-              ]
-              ++ lib.optionals isLaptop [
-                "battery"
-              ]
-              ++ [
-                "custom/left_inv-2"
-                "custom/notification"
-                "custom/power_menu"
-              ];
+            modules-right = [
+              "mpris"
+              "custom/left_div-6"
+              "group/wireplumber"
+              "wireplumber#output"
+              "custom/left_div-7"
+            ]
+            ++ lib.optionals isLaptop [
+              "backlight"
+            ]
+            ++ [
+              "custom/left_div-8"
+            ]
+            ++ lib.optionals isLaptop [
+              "battery"
+            ]
+            ++ [
+              "custom/left_inv-2"
+              "custom/notification"
+              "custom/power_menu"
+            ];
 
             "group/user" = {
               orientation = "horizontal";

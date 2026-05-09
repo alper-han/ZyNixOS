@@ -7,14 +7,13 @@
 let
   inherit (import ../../../../../hosts/${host}/variables.nix) terminal;
   inherit (lib) getExe;
-  mkRofiImage =
-    name: hash: {
-      inherit name;
-      path = pkgs.fetchurl {
-        url = "https://raw.githubusercontent.com/adi1090x/rofi/master/files/images/${name}";
-        inherit hash;
-      };
+  mkRofiImage = name: hash: {
+    inherit name;
+    path = pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/adi1090x/rofi/master/files/images/${name}";
+      inherit hash;
     };
+  };
   rofiImages = pkgs.linkFarm "rofi-images" [
     (mkRofiImage "paper.png" "sha256-meBjjafWiB6qRfck3oNAix0TgLRZb8UKBJ2qrMzOK6o=")
     (mkRofiImage "gradient.png" "sha256-n3IogwT1UCc8WtLUq2wMZ/VqFKDi+8OSozRZE7w4sTo=")
