@@ -10,7 +10,7 @@ let
 in
 {
   imports = [
-     inputs.crossmacro.nixosModules.default
+    inputs.crossmacro.nixosModules.default
   ];
 
   programs.crossmacro = {

@@ -161,7 +161,7 @@
 
           CONFIG_DIR="$HOME/.config/YouTube Music"
           CONFIG_FILE="$CONFIG_DIR/config.json"
-          
+
           if ! [ -f "$CONFIG_FILE" ]; then
             echo "YouTube Music config.json not found. Creating initial config..."
             mkdir -p "$CONFIG_DIR"
