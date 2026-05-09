@@ -13,6 +13,22 @@ pkgs.writeShellScriptBin "wallpaper" ''
 
   # If there is no wallpaper then set the default
   if ! ${pkgs.awww}/bin/awww query | ${pkgs.gnugrep}/bin/grep -q "image:" &> /dev/null; then
-    ${pkgs.awww}/bin/awww img "${../../../themes/wallpapers/${defaultWallpaper}}" --transition-step 255 --transition-duration 1 --transition-fps 60 --transition-type none
+    wallpaper_dir="''${XDG_PICTURES_DIR:-$HOME/Pictures}/Wallpapers"
+    default_wallpaper="$wallpaper_dir/${defaultWallpaper}"
+
+    if [ ! -d "$wallpaper_dir" ]; then
+      exit 0
+    fi
+
+    if [ ! -f "$default_wallpaper" ]; then
+      default_wallpaper="$(${pkgs.findutils}/bin/find "$wallpaper_dir" -maxdepth 1 -type f \( \
+        -iname '*.gif' -o -iname '*.jpeg' -o -iname '*.jpg' -o \
+        -iname '*.png' -o -iname '*.webp' \
+      \) | ${pkgs.coreutils}/bin/sort | ${pkgs.coreutils}/bin/head -n 1)"
+    fi
+
+    if [ -n "$default_wallpaper" ]; then
+      ${pkgs.awww}/bin/awww img "$default_wallpaper" --transition-step 255 --transition-duration 1 --transition-fps 60 --transition-type none
+    fi
   fi
 ''

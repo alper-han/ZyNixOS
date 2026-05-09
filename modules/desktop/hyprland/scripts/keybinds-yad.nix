@@ -10,17 +10,28 @@ let
     ;
   fileManagerScript = pkgs.callPackage ./file-manager.nix { inherit terminal; };
   clipmanager = pkgs.callPackage ./clipmanager.nix { };
-  rofimusic = pkgs.callPackage ./rofimusic.nix { };
   screen-record = pkgs.callPackage ./screen-record.nix { };
   screenshot = pkgs.callPackage ./screenshot.nix { };
   terminalCmd = "uwsm app -- ${terminal}";
   editorCmd = "uwsm app -- ${
-    getExe' (if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor}) editor
+    getExe' (
+      if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor}
+    ) editor
   }";
   fileManagerCmd = "uwsm app -- ${getExe fileManagerScript} ${fileManager}";
   browserCmd = "uwsm app -- ${browser}";
   barCmd = ''pkill -x \"waybar|caelestia-shell|quickshell\" || uwsm app -s s -- ${bar}'';
   isCaelestia = bar == "caelestia-shell";
+  gamesCmd = if isCaelestia then "uwsm app -- caelestia shell games open" else "uwsm app -- launcher games";
+  tmuxCmd = if isCaelestia then "uwsm app -- caelestia shell tmux open" else "uwsm app -- launcher tmux";
+  musicCmd =
+    if isCaelestia then
+      "uwsm app -- caelestia shell music open"
+    else
+      let
+        rofimusic = pkgs.callPackage ./rofimusic.nix { };
+      in
+      "uwsm app -- ${getExe rofimusic}";
 
   brightnessRows =
     if isCaelestia then
@@ -104,24 +115,34 @@ let
         "SUPER V" "Clipboard manager" "uwsm app -- ${getExe clipmanager}" \
       '';
 
+  rofiRows = ''
+    "SUPER SHIFT T" "Launch tmux sessions" "${tmuxCmd}" \
+    "SUPER SHIFT M" "Launch music menu" "${musicCmd}" \
+  '';
+
+  gamesRow =
+    ''
+      "SUPER G" "Game launcher" "${gamesCmd}" \
+    '';
+
   screenshotRows =
     if isCaelestia then
       ''
         "SUPER SHIFT R" "Caelestia screen record (select area + audio)" "uwsm app -- caelestia record -r -s" \
         "SUPER CTRL R" "Caelestia screen record (focused monitor + audio)" "uwsm app -- caelestia record -s" \
-        "SUPER P" "Caelestia screenshot area to clipboard" "global caelestia:screenshotClip" \
-        "SUPER CTRL P" "Caelestia frozen screenshot area to clipboard" "global caelestia:screenshotFreezeClip" \
-        "SUPER Print" "Caelestia full screenshot" "uwsm app -- caelestia screenshot" \
-        "SUPER CTRL Print" "Screenshot focused monitor" "uwsm app -- ${getExe screenshot} m" \
+        "SUPER P" "Caelestia screenshot selected area" "uwsm app -- caelestia screenshot -r" \
+        "SUPER CTRL P" "Caelestia frozen screenshot selected area" "uwsm app -- caelestia screenshot -r -f" \
+        "SUPER Print" "Caelestia screenshot all screens" "uwsm app -- caelestia screenshot" \
+        "SUPER CTRL Print" "Screenshot focused monitor, save, and copy" "uwsm app -- ${getExe screenshot} m" \
       ''
     else
       ''
         "SUPER SHIFT R" "Screen record selected area" "uwsm app -- ${getExe screen-record} a" \
         "SUPER CTRL R" "Screen record selected monitor" "uwsm app -- ${getExe screen-record} m" \
-        "SUPER P" "Screenshot selected area" "uwsm app -- ${getExe screenshot} s" \
-        "SUPER CTRL P" "Frozen screenshot selected area" "uwsm app -- ${getExe screenshot} sf" \
-        "SUPER Print" "Screenshot focused monitor" "uwsm app -- ${getExe screenshot} m" \
-        "SUPER ALT P" "Screenshot all screens" "uwsm app -- ${getExe screenshot} p" \
+        "SUPER P" "Screenshot selected area, edit, save, and copy" "uwsm app -- ${getExe screenshot} s" \
+        "SUPER CTRL P" "Frozen screenshot selected area, edit, save, and copy" "uwsm app -- ${getExe screenshot} sf" \
+        "SUPER Print" "Screenshot all screens, save, and copy" "uwsm app -- ${getExe screenshot} p" \
+        "SUPER CTRL Print" "Screenshot focused monitor, save, and copy" "uwsm app -- ${getExe screenshot} m" \
       '';
 in
 pkgs.writeShellScriptBin "keybinds-yad" ''
@@ -156,8 +177,8 @@ pkgs.writeShellScriptBin "keybinds-yad" ''
     "SUPER SHIFT Y" "Launch Pear Desktop" "uwsm app -- ${getExe pkgs.pear-desktop}" \
     "CTRL ALT Delete" "Open system monitor" "${terminalCmd} -e btop" \
     ${launcherRows}
-    "SUPER SHIFT T" "Launch tmux sessions" "uwsm app -- launcher tmux" \
-    "SUPER G" "Game launcher" "uwsm app -- launcher games" \
+    ${gamesRow}
+    ${rofiRows}
     "SUPER F9" "Enable night mode" "uwsm app -s b -- hyprsunset --temperature 3500" \
     "SUPER F10" "Disable night mode" "pkill hyprsunset" \
     "SUPER CTRL C" "Colour picker" "hyprpicker --autocopy --format=hex" \
@@ -192,7 +213,6 @@ pkgs.writeShellScriptBin "keybinds-yad" ''
     "SUPER ALT K" "Change keyboard layout" "keyboardswitch" \
     "SUPER U" "Rebuild system" "${terminalCmd} -e rebuild" \
     "SUPER ALT G" "Enable game mode" "gamemode" \
-    "SUPER SHIFT M" "Online music" "uwsm app -- ${getExe rofimusic}" \
     ${screenshotRows}
     "SUPER SHIFT CTRL ←" "Move window left" "movewindow l" \
     "SUPER SHIFT CTRL →" "Move window right" "movewindow r" \

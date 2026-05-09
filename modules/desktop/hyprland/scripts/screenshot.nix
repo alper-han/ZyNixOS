@@ -11,16 +11,33 @@ pkgs.writeShellScriptBin "screenshot" ''
     cat << EOF
   Usage: $(basename "$0") <action>
   Valid actions:
-    p  : Print all screens
-    s  : Snip area
-    sf : Snip area (frozen)
-    m  : Print focused monitor
+    p  : Print all screens to clipboard
+    s  : Snip area, edit in Swappy, save, and copy
+    sf : Snip area frozen, edit in Swappy, save, and copy
+    m  : Print focused monitor to clipboard
+    test-copy <file> : Copy an image file to the clipboard
   EOF
     exit 1
   }
 
-  take_screenshot() {
+  copy_to_clipboard() {
+    local image_file="$1"
+
+    ${pkgs.wl-clipboard}/bin/wl-copy --type image/png < "$image_file"
+  }
+
+  notify_copied() {
+    local image_file="$1"
+
+    ${pkgs.libnotify}/bin/notify-send -a Screenshot \
+                -i "$image_file" \
+                "Screenshot Copied" \
+                "$(basename "$image_file")"
+  }
+
+  take_selected_screenshot() {
     local save_file="$(date +'%y%m%d_%Hh%Mm%Ss_screenshot.png')"
+    local save_path="''${save_dir}/''${save_file}"
 
     cat > "$swpy_dir/config" << EOF
   [Default]
@@ -29,25 +46,41 @@ pkgs.writeShellScriptBin "screenshot" ''
   EOF
 
     case "$1" in
-      screen) ${pkgs.grimblast}/bin/grimblast save screen - | ${pkgs.swappy}/bin/swappy -f - ;;
-      area)   ${pkgs.grimblast}/bin/grimblast save area - | ${pkgs.swappy}/bin/swappy -f - ;;
-      freeze) ${pkgs.grimblast}/bin/grimblast --freeze save area - | ${pkgs.swappy}/bin/swappy -f - ;;
-      output) ${pkgs.grimblast}/bin/grimblast save output - | ${pkgs.swappy}/bin/swappy -f - ;;
+      area)   ${pkgs.grimblast}/bin/grimblast save area - | ${pkgs.swappy}/bin/swappy -f - -o "$save_path" ;;
+      freeze) ${pkgs.grimblast}/bin/grimblast --freeze save area - | ${pkgs.swappy}/bin/swappy -f - -o "$save_path" ;;
     esac
 
-    if [ -f "''${save_dir}/''${save_file}" ]; then
+    if [ -f "$save_path" ]; then
+      copy_to_clipboard "$save_path"
+
       ${pkgs.libnotify}/bin/notify-send -a Screenshot \
-                  -i "''${save_dir}/''${save_file}" \
-                  "Screenshot Saved" \
+                  -i "$save_path" \
+                  "Screenshot Saved & Copied" \
                   "$(basename "$save_file")"
     fi
   }
 
+  copy_screenshot() {
+    local save_file="$(date +'%y%m%d_%Hh%Mm%Ss_screenshot.png')"
+    local save_path="''${save_dir}/''${save_file}"
+
+    case "$1" in
+      screen) ${pkgs.grimblast}/bin/grimblast save screen "$save_path" ;;
+      output) ${pkgs.grimblast}/bin/grimblast save output "$save_path" ;;
+    esac
+
+    if [ -f "$save_path" ]; then
+      copy_to_clipboard "$save_path"
+      notify_copied "$save_path"
+    fi
+  }
+
   case "$1" in
-    p)  take_screenshot screen ;;
-    s)  take_screenshot area ;;
-    sf) take_screenshot freeze ;;
-    m)  take_screenshot output ;;
+    p)  copy_screenshot screen ;;
+    s)  take_selected_screenshot area ;;
+    sf) take_selected_screenshot freeze ;;
+    m)  copy_screenshot output ;;
+    test-copy) copy_to_clipboard "$2" ;;
     *)  print_error ;;
   esac
 ''
