@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   tuigreetArgs = [
     "--time"
@@ -7,7 +12,10 @@ let
     "--remember-session"
     "--asterisks"
     ''--theme "border=magenta;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red;greet=magenta"''
-  ] ++ lib.optional (config.services.displayManager.defaultSession == "hyprland-uwsm") ''--cmd "uwsm start hyprland.desktop"'';
+  ]
+  ++ lib.optional (
+    config.services.displayManager.defaultSession == "hyprland-uwsm"
+  ) ''--cmd "uwsm start hyprland.desktop"'';
 in
 {
 

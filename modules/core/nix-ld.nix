@@ -20,7 +20,7 @@
       glew
       libglvnd
       vulkan-loader
-      
+
       # Xorg & GUI
       libx11
       libxcursor

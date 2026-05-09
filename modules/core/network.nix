@@ -1,6 +1,11 @@
-{ host, pkgs, ... }:
+{
+  host,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  inherit (import ../../hosts/${host}/variables.nix) hostname;
+  inherit (import ../../hosts/${host}/variables.nix) hostname bar;
 in
 {
   networking = {
@@ -27,10 +32,10 @@ in
   boot = {
     kernel.sysctl = {
       # Virtual Memory Tweaks (64GB RAM Optimization)
-      "vm.swappiness" = 10;                     # Delay swapping as long as possible
-      "vm.vfs_cache_pressure" = 50;             # Keep filesystem cache in RAM longer
-      "vm.dirty_bytes" = 536870912;             # 512MB dirty cache cap (prevents IO stutter)
-      "vm.dirty_background_bytes" = 268435456;  # 256MB background writeback start
+      "vm.swappiness" = 10; # Delay swapping as long as possible
+      "vm.vfs_cache_pressure" = 50; # Keep filesystem cache in RAM longer
+      "vm.dirty_bytes" = 536870912; # 512MB dirty cache cap (prevents IO stutter)
+      "vm.dirty_background_bytes" = 268435456; # 256MB background writeback start
 
       # Network hardening
       "kernel.sysrq" = 0;
@@ -69,15 +74,15 @@ in
       "net.core.somaxconn" = 4096;
 
       # Kernel security hardening
-      "kernel.kptr_restrict" = 2;              # Hide kernel pointers (Exploit mitigation)
-      "kernel.dmesg_restrict" = 1;             # Restrict dmesg access (Info leak prevention)
-      "kernel.printk" = "3 3 3 3";             # Restrict kernel logging (Info leak prevention)
-      "kernel.unprivileged_bpf_disabled" = 1;  # Restrict BPF to root (Attack surface reduction)
-      "kernel.yama.ptrace_scope" = 1;          # Restrict ptrace (Process isolation)
+      "kernel.kptr_restrict" = 2; # Hide kernel pointers (Exploit mitigation)
+      "kernel.dmesg_restrict" = 1; # Restrict dmesg access (Info leak prevention)
+      "kernel.printk" = "3 3 3 3"; # Restrict kernel logging (Info leak prevention)
+      "kernel.unprivileged_bpf_disabled" = 1; # Restrict BPF to root (Attack surface reduction)
+      "kernel.yama.ptrace_scope" = 1; # Restrict ptrace (Process isolation)
 
       # BPF JIT compiler (performance boost & hardening)
       "net.core.bpf_jit_enable" = 1;
-      "net.core.bpf_jit_harden" = 2;           # Strongest hardening (JIT Spraying protection)
+      "net.core.bpf_jit_harden" = 2; # Strongest hardening (JIT Spraying protection)
       "net.core.bpf_jit_kallsyms" = 0;
 
       # IPv6
@@ -92,12 +97,12 @@ in
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.network.wait-online.enable = false;
 
-  environment.systemPackages = with pkgs; [
-    networkmanagerapplet
-    iproute2
-    ethtool
-    openvpn
-    proton-vpn
-    wireguard-tools
-  ];
+  environment.systemPackages =
+    (with pkgs; [
+      iproute2
+      ethtool
+      openvpn
+      wireguard-tools
+    ])
+    ++ lib.optional (bar != "caelestia-shell") pkgs.networkmanagerapplet;
 }

@@ -27,7 +27,7 @@
     # pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4 (AMD Zen4)
     # Other variants: _latest, _zen, _lqx, _xanmod_latest, _hardened, _rt
     kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto;
-    
+
     kernelParams = [
       "preempt=full" # lower latency but less throughput
       "systemd.swap=0" # disable GPT auto-discovered disk swap, keep zram-only strategy
@@ -72,17 +72,21 @@
         gfxmodeEfi = "2715x1527"; # for 4k: 3840x2160
         gfxmodeBios = "2715x1527"; # for 4k: 3840x2160
         # Theme only builds when GRUB is enabled (lazy evaluation)
-        theme = if config.boot.loader.grub.enable then pkgs.stdenv.mkDerivation {
-          pname = "distro-grub-themes";
-          version = "3.1";
-          src = pkgs.fetchFromGitHub {
-            owner = "AdisonCavani";
-            repo = "distro-grub-themes";
-            rev = "v3.1";
-            hash = "sha256-ZcoGbbOMDDwjLhsvs77C7G7vINQnprdfI37a9ccrmPs=";
-          };
-          installPhase = "cp -r customize/nixos $out";
-        } else null;
+        theme =
+          if config.boot.loader.grub.enable then
+            pkgs.stdenv.mkDerivation {
+              pname = "distro-grub-themes";
+              version = "3.1";
+              src = pkgs.fetchFromGitHub {
+                owner = "AdisonCavani";
+                repo = "distro-grub-themes";
+                rev = "v3.1";
+                hash = "sha256-ZcoGbbOMDDwjLhsvs77C7G7vINQnprdfI37a9ccrmPs=";
+              };
+              installPhase = "cp -r customize/nixos $out";
+            }
+          else
+            null;
       };
     };
 

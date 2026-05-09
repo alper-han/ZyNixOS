@@ -1,4 +1,11 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  host,
+  ...
+}:
+let
+  inherit (import ../../hosts/${host}/variables.nix) bar;
+in
 {
   # Services to start
   services = {
@@ -23,7 +30,7 @@
       scheduler = "scx_lavd"; # scx_lavd verified good for gaming
     };
 
-    blueman.enable = true; # Bluetooth Support
+    blueman.enable = bar != "caelestia-shell"; # Bluetooth UI frontend; Caelestia handles this in-shell.
     tumbler.enable = true; # Image/video preview
     journald.extraConfig = ''
       SystemMaxUse=1G

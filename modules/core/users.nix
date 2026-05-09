@@ -19,7 +19,8 @@ in
   programs.dconf.enable = true; # Enable dconf for home-manager
   programs.${shell} = {
     enable = true;
-  } // lib.optionalAttrs (shell == "zsh") {
+  }
+  // lib.optionalAttrs (shell == "zsh") {
     enableGlobalCompInit = false; # Disable global compinit - we lazy load it
   };
   home-manager = {
@@ -31,7 +32,6 @@ in
       # Let Home Manager install and manage itself.
       programs.home-manager.enable = true;
       xdg.enable = true;
-
 
       home = {
         username = "${username}";
