@@ -43,9 +43,10 @@
     </action>
   '';
 
-  packages = pkgs: with pkgs; [
-    exiftool
-    mediainfo
-  ];
+  packages =
+    pkgs: with pkgs; [
+      exiftool
+      mediainfo
+    ];
 
 }

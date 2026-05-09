@@ -1,5 +1,12 @@
-# Checksum Thunar Custom Actions (Rofi)
-{ checksum-rofi }:
+# Checksum Thunar Custom Actions
+{ checksumCommandFor, isCaelestia }:
+let
+  checksumCommand = algorithm:
+    if isCaelestia then
+      "caelestia shell thunar checksum %f ${algorithm}"
+    else
+      checksumCommandFor algorithm;
+in
 {
   xml = ''
     <!-- SHA256 -->
@@ -8,7 +15,7 @@
       <name>SHA256</name>
       <submenu>Checksum</submenu>
       <unique-id>checksum-sha256</unique-id>
-      <command>${checksum-rofi}/bin/checksum-rofi %f sha256</command>
+      <command>${checksumCommand "sha256"}</command>
       <description>Calculate SHA256 hash</description>
       <patterns>*</patterns>
       <audio-files/>
@@ -24,7 +31,7 @@
       <name>SHA512</name>
       <submenu>Checksum</submenu>
       <unique-id>checksum-sha512</unique-id>
-      <command>${checksum-rofi}/bin/checksum-rofi %f sha512</command>
+      <command>${checksumCommand "sha512"}</command>
       <description>Calculate SHA512 hash</description>
       <patterns>*</patterns>
       <audio-files/>
@@ -40,7 +47,7 @@
       <name>BLAKE3</name>
       <submenu>Checksum</submenu>
       <unique-id>checksum-blake3</unique-id>
-      <command>${checksum-rofi}/bin/checksum-rofi %f blake3</command>
+      <command>${checksumCommand "blake3"}</command>
       <description>Calculate BLAKE3 hash (fast)</description>
       <patterns>*</patterns>
       <audio-files/>
@@ -56,7 +63,7 @@
       <name>MD5</name>
       <submenu>Checksum</submenu>
       <unique-id>checksum-md5</unique-id>
-      <command>${checksum-rofi}/bin/checksum-rofi %f md5</command>
+      <command>${checksumCommand "md5"}</command>
       <description>Calculate MD5 hash (legacy)</description>
       <patterns>*</patterns>
       <audio-files/>
@@ -72,7 +79,7 @@
       <name>SHA1</name>
       <submenu>Checksum</submenu>
       <unique-id>checksum-sha1</unique-id>
-      <command>${checksum-rofi}/bin/checksum-rofi %f sha1</command>
+      <command>${checksumCommand "sha1"}</command>
       <description>Calculate SHA1 hash (legacy)</description>
       <patterns>*</patterns>
       <audio-files/>
@@ -88,7 +95,7 @@
       <name>Calculate All</name>
       <submenu>Checksum</submenu>
       <unique-id>checksum-all</unique-id>
-      <command>${checksum-rofi}/bin/checksum-rofi %f all</command>
+      <command>${checksumCommand "all"}</command>
       <description>Calculate all checksums</description>
       <patterns>*</patterns>
       <audio-files/>

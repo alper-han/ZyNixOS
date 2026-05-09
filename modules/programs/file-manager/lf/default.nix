@@ -55,7 +55,7 @@
             gt = "cd ~/.local/share/Trash/files";
           };
           commands = {
-            open-with-editor = ''$$EDITOR $f'';
+            open-with-editor = "$$EDITOR $f";
             dragon-out = ''%${getExe pkgs.dragon-drop} -a -x "$fx"'';
             mkdir = ''
               ''${{

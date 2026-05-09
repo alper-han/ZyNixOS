@@ -98,8 +98,9 @@
     </action>
   '';
 
-  packages = pkgs: with pkgs; [
-    b3sum
-  ];
+  packages =
+    pkgs: with pkgs; [
+      b3sum
+    ];
 
 }

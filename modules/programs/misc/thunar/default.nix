@@ -24,11 +24,12 @@ in
     ];
   };
 
-  environment.systemPackages = with pkgs;
-    (checksumActions.packages pkgs) ++
-    (fileinfoActions.packages pkgs) ++
-    (peazipActions.packages pkgs) ++
-    [
+  environment.systemPackages =
+    with pkgs;
+    (checksumActions.packages pkgs)
+    ++ (fileinfoActions.packages pkgs)
+    ++ (peazipActions.packages pkgs)
+    ++ [
       checksum-rofi
       fileinfo-rofi
       exifinfo-rofi
@@ -36,16 +37,18 @@ in
     ];
 
   # Thunar Custom Actions
-  home-manager.sharedModules = [{
-    # Custom Actions XML
-    xdg.configFile."Thunar/uca.xml".text = ''
-      <?xml version="1.0" encoding="UTF-8"?>
-      <actions>
-        ${generalActions.xml}
-        ${checksumActions.xml}
-        ${fileinfoActions.xml}
-        ${peazipActions.xml}
-      </actions>
-    '';
-  }];
+  home-manager.sharedModules = [
+    {
+      # Custom Actions XML
+      xdg.configFile."Thunar/uca.xml".text = ''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <actions>
+          ${generalActions.xml}
+          ${checksumActions.xml}
+          ${fileinfoActions.xml}
+          ${peazipActions.xml}
+        </actions>
+      '';
+    }
+  ];
 }

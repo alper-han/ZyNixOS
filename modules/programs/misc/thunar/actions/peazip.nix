@@ -125,7 +125,8 @@
     </action>
   '';
 
-  packages = pkgs: with pkgs; [
-    peazip
-  ];
+  packages =
+    pkgs: with pkgs; [
+      peazip
+    ];
 }
