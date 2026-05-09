@@ -4,27 +4,6 @@
   terminal,
   ...
 }:
-let
-  wallpaperDir = "${../themes/wallpapers}";
-  wallpaperThumbs =
-    pkgs.runCommand "wallpaper-thumbnails"
-      {
-        buildInputs = [ pkgs.imagemagick ];
-      }
-      ''
-        mkdir -p $out
-        for wallpaper in "${wallpaperDir}"/*.{webp,jxl,jpg,jpeg,png,gif}; do
-          if [ -f "$wallpaper" ]; then
-            wallpaper_name=$(basename "$wallpaper")
-            wallpaper_name="''${wallpaper_name%.*}"
-            thumbnail_size="320x180"
-            if [ ! -f "$out/''${wallpaper_name}.jpg" ]; then
-              magick "$wallpaper[0]" -strip -gravity center -thumbnail "''${thumbnail_size}^" -extent "$thumbnail_size" "$out/''${wallpaper_name}.jpg"
-            fi
-          fi
-        done
-      '';
-in
 pkgs.writeShellScriptBin "launcher" ''
   # check if rofi is already running
   if pidof rofi >/dev/null; then
@@ -70,8 +49,14 @@ pkgs.writeShellScriptBin "launcher" ''
     # rofi_theme="''${XDG_CONFIG_HOME:-$HOME/.config}/rofi/launchers/type-4/style-4.rasi"
     # r_override="entry{placeholder:'Search Wallpapers...';}listview{lines:15;}"
 
-    CACHE_DIR=${wallpaperThumbs}
-    WALLPAPER_DIR="${wallpaperDir}"
+    CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/zynix/wallpaper-thumbnails"
+    WALLPAPER_DIR="''${XDG_PICTURES_DIR:-$HOME/Pictures}/Wallpapers"
+    mkdir -p "$CACHE_DIR"
+
+    if [ ! -d "$WALLPAPER_DIR" ]; then
+      ${lib.getExe pkgs.libnotify} "Wallpaper directory not found" "$WALLPAPER_DIR"
+      exit 1
+    fi
 
     rofi_cmd() {
       rofi -dmenu \
@@ -80,9 +65,18 @@ pkgs.writeShellScriptBin "launcher" ''
         -theme "$rofi_theme"
     }
 
-    CHOICE=$(${lib.getExe pkgs.fd} --type f . "''${WALLPAPER_DIR}" \
-      | sed 's/.*\///' \
-      | while read -r A ; do echo -en "$A\x00icon\x1f""''${CACHE_DIR}"/"''${A%.*}.jpg\n" ; done \
+    CHOICE=$(${lib.getExe' pkgs.findutils "find"} "''${WALLPAPER_DIR}" -maxdepth 1 -type f \( \
+        -iname '*.gif' -o -iname '*.jpeg' -o -iname '*.jpg' -o \
+        -iname '*.png' -o -iname '*.webp' \
+      \) \
+      | while read -r wallpaper; do \
+          name="$(${lib.getExe' pkgs.coreutils "basename"} "$wallpaper")"; \
+          thumb="''${CACHE_DIR}/$(${lib.getExe' pkgs.coreutils "sha256sum"} "$wallpaper" | ${lib.getExe' pkgs.coreutils "cut"} -d' ' -f1).jpg"; \
+          if [ ! -f "$thumb" ]; then \
+            ${lib.getExe pkgs.imagemagick} "$wallpaper[0]" -strip -gravity center -thumbnail "320x180^" -extent "320x180" "$thumb" >/dev/null 2>&1 || thumb="$wallpaper"; \
+          fi; \
+          echo -en "$name\x00icon\x1f$thumb\n"; \
+        done \
       | rofi_cmd)
     [ -z "$CHOICE" ] && exit 0
 
