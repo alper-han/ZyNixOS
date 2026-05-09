@@ -14,6 +14,7 @@ let
     terminal
     ;
   useTwelveHourClock = false;
+  userWallpapersDir = "~/Pictures/Wallpapers";
   wallpapersDir = ../../../../themes/wallpapers;
   defaultWallpaperPath = "${wallpapersDir}/${defaultWallpaper}";
 
@@ -64,11 +65,11 @@ let
             timeout = 300;
             idleAction = "lock";
           }
-          {
-            timeout = 600;
-            idleAction = "dpms off";
-            returnAction = "dpms on";
-          }
+          # {
+          #   timeout = 600;
+          #   idleAction = "dpms off";
+          #   returnAction = "dpms on";
+          # }
         ];
       };
     };
@@ -216,7 +217,7 @@ let
     paths = {
       mediaGif = "root:/assets/bongocat.gif";
       sessionGif = "root:/assets/kurukuru.gif";
-      wallpaperDir = "${wallpapersDir}";
+      wallpaperDir = userWallpapersDir;
     };
 
     services = {
@@ -292,7 +293,7 @@ let
         audioOutputChanged = true;
         capsLockChanged = false;
         chargingChanged = true;
-        configLoaded = true;
+        configLoaded = false;
         dndChanged = true;
         gameModeChanged = true;
         kbLayoutChanged = false;
@@ -337,12 +338,39 @@ let
   caelestiaShellJson = pkgs.writeText "caelestia-shell.json" (builtins.toJSON caelestiaSettings);
   caelestiaCliPackage =
     inputs.caelestia-shell.inputs.caelestia-cli.packages.${pkgs.stdenv.hostPlatform.system}.default;
-  caelestiaPackage =
+  zynixGamesCatalog = pkgs.callPackage ./scripts/zynix-games-catalog.nix { };
+  baseCaelestiaPackage =
     inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.caelestia-shell.override
       {
         withCli = true;
         caelestia-cli = caelestiaCliPackage;
+        extraRuntimeDeps = with pkgs; [
+          tmux
+          mpv
+          procps
+          wl-clipboard
+          file
+          xdg-utils
+          exiftool
+          mediainfo
+          b3sum
+          coreutils
+          zynixGamesCatalog
+        ];
       };
+  caelestiaPackage = baseCaelestiaPackage.overrideAttrs (old: {
+    postInstall = (old.postInstall or "") + ''
+      mkdir -p $out/share/caelestia-shell/modules/zynix
+      cp -r ${./qml/modules/zynix}/. $out/share/caelestia-shell/modules/zynix/
+
+      substituteInPlace $out/share/caelestia-shell/shell.qml \
+        --replace-fail 'import "modules/drawers"' 'import "modules/drawers"
+import "modules/zynix"'
+      substituteInPlace $out/share/caelestia-shell/shell.qml \
+        --replace-fail '    Background {}' '    Background {}
+    ZynixShellExtensions {}'
+    '';
+  });
 in
 {
   home-manager.sharedModules = [
