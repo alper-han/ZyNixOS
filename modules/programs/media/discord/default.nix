@@ -1,4 +1,14 @@
-{ pkgs, ... }:
+{
+  host,
+  pkgs,
+  ...
+}:
+let
+  inherit (import ../../../../hosts/${host}/variables.nix) bar;
+  caelestiaOwnsTheme = bar == "caelestia-shell";
+  enabledThemes = if caelestiaOwnsTheme then [ "caelestia.theme.css" ] else [ "theme.css" ];
+  enabledThemesJson = builtins.toJSON enabledThemes;
+in
 {
   home-manager.sharedModules = [
     (
@@ -25,7 +35,7 @@
           disableMinSize = false;
           eagerPatches = false;
           enableReactDevtools = false;
-          enabledThemes = [ "theme.css" ];
+          inherit enabledThemes;
           frameless = false;
           notifications = {
             logLimit = 50;
@@ -340,7 +350,7 @@
               enabled = true;
               experimentalAV1Support = true;
             };
-            WhoReacted.enabled = true;
+            WhoReacted.enabled = false;
             XSOverlay.enabled = false;
             YoutubeAdblock.enabled = true;
             iLoveSpam.enabled = false;
@@ -391,15 +401,24 @@
               fi
 
               chmod u+w "$settings_file"
+
+              tmp_file="$(${pkgs.coreutils}/bin/mktemp)"
+              if ${pkgs.jq}/bin/jq '.enabledThemes = ${enabledThemesJson}' "$settings_file" > "$tmp_file"; then
+                ${pkgs.coreutils}/bin/mv "$tmp_file" "$settings_file"
+              else
+                ${pkgs.coreutils}/bin/rm -f "$tmp_file"
+              fi
             '') apps
           )}
         '';
 
-        xdg.configFile = builtins.listToAttrs (
-          map (app: {
-            name = "${app}/themes/theme.css";
-            value.source = themeFile;
-          }) apps
+        xdg.configFile = lib.mkIf (!caelestiaOwnsTheme) (
+          builtins.listToAttrs (
+            map (app: {
+              name = "${app}/themes/theme.css";
+              value.source = themeFile;
+            }) apps
+          )
         );
       }
     )

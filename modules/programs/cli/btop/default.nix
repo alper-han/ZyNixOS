@@ -1,4 +1,12 @@
-{ pkgs, ... }:
+{
+  host,
+  pkgs,
+  ...
+}:
+let
+  inherit (import ../../../../hosts/${host}/variables.nix) bar;
+  caelestiaOwnsTheme = bar == "caelestia-shell";
+in
 {
   home-manager.sharedModules = [
     (_: {
@@ -6,7 +14,7 @@
         enable = true;
         package = pkgs.btop;
         settings = {
-          color_theme = "catppuccin-mocha";
+          color_theme = if caelestiaOwnsTheme then "caelestia" else "catppuccin-mocha";
           show_gpu_info = "on";
           cpu_sensor = "auto";
           vim_keys = true;
