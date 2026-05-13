@@ -66,19 +66,23 @@ in
 
         xdg.configFile = {
           # Kate editor text area uses KTextEditor - separate from Qt widget theming
-          "katerc".source = (pkgs.formats.ini { }).generate "katerc" {
-            UiSettings.ColorScheme = "Breeze Dark";
-            "KTextEditor Renderer" = {
-              "Auto Color Theme Selection" = false;
-              "Color Theme" = "Breeze Dark";
+          "katerc" = lib.mkIf (!caelestiaOwnsTheme) {
+            source = (pkgs.formats.ini { }).generate "katerc" {
+              UiSettings.ColorScheme = "Breeze Dark";
+              "KTextEditor Renderer" = {
+                "Auto Color Theme Selection" = false;
+                "Color Theme" = "Breeze Dark";
+              };
             };
           };
           # KWrite - same KTextEditor config
-          "kwriterc".source = (pkgs.formats.ini { }).generate "kwriterc" {
-            UiSettings.ColorScheme = "Breeze Dark";
-            "KTextEditor Renderer" = {
-              "Auto Color Theme Selection" = false;
-              "Color Theme" = "Breeze Dark";
+          "kwriterc" = lib.mkIf (!caelestiaOwnsTheme) {
+            source = (pkgs.formats.ini { }).generate "kwriterc" {
+              UiSettings.ColorScheme = "Breeze Dark";
+              "KTextEditor Renderer" = {
+                "Auto Color Theme Selection" = false;
+                "Color Theme" = "Breeze Dark";
+              };
             };
           };
           # Global KDE dark mode - triggers auto-detection in KTextEditor apps
