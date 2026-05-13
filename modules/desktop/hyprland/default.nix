@@ -2,7 +2,6 @@
   host,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let
@@ -22,7 +21,6 @@ let
   wallpapersDir = ../../themes/wallpapers;
   defaultWallpaperPath = "${wallpapersDir}/${defaultWallpaper}";
   caelestiaOwnsTheme = bar == "caelestia-shell";
-  qtPlatformTheme = if caelestiaOwnsTheme then "qtengine" else "hyprqt6engine";
 
   # Import sub-modules
   fileManagerScript = pkgs.callPackage ./scripts/file-manager.nix { inherit terminal; };
@@ -62,10 +60,8 @@ in
   programs.hyprland = {
     enable = true;
     withUWSM = true;
-    # Use Hyprland from flake input to leverage Cachix cache
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage =
-      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    package = pkgs.hyprland;
+    portalPackage = pkgs.xdg-desktop-portal-hyprland;
   };
 
   home-manager.sharedModules =
@@ -129,10 +125,6 @@ in
               # socat # for and autowaybar.sh
               bc # zoom
             ])
-            ++ lib.optionals caelestiaOwnsTheme [
-              pkgs.qtengine
-              pkgs.qtengine.qt5
-            ]
             ++ lib.optional (bar != "caelestia-shell") pkgs.awww;
 
           xdg.configFile."hypr/icons" = {
@@ -159,6 +151,9 @@ in
           '';
 
           xdg.configFile."uwsm/env".text = ''
+            export XDG_CURRENT_DESKTOP=Hyprland
+            export XDG_SESSION_DESKTOP=Hyprland
+            export XDG_SESSION_TYPE=wayland
             export GDK_BACKEND=wayland,x11,*
             export SDL_VIDEODRIVER=wayland,x11
             export CLUTTER_BACKEND=wayland
@@ -166,22 +161,35 @@ in
             export MOZ_ENABLE_WAYLAND=1
             export QT_QPA_PLATFORM="wayland;xcb"
             export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-            export QT_QPA_PLATFORMTHEME=${qtPlatformTheme}
+            ${lib.optionalString (!caelestiaOwnsTheme) ''
+              export QT_QPA_PLATFORMTHEME=hyprqt6engine
+            ''}
             export QT_AUTO_SCREEN_SCALE_FACTOR=1
             export QT_ENABLE_HIGHDPI_SCALING=1
-            export HYPRCURSOR_THEME=catppuccin-mocha-mauve-cursors
-            export HYPRCURSOR_SIZE=${toString config.home.pointerCursor.size}
             export XCURSOR_THEME=catppuccin-mocha-mauve-cursors
             export XCURSOR_SIZE=${toString config.home.pointerCursor.size}
-            export CAELESTIA_WALLPAPERS_DIR=''${XDG_PICTURES_DIR:-$HOME/Pictures}/Wallpapers
-            export CAELESTIA_SCREENSHOTS_DIR=''${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots
-            export CAELESTIA_RECORDINGS_DIR=''${XDG_VIDEOS_DIR:-$HOME/Videos}/Recordings
           '';
+
+          xdg.configFile."uwsm/env-hyprland".text = ''
+            export HYPRCURSOR_THEME=catppuccin-mocha-mauve-cursors
+            export HYPRCURSOR_SIZE=${toString config.home.pointerCursor.size}
+          '';
+
+          xdg.configFile."systemd/user/xdg-desktop-portal-gtk.service.d/caelestia-theme.conf" =
+            lib.mkIf caelestiaOwnsTheme
+              {
+                text = ''
+                  [Service]
+                  Environment=GTK_THEME=adw-gtk3-dark
+                  Environment=ADW_COLOR_SCHEME=prefer-dark
+                  Environment=XDG_CONFIG_HOME=${config.xdg.configHome}
+                '';
+              };
 
           #test later systemd.user.targets.hyprland-session.Unit.Wants = [ "xdg-desktop-autostart.target" ];
           wayland.windowManager.hyprland = {
             enable = true;
-            package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+            package = pkgs.hyprland;
             plugins = [ ];
             systemd.enable = false; # Disabled to avoid conflicts with UWSM
             settings =
