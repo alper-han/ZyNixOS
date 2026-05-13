@@ -55,7 +55,7 @@ in
     ../../modules/programs/misc/opensnitch
     # ../../modules/programs/misc/mitmproxy
     # ../../modules/programs/misc/tailscale
-    # ../../modules/programs/misc/lact # GPU fan, clock and power configuration
+    ../../modules/programs/misc/lact # GPU fan, clock and power configuration
     # ../../modules/programs/media/davinci-resolve-studio
     # ../../modules/programs/misc/zapret
     # ../../modules/programs/misc/duplicati
