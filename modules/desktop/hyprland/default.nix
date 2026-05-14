@@ -190,6 +190,7 @@ in
           wayland.windowManager.hyprland = {
             enable = true;
             package = pkgs.hyprland;
+            configType = "hyprlang";
             plugins = [ ];
             systemd.enable = false; # Disabled to avoid conflicts with UWSM
             settings =
