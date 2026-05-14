@@ -70,6 +70,9 @@ in
               enableChromium = true;
               enableZed = true;
               enableCava = true;
+              iconTheme = "Papirus-Dark";
+              iconThemeLight = "Papirus";
+              iconThemeDark = "Papirus-Dark";
               postHook = toString caelestiaThemePostHook;
             };
           };
