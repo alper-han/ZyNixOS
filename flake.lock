@@ -95,35 +95,24 @@
         "type": "github"
       }
     },
-    "crossmacro-daemon-pr": {
+    "crossmacro": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
       "locked": {
-        "lastModified": 1778495621,
-        "narHash": "sha256-Lar2fhMcgt55yqaTUjJbBJCcZ6MU6VzK7XTU6RwApW8=",
-        "owner": "r-ryantm",
-        "repo": "nixpkgs",
-        "rev": "51a8cf75096a9f0e114037b305b7b8c179083ed7",
+        "lastModified": 1778425890,
+        "narHash": "sha256-nsAV2lN9ANI851dVyZ+j1hiFnM40zTXYMusvsQ1V5aw=",
+        "owner": "alper-han",
+        "repo": "crossmacro",
+        "rev": "a810c0e27f1928b207948f9d8cf6974a58c32857",
         "type": "github"
       },
       "original": {
-        "owner": "r-ryantm",
-        "repo": "nixpkgs",
-        "rev": "51a8cf75096a9f0e114037b305b7b8c179083ed7",
-        "type": "github"
-      }
-    },
-    "crossmacro-pr": {
-      "locked": {
-        "lastModified": 1778495492,
-        "narHash": "sha256-P0zFVWSh4wWbX7wVwU0f+eiC1RpukfiYCpF8B0f7FMc=",
-        "owner": "r-ryantm",
-        "repo": "nixpkgs",
-        "rev": "d92bbb7099fa47b0086b3c8f35d48939fe2dd50d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "r-ryantm",
-        "repo": "nixpkgs",
-        "rev": "d92bbb7099fa47b0086b3c8f35d48939fe2dd50d",
+        "owner": "alper-han",
+        "repo": "crossmacro",
         "type": "github"
       }
     },
@@ -148,6 +137,24 @@
         "nixpkgs-lib": "nixpkgs-lib"
       },
       "locked": {
+        "lastModified": 1775087534,
+        "narHash": "sha256-91qqW8lhL7TLwgQWijoGBbiD4t7/q75KTi8NxjVmSmA=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "3107b77cd68437b9a76194f0f7f9c55f2329ca5b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-parts_2": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib_2"
+      },
+      "locked": {
         "lastModified": 1777988971,
         "narHash": "sha256-qIoWPDs+0/8JecyYgE3gpKQxW/4bLW/gp45vow9ioCQ=",
         "owner": "hercules-ci",
@@ -168,11 +175,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778628724,
-        "narHash": "sha256-VNG6hJ146VEenXcDrB3t6MVnrMx+gtyCWTCDkzOp9Qs=",
+        "lastModified": 1778706808,
+        "narHash": "sha256-ihH1UnI6nYSOkjAg4QsOadg6sp2LxXnWO9urPbo3/hw=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6a0bbd6b4720da1c9ce7ebf35ff5c41a82db367a",
+        "rev": "9760b31dab3016fc6e422ca241cfeac605fb89c9",
         "type": "github"
       },
       "original": {
@@ -284,7 +291,7 @@
         "cachyos-kernel": "cachyos-kernel",
         "cachyos-kernel-patches": "cachyos-kernel-patches",
         "flake-compat": "flake-compat",
-        "flake-parts": "flake-parts",
+        "flake-parts": "flake-parts_2",
         "nixpkgs": "nixpkgs"
       },
       "locked": {
@@ -371,6 +378,21 @@
       }
     },
     "nixpkgs-lib": {
+      "locked": {
+        "lastModified": 1774748309,
+        "narHash": "sha256-+U7gF3qxzwD5TZuANzZPeJTZRHS29OFQgkQ2kiTJBIQ=",
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "rev": "333c4e0545a6da976206c74db8773a1645b5870a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "type": "github"
+      }
+    },
+    "nixpkgs-lib_2": {
       "locked": {
         "lastModified": 1777168982,
         "narHash": "sha256-GOkGPcboWE9BmGCRMLX3worL4EMnsnG8MyKmXNeYuhQ=",
@@ -465,8 +487,7 @@
       "inputs": {
         "betterfox": "betterfox",
         "caelestia-shell": "caelestia-shell",
-        "crossmacro-daemon-pr": "crossmacro-daemon-pr",
-        "crossmacro-pr": "crossmacro-pr",
+        "crossmacro": "crossmacro",
         "home-manager": "home-manager",
         "hyprqt6engine": "hyprqt6engine",
         "nix-cachyos-kernel": "nix-cachyos-kernel",
