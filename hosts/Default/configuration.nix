@@ -27,9 +27,9 @@ in
     ../../modules/themes/wallpaper-bank.nix
     # ../../modules/core/ssh.nix
     # ../../modules/core/flatpak.nix
-    # ../../modules/core/virtualisation.nix
+    ../../modules/core/virtualisation.nix
     # ../../modules/core/nix-ld.nix
-    # ../../modules/core/dns.nix
+    ../../modules/core/dns.nix
 
     # Optional
     ../../modules/hardware/video/${vars.videoDriver}.nix # Enable gpu drivers defined in variables.nix
@@ -52,14 +52,13 @@ in
     ../../modules/programs/misc/crossmacro
     ../../modules/programs/misc/kde-connect
     # ../../modules/programs/misc/openrgb
-    ../../modules/programs/misc/opensnitch
+    # ../../modules/programs/misc/opensnitch
     # ../../modules/programs/misc/mitmproxy
     # ../../modules/programs/misc/tailscale
     ../../modules/programs/misc/lact # GPU fan, clock and power configuration
     # ../../modules/programs/media/davinci-resolve-studio
     # ../../modules/programs/misc/zapret
     # ../../modules/programs/misc/duplicati
-    # ../../modules/programs/media/spicetify
     # ../../modules/programs/media/thunderbird
   ]
   ++ lib.optional (vars.games == true) ../../modules/core/games.nix

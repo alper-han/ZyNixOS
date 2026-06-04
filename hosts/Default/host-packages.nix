@@ -3,7 +3,7 @@
 
   environment.systemPackages = with pkgs; [
     rustdesk
-    # jellyfin-desktop
+    jellyfin-desktop
     # jellyfin-mpv-shim
     # kdiskmark
     # qbittorrent
