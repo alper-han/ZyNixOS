@@ -22,6 +22,7 @@ in
             # cursor_trail = 3; # Fancy cursor movements (especially in nixvim)
             # cursor_trail_decay = "0.08 0.3"; # Animation speed
             # cursor_trail_start_threshold = "4";
+            auto_reload_config = -1.0;
             strip_trailing_spaces = "smart";
             copy_on_select = "yes";
             confirm_os_window_close = 0;
