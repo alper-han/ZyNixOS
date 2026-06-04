@@ -1,6 +1,7 @@
 {
   lib,
   config,
+  pkgs,
   ...
 }:
 let
@@ -32,9 +33,9 @@ in
       enable = true;
       enable32Bit = true;
       extraPackages = [
-        # pkgs.nvidia-vaapi-driver
-        # pkgs.libva-vdpau-driver
-        # pkgs.libvdpau-va-gl
+        pkgs.nvidia-vaapi-driver
+        pkgs.libva-vdpau-driver
+        pkgs.libvdpau-va-gl
       ];
     };
   };
