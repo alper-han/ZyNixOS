@@ -8,14 +8,10 @@
 let
   inherit (import ../../../../../hosts/${host}/variables.nix)
     bluetoothSupport
-    defaultWallpaper
     fileManager
     isLaptop
     terminal
     ;
-
-  wallpapersDir = ../../../../themes/wallpapers;
-  defaultWallpaperPath = "${wallpapersDir}/${defaultWallpaper}";
 
   caelestiaSettings = import ./settings.nix {
     inherit
@@ -46,6 +42,13 @@ in
         ];
 
         xdg.configFile."uwsm/env.d/50-caelestia-theme".text = import ./uwsm-env.nix { inherit pkgs; };
+        xdg.configFile."swappy/config".text = ''
+          [Default]
+          save_dir=$HOME/Pictures/Screenshots
+          save_filename_format=swappy-%Y%m%d-%H%M%S.png
+          early_exit=false
+          auto_save=false
+        '';
 
         programs.caelestia = {
           enable = true;
@@ -82,7 +85,6 @@ in
           inherit
             caelestiaShellJson
             config
-            defaultWallpaperPath
             lib
             pkgs
             ;

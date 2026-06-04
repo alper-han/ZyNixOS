@@ -6,7 +6,6 @@
 }:
 let
   useTwelveHourClock = false;
-  userWallpapersDir = "~/Pictures/Wallpapers";
 
   favouriteApps = [
     "zen-beta"
@@ -208,13 +207,12 @@ in
   paths = {
     mediaGif = "root:/assets/bongocat.gif";
     sessionGif = "root:/assets/kurukuru.gif";
-    wallpaperDir = userWallpapersDir;
   };
 
   services = {
     audioIncrement = 0.05;
     brightnessIncrement = 0.05;
-    maxVolume = 1.25;
+    maxVolume = 1.0;
     defaultPlayer = "YT Music";
     playerAliases = [
       {
@@ -281,18 +279,18 @@ in
     maxToasts = 4;
     toasts = {
       # position = "top-right";
-      audioInputChanged = true;
-      audioOutputChanged = true;
+      audioInputChanged = false;
+      audioOutputChanged = false;
       capsLockChanged = false;
-      chargingChanged = true;
+      chargingChanged = false;
       configLoaded = false;
-      dndChanged = true;
-      gameModeChanged = true;
+      dndChanged = false;
+      gameModeChanged = false;
       kbLayoutChanged = false;
-      kbLimit = true;
+      kbLimit = false;
       numLockChanged = false;
       vpnChanged = false;
-      nowPlaying = true;
+      nowPlaying = false;
     };
     quickToggles = [
       {

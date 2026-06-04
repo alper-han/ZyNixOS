@@ -1,7 +1,6 @@
 {
   caelestiaShellJson,
   config,
-  defaultWallpaperPath,
   lib,
   pkgs,
 }:
@@ -39,15 +38,4 @@ lib.hm.dag.entryAfter [ "writeBoundary" ] ''
 
   install -m 0644 "${caelestiaShellJson}" \
     "${config.xdg.configHome}/caelestia/shell.json"
-
-  mkdir -p "${config.xdg.stateHome}/caelestia/wallpaper"
-  default_wallpaper="${defaultWallpaperPath}"
-  if [ ! -s "${config.xdg.stateHome}/caelestia/wallpaper/path.txt" ]; then
-    printf '%s' "$default_wallpaper" > \
-      "${config.xdg.stateHome}/caelestia/wallpaper/path.txt"
-  fi
-  if [ ! -e "${config.xdg.stateHome}/caelestia/wallpaper/current" ]; then
-    ln -s "$default_wallpaper" \
-      "${config.xdg.stateHome}/caelestia/wallpaper/current"
-  fi
 ''

@@ -22,6 +22,7 @@ let
           mediainfo
           b3sum
           coreutils
+          qt6.qtimageformats
           zynixGamesCatalog
         ];
       };
