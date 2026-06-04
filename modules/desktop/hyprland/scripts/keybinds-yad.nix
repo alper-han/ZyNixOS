@@ -173,7 +173,6 @@ pkgs.writeShellScriptBin "keybinds-yad" ''
     "SUPER E" "Launch file manager" "${fileManagerCmd}" \
     "SUPER C" "Launch editor" "${editorCmd}" \
     "SUPER F" "Launch browser" "${browserCmd}" \
-    "SUPER SHIFT S" "Launch Spotify" "uwsm app -- spotify" \
     "SUPER SHIFT Y" "Launch Pear Desktop" "uwsm app -- ${getExe pkgs.pear-desktop}" \
     "CTRL ALT Delete" "Open system monitor" "${terminalCmd} -e btop" \
     ${launcherRows}

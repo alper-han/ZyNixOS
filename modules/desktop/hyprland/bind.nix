@@ -176,7 +176,6 @@ in
     "$mainMod, E, exec, $fileManager"
     "$mainMod, C, exec, $editor"
     "$mainMod, F, exec, $browser"
-    "$mainMod SHIFT, S, exec, uwsm app -- spotify"
     "$mainMod SHIFT, Y, exec, ${pearCmd}"
     "CTRL ALT, DELETE, exec, $term -e '${getExe pkgs.btop}'"
     "$mainMod CTRL, C, exec, hyprpicker --autocopy --format=hex"

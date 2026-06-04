@@ -226,8 +226,6 @@ in
     "opacity 0.90 0.80, match:class ${mkRegex highOpacityApps}"
     "opacity 0.80 0.70, match:class ${mkRegex mediumOpacityApps}"
     "opacity 0.80 0.70, match:class ^(Xdg-desktop-portal-gtk|Xdg-desktop-portal-kde)$"
-    "opacity 0.80 0.70, match:title (.*)(Spotify)(.*)$" # Special title match for Spotify
-
     # === Floating Rules ===
     "float on, match:class ${mkRegex floatingApps}"
     "center on, match:class ${mkRegex centeredApps}"

@@ -301,7 +301,6 @@ in
               tooltip-format-paused = "Paused: {title} - {artist}";
               player-icons = {
                 default = "󰐊";
-                spotify = "";
                 mpv = "󰐹";
                 vlc = "󰕼";
                 firefox = "";
