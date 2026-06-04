@@ -34,7 +34,7 @@
         executable = true;
         text = ''
           #!${pkgs.runtimeShell}
-          exec ${pkgs.bun}/bin/bun "$HOME/.config/opencode/node_modules/oh-my-openagent/dist/cli/index.js" "$@"
+          exec ${pkgs.bun}/bin/bun "$HOME/.config/opencode/node_modules/oh-my-opencode/dist/cli/index.js" "$@"
         '';
       };
     })
