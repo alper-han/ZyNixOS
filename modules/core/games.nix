@@ -11,6 +11,7 @@
     enable = true;
     enable32Bit = true;
   };
+
   environment.systemPackages = [
     # lutris
     # heroic
@@ -32,7 +33,9 @@
       dedicatedServer.openFirewall = false;
       extraCompatPackages = [ pkgs.proton-ge-bin ];
       gamescopeSession = {
-        enable = true;
+        # Avoid NixOS Steam's setuid bwrap wrapper path; normal Steam launch only
+        # needs unprivileged user namespaces, which are already enabled.
+        enable = false;
         args = [
           "--rt"
           "--expose-wayland"
@@ -71,7 +74,7 @@
             144
             60
           ];
-          fps_limit_method = "early";
+          fps_limit_method = "late";
           vsync = 1;
           gl_vsync = 0;
           horizontal = false;
