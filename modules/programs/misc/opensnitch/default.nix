@@ -1,4 +1,16 @@
 { lib, pkgs, ... }:
+let
+  opensnitchUiDefaults = pkgs.writeShellApplication {
+    name = "opensnitch-ui-defaults";
+    runtimeInputs = [ pkgs.crudini ];
+    text = ''
+      settings="''${XDG_CONFIG_HOME:-$HOME/.config}/opensnitch/settings.conf"
+
+      mkdir -p "$(dirname "$settings")"
+      crudini --set "$settings" global default_duration 8
+    '';
+  };
+in
 {
   services.opensnitch = {
     enable = true;
@@ -7,7 +19,7 @@
       ProcMonitorMethod = "proc";
       InterceptUnknown = true;
       DefaultAction = "allow";
-      DefaultDuration = "once";
+      Rules.Path = "/var/lib/opensnitch/rules";
       LogLevel = 2;
     };
   };
@@ -16,8 +28,6 @@
     opensnitch-ui
   ];
 
-  # eBPF is incompatible with the custom CachyOS kernel, and audit mode breaks
-  # activation on this system, so use proc mode.
   systemd.user.services.opensnitch-ui = {
     description = "OpenSnitch UI";
     wantedBy = [ "graphical-session.target" ];
@@ -25,6 +35,7 @@
     after = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
+      ExecStartPre = lib.getExe opensnitchUiDefaults;
       ExecStart = lib.getExe pkgs.opensnitch-ui;
       Restart = "on-failure";
       RestartSec = 2;
