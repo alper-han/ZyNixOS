@@ -22,6 +22,7 @@ let
           mediainfo
           b3sum
           coreutils
+          uwsm
           qt6.qtimageformats
           zynixGamesCatalog
         ];
@@ -37,6 +38,10 @@ let
             substituteInPlace $out/share/caelestia-shell/shell.qml \
               --replace-fail '    Background {}' '    Background {}
           ZynixShellExtensions {}'
+
+            substituteInPlace $out/share/caelestia-shell/modules/launcher/services/Apps.qml \
+              --replace-fail '["app2unit", "--", ...GlobalConfig.general.apps.terminal' '["uwsm", "app", "--", ...GlobalConfig.general.apps.terminal' \
+              --replace-fail '["app2unit", "--", ...entry.command]' '["uwsm", "app", "--", ...entry.command]'
     '';
   });
 in
