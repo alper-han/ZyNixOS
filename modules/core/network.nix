@@ -103,6 +103,7 @@ in
       ethtool
       openvpn
       wireguard-tools
+      # proton-vpn
     ])
     ++ lib.optional (bar != "caelestia-shell") pkgs.networkmanagerapplet;
 }

@@ -59,6 +59,7 @@
       timeout = 1;
       systemd-boot = {
         enable = true;
+        configurationLimit = 3;
         editor = false;
         consoleMode = "max";
         memtest86.enable = true;
