@@ -17,7 +17,25 @@
     "xhci_pci"
     "usbhid"
   ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [
+    "xhci_pci"
+    "usbhid"
+    "nvidia"
+    "nvidia_modeset"
+    "nvidia_drm"
+  ];
+  boot.initrd.systemd.services.early-usb-hid = {
+    description = "Load USB keyboard support before LUKS prompt";
+    wantedBy = [ "initrd.target" ];
+    before = [ "systemd-cryptsetup@luks\\x2droot.service" ];
+    unitConfig.DefaultDependencies = false;
+    path = [ pkgs.kmod ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      modprobe xhci_pci
+      modprobe usbhid
+    '';
+  };
   boot.kernelModules = [
     "kvm-amd"
     "k10temp"
@@ -38,6 +56,10 @@
   ];
   boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
   boot.blacklistedKernelModules = [ ];
+
+  boot.extraModprobeConfig = ''
+    options mt7925e disable_aspm=1
+  '';
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/e01615ee-1128-44b1-b5f4-3735af0cec57";
