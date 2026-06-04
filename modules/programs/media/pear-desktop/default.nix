@@ -12,6 +12,7 @@
           window-maximized = true;
           url = "https://music.youtube.com";
           options = {
+            language = "en";
             tray = true;
             appVisible = true;
             autoUpdates = false;
@@ -26,6 +27,7 @@
             autoResetAppCache = false;
             resumeOnStart = false;
             likeButtons = "force";
+            swapLikeButtonsOrder = false;
             proxy = "";
             startingPage = "";
             overrideUserAgent = false;
@@ -49,14 +51,60 @@
               forceHide = false;
               align = "left";
             };
-            shortcuts.enabled = true;
-            precise-volume = {
-              globalShortcuts = { };
+            shortcuts = {
+              enabled = true;
+              overrideMediaKeys = false;
+              global = {
+                previous = "";
+                playPause = "";
+                next = "";
+              };
+              local = {
+                previous = "";
+                playPause = "";
+                next = "";
+              };
             };
-            discord.listenAlong = true;
-            bypass-age-restrictions.enabled = true;
-            sponsorblock.enabled = true;
-            downloader.enabled = true;
+            precise-volume = {
+              globalShortcuts = {
+                volumeUp = "";
+                volumeDown = "";
+              };
+            };
+            discord = {
+              enabled = false;
+              playOnYouTubeMusic = false;
+            };
+            sponsorblock = {
+              enabled = true;
+              apiURL = "https://sponsor.ajay.app";
+              categories = [
+                "sponsor"
+                "intro"
+                "outro"
+                "interaction"
+                "selfpromo"
+                "music_offtopic"
+              ];
+            };
+            downloader = {
+              enabled = true;
+              downloadOnFinish = {
+                enabled = false;
+                seconds = 20;
+                percent = 10;
+                mode = "seconds";
+              };
+              selectedPreset = "mp3 (256kbps)";
+              customPresetSetting = {
+                extension = "mp3";
+                ffmpegArgs = [
+                  "-b:a"
+                  "256k"
+                ];
+              };
+              skipExisting = false;
+            };
             audio-compressor.enabled = false;
             blur-nav-bar.enabled = false;
             equalizer.enabled = false;
@@ -69,7 +117,6 @@
               type = "vudio";
               butterchurn = {
                 preset = "martin [shadow harlequins shape code] - fata morgana";
-                renderingFrequencyInMs = 500;
                 blendTimeInSeconds = 2.7;
               };
               vudio = {
