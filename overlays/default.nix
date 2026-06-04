@@ -11,27 +11,17 @@
   # https://wiki.nixos.org/wiki/Overlays
   modifications =
     final: prev:
-    let
-      nixpkgsWithDiscordKrisp = prev.applyPatches {
-        name = "nixpkgs-pr-506089-discord-krisp";
-        src = prev.path;
-        patches = [
-          (prev.fetchpatch {
-            url = "https://github.com/NixOS/nixpkgs/commit/57844013458b550400c5bb3b98ae35267fc5ee44.patch";
-            hash = "sha256-zDNXE0nbeoV4lJF2wTIEdzkujIfBZBj6Anya8apUCJc=";
+    {
+      # virtualisation.libvirtd.qemu.package uses pkgs.qemu_kvm.
+      # qemu-10.2.2.patch from https://github.com/zhaodice/qemu-anti-detection
+      qemu_kvm = prev.qemu_kvm.overrideAttrs (oldAttrs: {
+        patches = (oldAttrs.patches or [ ]) ++ [
+          (final.fetchpatch {
+            url = "https://raw.githubusercontent.com/zhaodice/qemu-anti-detection/2750c86d2d045243ba6617951487e41b25c05557/qemu-10.2.2.patch";
+            hash = "sha256-mMUtKzkHh8Q1lBu2Lrok6au521mUf4KOj8QJZRPOCOQ=";
           })
         ];
-      };
-
-      discordKrispPkgs = import nixpkgsWithDiscordKrisp {
-        system = final.stdenv.hostPlatform.system;
-        config = prev.config;
-      };
-    in
-    {
-      stable = import inputs.nixpkgs-stable {
-        system = final.stdenv.hostPlatform.system;
-      };
+      });
 
       vesktop = prev.vesktop.override {
         withTTS = false;
@@ -42,11 +32,10 @@
         withTTS = false;
         withMiddleClickScroll = true;
       };
-      discord = discordKrispPkgs.discord.override {
+      discord = prev.discord.override {
         withVencord = true;
         withOpenASAR = true;
         enableAutoscroll = true;
-        withKrisp = true;
       };
 
       davinci-resolve-studio =

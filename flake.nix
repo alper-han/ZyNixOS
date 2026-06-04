@@ -2,7 +2,6 @@
   description = "A simple flake for an atomic system";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
     nix-flatpak.url = "github:gmodena/nix-flatpak?ref=latest";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -18,7 +17,7 @@
     };
     caelestia-shell = {
       # url = "github:caelestia-dots/shell";
-      url = "github:alper-han/caelestia-shell/bar-position";
+      url = "github:alper-han/caelestia-shell/bar";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-cachyos-kernel = {
@@ -28,10 +27,6 @@
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
-    };
-    spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     betterfox = {
       url = "github:yokoffing/Betterfox";
@@ -44,6 +39,7 @@
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
     crossmacro = {
       url = "github:alper-han/crossmacro";
