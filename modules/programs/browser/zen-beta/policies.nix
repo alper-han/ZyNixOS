@@ -140,7 +140,7 @@ in
       Status = "locked";
     };
     "dom.event.contextmenu.enabled" = {
-      Value = false;
+      Value = true;
       Status = "locked";
     };
     "dom.battery.enabled" = {

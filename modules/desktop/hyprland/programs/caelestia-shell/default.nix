@@ -51,6 +51,16 @@ in
           early_exit=false
           auto_save=false
         '';
+        xdg.dataFile."applications/org.quickshell.desktop".text = ''
+          [Desktop Entry]
+          Type=Application
+          Name=Quickshell
+          Exec=${caelestiaPackages.caelestiaPackage}/bin/caelestia-shell
+          Icon=org.quickshell
+          NoDisplay=true
+          StartupNotify=false
+          Categories=Utility;
+        '';
 
         programs.caelestia = {
           enable = true;
