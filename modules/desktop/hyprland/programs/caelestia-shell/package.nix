@@ -38,9 +38,6 @@ let
             substituteInPlace $out/share/caelestia-shell/shell.qml \
               --replace-fail '    Background {}' '    Background {}
           ZynixShellExtensions {}'
-
-            substituteInPlace $out/share/caelestia-shell/modules/launcher/services/Apps.qml \
-              --replace-fail '["app2unit", "--", ...entry.command]' '["app2unit", "--", entry.id]'
     '';
   });
 in

@@ -38,6 +38,8 @@ in
           pkgs.adw-gtk3
           pkgs.papirus-folders
           pkgs.papirus-icon-theme
+          pkgs.libsForQt5.qt5ct
+          pkgs.libsForQt5.qtstyleplugin-kvantum
           pkgs.qtengine
         ];
 

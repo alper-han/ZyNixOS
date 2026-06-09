@@ -4,8 +4,9 @@
 {
   # General appearance
   general = {
-    gaps_in = 1;
-    gaps_out = if bar == "caelestia-shell" then 3 else 0;
+    gaps_workspaces = 20;
+    gaps_in = 5;
+    gaps_out = 10;
     border_size = 1;
     "col.active_border" = "rgba(ca9ee6ff) rgba(f2d5cfff) 45deg";
     "col.inactive_border" = "rgba(b4befecc) rgba(6c7086cc) 45deg";
@@ -16,19 +17,24 @@
 
   # Decoration (shadows, blur, rounding)
   decoration = {
-    shadow.enabled = false;
+    shadow = {
+      enabled = true;
+      range = 15;
+      render_power = 4;
+      color = "rgba(59599210)";
+    };
     rounding = if bar == "caelestia-shell" then 15 else 0;
     dim_special = 0.3;
     blur = {
       enabled = true;
-      special = true;
-      size = 6; # 6
-      passes = 2; # 3
-      vibrancy = 0.1696;
-      popups = false;
-      new_optimizations = true;
-      ignore_opacity = false;
       xray = false;
+      special = false;
+      ignore_opacity = true;
+      new_optimizations = true;
+      popups = true;
+      input_methods = true;
+      size = 8;
+      passes = 2;
     };
   };
 
@@ -43,30 +49,33 @@
   # Animations
   animations = {
     enabled = true;
+    # end-4/dots-hyprland inspired Material-style animations.
     bezier = [
-      "linear, 0, 0, 1, 1"
-      "md3_standard, 0.2, 0, 0, 1"
-      "md3_decel, 0.05, 0.7, 0.1, 1"
-      "md3_accel, 0.3, 0, 0.8, 0.15"
-      "overshot, 0.05, 0.9, 0.1, 1.1"
-      "crazyshot, 0.1, 1.5, 0.76, 0.92"
-      "hyprnostretch, 0.05, 0.9, 0.1, 1.0"
-      "fluent_decel, 0.1, 1, 0, 1"
-      "easeInOutCirc, 0.85, 0, 0.15, 1"
-      "easeOutCirc, 0, 0.55, 0.45, 1"
-      "easeOutExpo, 0.16, 1, 0.3, 1"
-      "zoomEase, 0.16, 1, 0.3, 1" # Special bezier for Zoom
+      "expressiveFastSpatial, 0.42, 1.67, 0.21, 0.90"
+      "expressiveSlowSpatial, 0.39, 1.29, 0.35, 0.98"
+      "expressiveDefaultSpatial, 0.38, 1.21, 0.22, 1.00"
+      "emphasizedDecel, 0.05, 0.7, 0.1, 1"
+      "emphasizedAccel, 0.3, 0, 0.8, 0.15"
+      "standardDecel, 0, 0, 0, 1"
+      "menu_decel, 0.1, 1, 0, 1"
+      "menu_accel, 0.52, 0.03, 0.72, 0.08"
+      "stall, 1, -0.1, 0.7, 0.85"
     ];
     animation = [
-      "windows, 1, 3, md3_decel, popin 60%"
-      "border, 1, 4, default"
-      "fade, 1, 2.5, md3_decel"
-      # "workspaces, 1, 3.5, md3_decel, slide"
-      "workspaces, 1, 3.5, easeOutExpo, slide"
-      # "workspaces, 1, 7, fluent_decel, slidefade 15%"
-      # "specialWorkspace, 1, 3, md3_decel, slidefadevert 15%"
-      "specialWorkspace, 1, 3, md3_decel, slidevert"
-      "zoomFactor, 1, 6, zoomEase" # Zoom animation - 600ms
+      "windowsIn, 1, 3, emphasizedDecel, popin 80%"
+      "fadeIn, 1, 3, emphasizedDecel"
+      "windowsOut, 1, 2, emphasizedDecel, popin 90%"
+      "fadeOut, 1, 2, emphasizedDecel"
+      "windowsMove, 1, 3, emphasizedDecel, slide"
+      "border, 1, 10, emphasizedDecel"
+      "layersIn, 1, 2.7, emphasizedDecel, popin 93%"
+      "layersOut, 1, 2.4, menu_accel, popin 94%"
+      "fadeLayersIn, 1, 0.5, menu_decel"
+      "fadeLayersOut, 1, 2.7, stall"
+      "workspaces, 1, 7, menu_decel, slide"
+      "specialWorkspaceIn, 1, 2.8, emphasizedDecel, slidevert"
+      "specialWorkspaceOut, 1, 1.2, emphasizedAccel, slidevert"
+      "zoomFactor, 1, 3, standardDecel"
     ];
   };
 }

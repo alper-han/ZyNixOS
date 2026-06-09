@@ -36,7 +36,7 @@ StyledRect {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
             visible: root.title.length > 0 || root.subtitle.length > 0 || root.icon.length > 0
 
             MaterialIcon {
@@ -44,7 +44,7 @@ StyledRect {
                 visible: root.icon.length > 0
                 text: root.icon
                 color: Colours.palette.m3primary
-                font.pointSize: Tokens.font.size.extraLarge
+                font: Tokens.font.icon.extraLarge
             }
 
             ColumnLayout {
@@ -55,8 +55,7 @@ StyledRect {
                     Layout.fillWidth: true
                     visible: root.title.length > 0
                     text: root.title
-                    font.pointSize: Tokens.font.size.larger
-                    font.weight: 500
+                    font: Tokens.font.title.medium
                     elide: Text.ElideRight
                 }
 
@@ -65,7 +64,7 @@ StyledRect {
                     visible: root.subtitle.length > 0
                     text: root.subtitle
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     wrapMode: Text.WordWrap
                 }
             }

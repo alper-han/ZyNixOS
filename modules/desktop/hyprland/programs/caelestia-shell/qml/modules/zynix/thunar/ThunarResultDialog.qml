@@ -184,18 +184,16 @@ Scope {
 
             screen: modelData
             name: `zynix-thunar-${root.commandName}`
-            visible: root.shown
+            visible: root.shown && Hypr.monitorFor(modelData) === Hypr.focusedMonitor
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.keyboardFocus: root.shown ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-            mask: root.shown ? null : emptyRegion
+            WlrLayershell.keyboardFocus: win.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+            mask: win.visible ? null : emptyRegion
 
             anchors.top: true
             anchors.bottom: true
             anchors.left: true
             anchors.right: true
-
-            Keys.onEscapePressed: root.close()
 
             Region {
                 id: emptyRegion
@@ -204,7 +202,7 @@ Scope {
             StyledRect {
                 anchors.fill: parent
                 color: Colours.palette.m3scrim
-                opacity: root.shown ? 0.45 : 0
+                opacity: win.visible ? 0.45 : 0
 
                 StateLayer {
                     anchors.fill: parent
@@ -220,7 +218,7 @@ Scope {
                 id: panel
 
                 anchors.centerIn: parent
-                visible: root.shown
+                visible: win.visible
                 title: root.dialogTitle
                 subtitle: root.dialogSubtitle
                 icon: root.dialogIcon
@@ -240,7 +238,7 @@ Scope {
                         id: contentStack
 
                         anchors.fill: parent
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         EmptyState {
                             Layout.alignment: Qt.AlignHCenter
@@ -278,17 +276,17 @@ Scope {
                                 required property int index
 
                                 width: ListView.view.width
-                                implicitHeight: Math.max(rowLayout.implicitHeight + Tokens.padding.normal * 2, Tokens.sizes.launcher.itemHeight)
+                                implicitHeight: Math.max(rowLayout.implicitHeight + Tokens.padding.medium * 2, Tokens.sizes.launcher.itemHeight)
 
                                 StyledRect {
                                     anchors.fill: parent
-                                    radius: Tokens.rounding.normal
+                                    radius: Tokens.rounding.medium
                                     color: rowRoot.ListView.isCurrentItem ? Colours.palette.m3secondaryContainer : "transparent"
                                 }
 
                                 StateLayer {
                                     anchors.fill: parent
-                                    radius: Tokens.rounding.normal
+                                    radius: Tokens.rounding.medium
                                     onClicked: {
                                         root.selectedIndex = rowRoot.index;
                                         resultList.currentIndex = rowRoot.index;
@@ -299,8 +297,8 @@ Scope {
                                     id: rowLayout
 
                                     anchors.fill: parent
-                                    anchors.margins: Tokens.padding.normal
-                                    spacing: Tokens.spacing.normal
+                                    anchors.margins: Tokens.padding.medium
+                                    spacing: Tokens.spacing.medium
 
                                     ColumnLayout {
                                         Layout.fillWidth: true
@@ -310,15 +308,14 @@ Scope {
                                             Layout.fillWidth: true
                                             text: rowRoot.modelData.label
                                             color: Colours.palette.m3onSurfaceVariant
-                                            font.pointSize: Tokens.font.size.small
+                                            font: Tokens.font.body.small
                                             elide: Text.ElideRight
                                         }
 
                                         StyledText {
                                             Layout.fillWidth: true
                                             text: rowRoot.modelData.value
-                                            font.family: Tokens.font.family.mono
-                                            font.pointSize: Tokens.font.size.small
+                                            font: Tokens.font.mono.small
                                             wrapMode: Text.WrapAnywhere
                                             maximumLineCount: 6
                                             elide: Text.ElideRight
@@ -339,7 +336,7 @@ Scope {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     TextButton {
                         Layout.fillWidth: true

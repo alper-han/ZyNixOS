@@ -66,6 +66,98 @@ in
     "browser.tabs.warnOnClose" = {
       Value = false;
     };
+    "extensions.formautofill.addresses.enabled" = {
+      Value = false;
+      Status = "locked";
+    };
+    "extensions.formautofill.creditCards.enabled" = {
+      Value = false;
+      Status = "locked";
+    };
+    "dom.security.https_only_mode_pbm" = {
+      Value = true;
+      Status = "locked";
+    };
+    "dom.security.https_only_mode_error_page_user_suggestions" = {
+      Value = true;
+      Status = "locked";
+    };
+    "browser.firefox-view.feature-tour" = {
+      Value = ''{"screen":"","complete":true}'';
+      Status = "locked";
+    };
+    "identity.fxaccounts.enabled" = {
+      Value = false;
+      Status = "locked";
+    };
+    "browser.tabs.firefox-view-next" = {
+      Value = false;
+      Status = "locked";
+    };
+    "privacy.sanitize.sanitizeOnShutdown" = {
+      Value = false;
+      Status = "locked";
+    };
+    "privacy.clearOnShutdown.cache" = {
+      Value = true;
+      Status = "locked";
+    };
+    "privacy.clearOnShutdown.cookies" = {
+      Value = false;
+      Status = "locked";
+    };
+    "privacy.clearOnShutdown.offlineApps" = {
+      Value = false;
+      Status = "locked";
+    };
+    "browser.sessionstore.privacy_level" = {
+      Value = 0;
+      Status = "locked";
+    };
+    "floorp.browser.sidebar.enable" = {
+      Value = false;
+      Status = "locked";
+    };
+    "geo.enabled" = {
+      Value = false;
+      Status = "locked";
+    };
+    "media.navigator.enabled" = {
+      Value = false;
+      Status = "locked";
+    };
+    "dom.event.clipboardevents.enabled" = {
+      Value = false;
+      Status = "locked";
+    };
+    "dom.event.contextmenu.enabled" = {
+      Value = false;
+      Status = "locked";
+    };
+    "dom.battery.enabled" = {
+      Value = false;
+      Status = "locked";
+    };
+    "extensions.enabledScopes" = {
+      Value = 15;
+      Status = "locked";
+    };
+    "extensions.autoDisableScopes" = {
+      Value = 0;
+      Status = "locked";
+    };
+    "browser.newtabpage.activity-stream.floorp.newtab.imagecredit.hide" = {
+      Value = true;
+      Status = "locked";
+    };
+    "browser.newtabpage.activity-stream.floorp.newtab.releasenote.hide" = {
+      Value = true;
+      Status = "locked";
+    };
+    "browser.search.separatePrivateDefault" = {
+      Value = true;
+      Status = "locked";
+    };
   };
   PromptForDownloadLocation = true;
   SearchSuggestEnabled = false;

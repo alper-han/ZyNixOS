@@ -78,7 +78,6 @@ in
   };
 
   bar = {
-    position = "top";
     clock = {
       background = true;
       showIcon = true;
@@ -232,7 +231,6 @@ in
     useFahrenheit = false;
     useFahrenheitPerformance = false;
     smartScheme = true;
-    showLyrics = false;
     inherit useTwelveHourClock;
   };
 

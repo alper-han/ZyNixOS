@@ -35,7 +35,8 @@ let
       in
       "${app} ${getExe rofimusic}";
 
-  barToggle = ''pkill -x "waybar|caelestia-shell|quickshell" || ${serviceApp} ${bar}'';
+  barCommand = if isCaelestia then "caelestia shell -d" else bar;
+  barToggle = ''pkill -x "waybar|caelestia-shell|quickshell" || ${serviceApp} ${barCommand}'';
   clipmanagerCmd = "${app} ${getExe clipmanager}";
   gamemodeCmd = getExe gamemode;
   keybindsYadCmd = "${app} ${getExe keybinds-yad}";
@@ -58,7 +59,7 @@ let
     launcher = [
       "$mainMod, A, global, caelestia:launcher"
       "$mainMod, SPACE, global, caelestia:showall"
-      "$mainMod SHIFT, I, global, caelestia:controlCenter"
+      "$mainMod SHIFT, I, global, caelestia:nexus"
       "$mainMod SHIFT, D, global, caelestia:dashboard"
       "$mainMod SHIFT, U, global, caelestia:utilities"
       "$mainMod, Z, exec, pkill -x fuzzel || ${caelestia} emoji -p"

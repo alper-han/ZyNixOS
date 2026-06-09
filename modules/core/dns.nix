@@ -50,7 +50,9 @@
           ];
           upstream_dns = [
             "https://dns.quad9.net/dns-query"
+            "https://cloudflare-dns.com/dns-query"
           ];
+          upstream_mode = "parallel";
           bootstrap_dns = [
             "9.9.9.9"
             "149.112.112.112"
@@ -61,11 +63,9 @@
             "2606:4700:4700::1111"
             "2606:4700:4700::1001"
           ];
-          fallback_dns = [
-            "https://cloudflare-dns.com/dns-query"
-          ];
-          cache_size = 67108864;
-          cache_ttl_min = 60;
+          upstream_timeout = "2s";
+          cache_size = 134217728;
+          cache_ttl_min = 300;
           cache_optimistic = true;
         };
         filtering = {
@@ -78,26 +78,60 @@
               answer = "192.168.0.200";
               enabled = true;
             }
+            {
+              domain = "nixos-server";
+              answer = "192.168.0.200";
+              enabled = true;
+            }
           ];
 
           parental_enabled = false;
           safe_search.enabled = false;
         };
-        filters =
-          map
-            (url: {
-              enabled = true;
-              url = url;
-            })
-            [
-              "https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt"
-              "https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt"
-              "https://adguardteam.github.io/HostlistsRegistry/assets/filter_8.txt"
-              "https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt"
-              "https://adguardteam.github.io/HostlistsRegistry/assets/filter_40.txt"
-              "https://adguardteam.github.io/HostlistsRegistry/assets/filter_26.txt"
-              "https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt"
-            ];
+        filters = [
+          {
+            enabled = true;
+            id = 1780709973;
+            name = "Malicious URL Blocklist (URLHaus)";
+            url = "https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt";
+          }
+          {
+            enabled = true;
+            id = 1780709974;
+            name = "Phishing Army";
+            url = "https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt";
+          }
+          {
+            enabled = true;
+            id = 1780709975;
+            name = "NoCoin Filter List";
+            url = "https://adguardteam.github.io/HostlistsRegistry/assets/filter_8.txt";
+          }
+          {
+            enabled = true;
+            id = 1780709976;
+            name = "Phishing URL Blocklist (PhishTank and OpenPhish)";
+            url = "https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt";
+          }
+          {
+            enabled = true;
+            id = 1780709977;
+            name = "TUR: Turkish Ad Hosts";
+            url = "https://adguardteam.github.io/HostlistsRegistry/assets/filter_40.txt";
+          }
+          {
+            enabled = true;
+            id = 1780709978;
+            name = "TUR: turk-adlist";
+            url = "https://adguardteam.github.io/HostlistsRegistry/assets/filter_26.txt";
+          }
+          {
+            enabled = true;
+            id = 1780709979;
+            name = "HaGeZi's Ultimate Blocklist";
+            url = "https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt";
+          }
+        ];
       };
     };
   };

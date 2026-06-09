@@ -13,8 +13,12 @@
     final: prev:
     {
       # virtualisation.libvirtd.qemu.package uses pkgs.qemu_kvm.
-      # qemu-10.2.2.patch from https://github.com/zhaodice/qemu-anti-detection
-      qemu_kvm = prev.qemu_kvm.overrideAttrs (oldAttrs: {
+      # Pin qemu_kvm to 10.2.2 because the anti-detection patch is version-specific.
+      qemu_kvm =
+        let
+          qemuPkgs = inputs.nixpkgs-qemu-10-2-2.legacyPackages.${final.stdenv.hostPlatform.system};
+        in
+        qemuPkgs.qemu_kvm.overrideAttrs (oldAttrs: {
         patches = (oldAttrs.patches or [ ]) ++ [
           (final.fetchpatch {
             url = "https://raw.githubusercontent.com/zhaodice/qemu-anti-detection/2750c86d2d045243ba6617951487e41b25c05557/qemu-10.2.2.patch";

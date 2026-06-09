@@ -64,6 +64,11 @@ in
     portalPackage = pkgs.xdg-desktop-portal-hyprland;
   };
 
+  # TODO: Drop after Hyprland 0.55.2 if portal access works without this wrapper override.
+  security.wrappers.Hyprland.capabilities = lib.mkIf (lib.versionAtLeast pkgs.hyprland.version "0.55.2" && lib.versionOlder pkgs.hyprland.version "0.55.3") (
+    lib.mkForce ""
+  );
+
   home-manager.sharedModules =
     let
       inherit (lib) getExe getExe';
@@ -203,18 +208,24 @@ in
                   ) editor
                 }";
                 "$fileManager" = "uwsm app -- ${getExe fileManagerScript} ${fileManager}";
-                "$browser" = "uwsm app -- ${browser}";
+                "$browser" = "uwsm app -- ${browser} --blank-window";
 
                 # Input settings
                 input = {
                   kb_layout = "${kbdLayout}";
-                  repeat_delay = 275; # or 212
-                  repeat_rate = 35;
                   numlock_by_default = true;
+                  repeat_delay = 250;
+                  repeat_rate = 35;
 
                   follow_mouse = 1;
+                  off_window_axis_events = 2;
 
-                  touchpad.natural_scroll = false;
+                  touchpad = {
+                    natural_scroll = false;
+                    disable_while_typing = true;
+                    clickfinger_behavior = true;
+                    scroll_factor = 0.7;
+                  };
 
                   tablet.output = "current";
 
@@ -227,8 +238,8 @@ in
 
                 # Render settings
                 render = {
-                  direct_scanout = 2; # 0 = off, 1 = on, 2 = auto (on with content type 'game' , It causes problems in some games)
                   cm_auto_hdr = 0;
+                  # direct_scanout = 2; # 0 = off, 1 = on, 2 = auto (on with content type 'game' , It causes problems in some games)
                   # new_render_scheduling = true;
                 };
 
@@ -241,18 +252,26 @@ in
                 # Miscellaneous settings
                 misc = {
                   middle_click_paste = false;
-                  on_focus_under_fullscreen = false; # test
+                  on_focus_under_fullscreen = false;
                   anr_missed_pings = 3;
                   disable_hyprland_logo = true;
+                  disable_splash_rendering = true;
                   mouse_move_focuses_monitor = true;
-                  animate_manual_resizes = true;
-                  animate_mouse_windowdragging = true;
+                  mouse_move_enables_dpms = true;
+                  key_press_enables_dpms = true;
+                  animate_manual_resizes = false;
+                  animate_mouse_windowdragging = false;
                   force_default_wallpaper = 0;
-                  swallow_regex = "^(Alacritty|kitty)$";
+                  swallow_regex = "(foot|kitty|allacritty|Alacritty)";
                   enable_swallow = false;
                   disable_autoreload = true; # If true, the config will not reload automatically on save, and instead needs to be reloaded with hyprctl reload. Might save on battery.
                   disable_hyprland_guiutils_check = true;
-                  vrr = 2; # enable variable refresh rate (0=off, 1=on, 2=fullscreen only, 3 = fullscreen games/media)
+                  vrr = 1; # enable variable refresh rate (0=off, 1=on, 2=fullscreen only, 3 = fullscreen games/media)
+                  allow_session_lock_restore = true;
+                  session_lock_xray = true;
+                  initial_workspace_tracking = false;
+                  focus_on_activate = true;
+                  background_color = "rgb(201f23)";
                 };
 
                 # Cursor settings
@@ -262,20 +281,35 @@ in
                   sync_gsettings_theme = false;
                   zoom_factor = 1.0;
                   zoom_rigid = false;
+                  zoom_disable_aa = true;
+                  hotspot_padding = 1;
                 };
 
                 # XWayland settings
-                xwayland.force_zero_scaling = false;
+                xwayland.force_zero_scaling = true;
 
                 # Gestures
                 gesture = [
-                  "3, horizontal, workspace"
+                  "3, swipe, move"
+                  "3, pinch, fullscreen"
+                  "4, horizontal, workspace"
                 ];
+
+                gestures = {
+                  workspace_swipe_distance = 700;
+                  workspace_swipe_cancel_ratio = 0.2;
+                  workspace_swipe_min_speed_to_force = 5;
+                  workspace_swipe_direction_lock = true;
+                  workspace_swipe_direction_lock_threshold = 10;
+                  workspace_swipe_create_new = true;
+                };
 
                 # Dwindle layout settings
                 dwindle = {
                   # pseudotile = true;
                   preserve_split = true;
+                  smart_split = false;
+                  smart_resizing = false;
                 };
 
                 # Master layout settings

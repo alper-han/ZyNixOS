@@ -19,11 +19,14 @@ let
     ) editor
   }";
   fileManagerCmd = "uwsm app -- ${getExe fileManagerScript} ${fileManager}";
-  browserCmd = "uwsm app -- ${browser}";
-  barCmd = ''pkill -x \"waybar|caelestia-shell|quickshell\" || uwsm app -s s -- ${bar}'';
+  browserCmd = "uwsm app -- ${browser} --blank-window";
   isCaelestia = bar == "caelestia-shell";
-  gamesCmd = if isCaelestia then "uwsm app -- caelestia shell games open" else "uwsm app -- launcher games";
-  tmuxCmd = if isCaelestia then "uwsm app -- caelestia shell tmux open" else "uwsm app -- launcher tmux";
+  barCommand = if isCaelestia then "caelestia shell -d" else bar;
+  barCmd = ''pkill -x \"waybar|caelestia-shell|quickshell\" || uwsm app -s s -- ${barCommand}'';
+  gamesCmd =
+    if isCaelestia then "uwsm app -- caelestia shell games open" else "uwsm app -- launcher games";
+  tmuxCmd =
+    if isCaelestia then "uwsm app -- caelestia shell tmux open" else "uwsm app -- launcher tmux";
   musicCmd =
     if isCaelestia then
       "uwsm app -- caelestia shell music open"
@@ -50,7 +53,7 @@ let
       ''
         "SUPER A" "Toggle Caelestia launcher" "global caelestia:launcher" \
         "SUPER SPACE" "Toggle Caelestia panels" "global caelestia:showall" \
-        "SUPER SHIFT I" "Open Caelestia control center" "global caelestia:controlCenter" \
+        "SUPER SHIFT I" "Open Caelestia nexus" "global caelestia:nexus" \
         "SUPER SHIFT D" "Toggle Caelestia dashboard" "global caelestia:dashboard" \
         "SUPER SHIFT U" "Toggle Caelestia utilities" "global caelestia:utilities" \
       ''
@@ -120,10 +123,9 @@ let
     "SUPER SHIFT M" "Launch music menu" "${musicCmd}" \
   '';
 
-  gamesRow =
-    ''
-      "SUPER G" "Game launcher" "${gamesCmd}" \
-    '';
+  gamesRow = ''
+    "SUPER G" "Game launcher" "${gamesCmd}" \
+  '';
 
   screenshotRows =
     if isCaelestia then

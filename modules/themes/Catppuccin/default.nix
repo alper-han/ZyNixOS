@@ -117,10 +117,10 @@ in
             force = true;
             source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk-dark.css";
           };
-          "Kvantum/${catppuccin}" = lib.mkIf (!caelestiaOwnsTheme) {
+          "Kvantum/${catppuccin}" = {
             source = "${catppuccin-kvantum-pkg}/share/Kvantum/${catppuccin}";
           };
-          "Kvantum/kvantum.kvconfig" = lib.mkIf (!caelestiaOwnsTheme) {
+          "Kvantum/kvantum.kvconfig" = {
             source = (pkgs.formats.ini { }).generate "kvantum.kvconfig" {
               General.theme = catppuccin;
             };

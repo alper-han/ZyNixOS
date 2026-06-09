@@ -16,8 +16,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     caelestia-shell = {
-      # url = "github:caelestia-dots/shell";
-      url = "github:alper-han/caelestia-shell/bar";
+      url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-cachyos-kernel = {
@@ -46,6 +45,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-davinci-20-2-3.url = "github:NixOS/nixpkgs/4652ba995a945108fb891191c1e910b9a6ed9064";
+    nixpkgs-qemu-10-2-2.url = "github:NixOS/nixpkgs/331800de5053fcebacf6813adb5db9c9dca22a0c";
   };
 
   outputs =

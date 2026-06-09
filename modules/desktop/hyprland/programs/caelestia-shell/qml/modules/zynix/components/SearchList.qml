@@ -30,7 +30,7 @@ Item {
     readonly property StyledTextField searchField: search
 
     implicitWidth: root.listWidth
-    implicitHeight: searchWrapper.implicitHeight + Tokens.spacing.normal + Math.max(listWrapper.implicitHeight, empty.implicitHeight)
+    implicitHeight: searchWrapper.implicitHeight + Tokens.spacing.medium + Math.max(listWrapper.implicitHeight, empty.implicitHeight)
 
     StyledRect {
         id: searchWrapper
@@ -59,8 +59,8 @@ Item {
             anchors.right: clearIcon.left
             anchors.leftMargin: Tokens.spacing.small
             anchors.rightMargin: Tokens.spacing.small
-            topPadding: Tokens.padding.larger
-            bottomPadding: Tokens.padding.larger
+            topPadding: Tokens.padding.large
+            bottomPadding: Tokens.padding.large
             placeholderText: root.placeholderText
             onAccepted: root.accepted()
 
@@ -106,7 +106,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: searchWrapper.bottom
-        anchors.topMargin: Tokens.spacing.normal
+        anchors.topMargin: Tokens.spacing.medium
         implicitHeight: Math.min(root.maxListHeight, list.contentHeight)
         clip: true
         visible: list.count > 0
@@ -125,7 +125,7 @@ Item {
         id: empty
 
         anchors.top: searchWrapper.bottom
-        anchors.topMargin: Tokens.spacing.normal
+        anchors.topMargin: Tokens.spacing.medium
         anchors.horizontalCenter: parent.horizontalCenter
         visible: list.count === 0
         icon: root.emptyIcon

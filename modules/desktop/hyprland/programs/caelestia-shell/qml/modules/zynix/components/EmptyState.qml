@@ -13,13 +13,13 @@ RowLayout {
     property string title: qsTr("No results")
     property string subtitle: qsTr("Try searching for something else")
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     MaterialIcon {
         Layout.alignment: Qt.AlignVCenter
         text: root.icon
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Tokens.font.size.extraLarge
+        font: Tokens.font.icon.extraLarge
     }
 
     ColumnLayout {
@@ -29,15 +29,14 @@ RowLayout {
         StyledText {
             text: root.title
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Tokens.font.size.larger
-            font.weight: 500
+            font: Tokens.font.title.medium
         }
 
         StyledText {
             visible: root.subtitle.length > 0
             text: root.subtitle
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
         }
     }
 }

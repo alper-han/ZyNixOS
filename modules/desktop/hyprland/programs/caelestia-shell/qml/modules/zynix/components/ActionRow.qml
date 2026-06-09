@@ -21,13 +21,13 @@ Item {
     signal activated
 
     width: ListView.view?.width ?? implicitWidth
-    implicitHeight: Math.max(Tokens.sizes.launcher.itemHeight, row.implicitHeight + Tokens.padding.smaller * 2)
+    implicitHeight: Math.max(Tokens.sizes.launcher.itemHeight, row.implicitHeight + Tokens.padding.extraSmall * 2)
     height: implicitHeight
 
 
     StateLayer {
         disabled: !root.interactive
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.medium
         onClicked: root.activated()
     }
 
@@ -35,10 +35,10 @@ Item {
         id: row
 
         anchors.fill: parent
-        anchors.leftMargin: Tokens.padding.larger
-        anchors.rightMargin: Tokens.padding.larger
-        anchors.margins: Tokens.padding.smaller
-        spacing: Tokens.spacing.normal
+        anchors.leftMargin: Tokens.padding.large
+        anchors.rightMargin: Tokens.padding.large
+        anchors.margins: Tokens.padding.extraSmall
+        spacing: Tokens.spacing.medium
 
         Item {
             id: leadingIcon
@@ -77,7 +77,7 @@ Item {
                 visible: root.iconPath.length === 0 && leadingIcon.themedIconPath.length === 0 && root.icon.length > 0
                 text: root.icon
                 color: Colours.palette.m3primary
-                font.pointSize: Tokens.font.size.extraLarge
+                font: Tokens.font.icon.extraLarge
             }
         }
 
@@ -89,7 +89,7 @@ Item {
             StyledText {
                 Layout.fillWidth: true
                 text: root.title
-                font.pointSize: Tokens.font.size.normal
+                font: Tokens.font.body.medium
                 elide: Text.ElideRight
             }
 
@@ -98,7 +98,7 @@ Item {
                 visible: root.subtitle.length > 0
                 text: root.subtitle
                 color: Colours.palette.m3outline
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
                 elide: Text.ElideRight
             }
         }
@@ -108,7 +108,7 @@ Item {
             visible: root.trailingText.length > 0
             text: root.trailingText
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Tokens.font.size.small
+            font: Tokens.font.body.small
         }
     }
 }

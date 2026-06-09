@@ -118,10 +118,8 @@ in
   "browser.tabs.crashReporting.sendReport" = lock-false;
   "browser.crashReports.unsubmittedCheck.autoSubmit2" = lock-false;
   "browser.formfill.enable" = lock-false;
-  "extensions.formautofill.addresses.enabled" = lock-false;
   "extensions.formautofill.available" = "off";
-  "extensions.formautofill.creditCards.available" = lock-false;
-  "extensions.formautofill.creditCards.enabled" = lock-false;
+  "extensions.formautofill.creditCards.available" = false;
   "extensions.formautofill.heuristics.enabled" = lock-false;
   "app.normandy.enabled" = lock-false;
   "app.normandy.api_url" = "";
@@ -157,7 +155,6 @@ in
   "app.shield.optoutstudies.enabled" = lock-false;
   "dom.security.https_only_mode" = lock-true;
   "dom.security.https_only_mode_ever_enabled" = lock-true;
-  "identity.fxaccounts.enabled" = lock-false;
   "app.update.auto" = false;
   "browser.startup.homepage" = "";
   "browser.bookmarks.restore_default_bookmarks" = false;
@@ -189,14 +186,6 @@ in
   "extensions.webcompat.perform_injections" = true;
   "extensions.webcompat.perform_ua_overrides" = true;
 
-  "extensions.autoDisableScopes" = {
-    Value = 0;
-    Status = "locked";
-  };
-  "extensions.enabledScopes" = {
-    Value = 15;
-    Status = "locked";
-  };
   "extensions.allowPrivateBrowsingByDefault" = lock-true;
   "extensions.webextensions.restrictedDomains" = {
     Value = "";

@@ -63,7 +63,10 @@ Scope {
             if (exitCode !== 0) {
                 root.sessions = [];
                 root.errorText = error.trim();
-                console.warn(lc, `zynix.tmux.error exitCode=${exitCode} stderr=${root.errorText}`);
+                if (root.errorText.includes("no server running"))
+                    console.info(lc, "zynix.tmux.noServer");
+                else
+                    console.warn(lc, `zynix.tmux.error exitCode=${exitCode} stderr=${root.errorText}`);
                 console.info(lc, "zynix.tmux.empty");
                 root.failed(root.errorText);
                 root.refreshed();

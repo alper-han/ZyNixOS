@@ -2,290 +2,157 @@
 # Usage: import ./rules.nix { }
 { }:
 let
-  # Helper function to generate regex from a list of strings: ^(app1|app2|app3)$
   mkRegex = list: "^(${builtins.concatStringsSep "|" list})$";
 
-  # --- Application Lists ---
-
-  # Browser instances (1.00 active / 1.00 inactive)
-  browserApps = [
-    "[Ff]irefox"
-    "[Ff]loorp"
-    "[Zz]en(-beta|-browser)?"
-    "[Bb]rave-browser(-beta|-dev|-unstable)?"
-  ];
-
-  # High Opacity Apps (0.90 active / 0.80 inactive)
-  # Editors, Auth agents, Launchers, Discord, Media Apps
-  highOpacityApps = [
-    "Emacs"
-    "obsidian"
-    "gcr-prompter"
-    "Hyprland Polkit Agent"
-    "[Ll]utris"
-    "net.lutris.Lutris"
-    "[Dd]iscord"
-    "[Vv]esktop"
-    "[Ww]eb[Cc]ord"
-    "com.github.rafostar.Clapper"
-    # Video Editing / Media Production
-    "resolve" # DaVinci Resolve class name
-    "YouTube Music"
-    "youtube-music"
-    # IDEs (JetBrains - also matches -ce variants via regex)
-    "jetbrains-rider"
-    "jetbrains-idea"
-    "jetbrains-idea-ce"
-    "jetbrains-webstorm"
-    "jetbrains-clion"
-    "jetbrains-pycharm"
-    "jetbrains-pycharm-ce"
-    "jetbrains-goland"
-    "jetbrains-datagrip"
-    "jetbrains-phpstorm"
-    "jetbrains-rubymine"
-    # GitHub Desktop
-    "GitHub Desktop"
-    "github-desktop"
-    # Text Editors
-    "org.gnome.gedit"
-    "gedit"
-    "org.gnome.TextEditor"
-    "org.kde.kate"
-    "kate"
-    "org.kde.kwrite"
-    "kwrite"
-    # Remote Desktop
-    "rustdesk"
-    "RustDesk"
-    # Media
-    "jellyfin"
-    "Jellyfin Media Player"
-  ];
-
-  # Medium Opacity Apps (0.80 active / 0.70 inactive)
-  # Terminals, File Managers, System Tools
-  mediumOpacityApps = [
-    # Coding
-    "VSCodium"
-    "codium-url-handler"
-    "code"
-    "code-url-handler"
-    "nvim-wrapper"
-    # Terminals
-    "kitty"
-    "[Aa]lacritty"
-    "org.wezfurlong.wezterm"
-    # File Managers
-    "org.gnome.Nautilus"
-    "[Tt]hunar"
-    "pcmanfm"
-    "thunar-volman-settings"
-    "org.kde.dolphin"
-    "fileManager"
-    "file-roller"
-    "org.gnome.FileRoller"
-    "org.kde.ark"
-    "peazip"
-    "PeaZip"
-    # System & Tools
-    "org.kde.polkit-kde-authentication-agent-1"
-    "gnome-disks"
-    "io.github.ilya_zlobintsev.LACT"
-    "[Ss]team"
-    "steamwebhelper"
-    "hu.kramo.Cartridges"
-    "[Ss]potify"
-    "Kvantum Manager"
-    "nwg-look"
-    "qt5ct"
-    "qt6ct"
-    "Signal"
-    "com.github.tchx84.Flatseal"
-    "com.obsproject.Studio"
-    "gnome-boxes"
-    "app.drey.Warp"
-    "net.davidotek.pupgui2"
-    "io.gitlab.theevilskeleton.Upscaler"
-    "yad"
-    "pavucontrol"
-    "org.pulseaudio.pavucontrol"
-    "blueman-manager"
-    ".blueman-manager-wrapped"
-    "nm-applet"
-    "nm-connection-editor"
-    # Container / Virtualization
-    "io.podman_desktop.PodmanDesktop"
-    "podman-desktop"
-    # Database
-    "sqlitebrowser"
-    "DB Browser for SQLite"
-  ];
-
-  # Applications that must always float
-  floatingApps = [
-    "qt5ct"
-    "nwg-look"
-    "org.kde.ark"
-    "Signal"
-    "com.github.rafostar.Clapper"
-    "app.drey.Warp"
-    "net.davidotek.pupgui2"
-    "eog"
-    "io.gitlab.theevilskeleton.Upscaler"
-    "yad"
-    "pavucontrol"
-    "org.pulseaudio.pavucontrol"
-    "blueman-manager"
-    ".blueman-manager-wrapped"
-    "nm-applet"
-    "nm-connection-editor"
-    "org.kde.polkit-kde-authentication-agent-1"
-    "peazip"
-    "PeaZip"
-    # Remote Desktop
-    "rustdesk"
-    "RustDesk"
-    # Audio
-    "com.github.wwmm.easyeffects"
-    "easyeffects"
-    # Screenshot / Color Picker
-    "swappy"
-    "org.gnome.Screenshot"
-    "hyprpicker"
-    # KDE Connect
-    "org.kde.kdeconnect.app"
-    "kdeconnect-app"
-    "kdeconnect-indicator"
-    "kdeconnect-settings"
-    # Backup
-    "Duplicati"
-    "duplicati"
-    # Virtualization
-    "virt-viewer"
-    "remote-viewer"
-    "virt-manager"
-    # Settings
-    "gnome-tweaks"
-    "org.gnome.tweaks"
-    # Database
-    "sqlitebrowser"
-    "DB Browser for SQLite"
-  ];
-
-  # Applications to center on screen
-  centeredApps = [
-    "pavucontrol"
-    "blueman-manager"
-    "nm-connection-editor"
-    # New additions
-    "rustdesk"
-    "RustDesk"
-    "easyeffects"
-    "com.github.wwmm.easyeffects"
-    "swappy"
-    "hyprpicker"
-    "sqlitebrowser"
-    "virt-viewer"
-    "virt-manager"
-    "gnome-tweaks"
-    "Duplicati"
-  ];
-
-  # Game definitions (Regex for classes)
   gameApps = [
     "steam_app_.*"
     "gamescope"
-    "Waydroid"
-    "osu!"
     ".*\\.exe"
     "pathofexilesteam\\.exe"
-    "com.libretro.RetroArch"
-    "RetroArch"
-    "retroarch"
   ];
-
 in
 {
-  # Layer rules (for special surfaces like rofi, notifications)
-  layerrule = [
-    "blur on, ignore_alpha 0.7, animation fade, match:namespace rofi"
-    "no_screen_share on, blur on, ignore_alpha 0, match:namespace swaync-notification-window"
-    "blur on, ignore_alpha 0.7, match:namespace swaync-control-center"
-  ];
-
-  # Window rules
   windowrule = [
-    # === General Rules ===
-    "tile on, match:title (.*)(Godot)(.*)$"
+    "opacity 0.95 override, match:fullscreen false"
     "suppress_event maximize, match:class .*"
-    "center on, match:title ^(splash)$"
+    "opaque on, match:class org\\.quickshell|swappy"
+    "center on, match:float 1, match:xwayland 0"
 
-    # === Opacity Rules (Grouped via Nix) ===
-    "opacity 1.00 1.00, match:class ${mkRegex browserApps}"
-    "opacity 0.90 0.80, match:class ${mkRegex highOpacityApps}"
-    "opacity 0.80 0.70, match:class ${mkRegex mediumOpacityApps}"
-    "opacity 0.80 0.70, match:class ^(Xdg-desktop-portal-gtk|Xdg-desktop-portal-kde)$"
-    # === Floating Rules ===
-    "float on, match:class ${mkRegex floatingApps}"
-    "center on, match:class ${mkRegex centeredApps}"
-
-    # === Picture-in-Picture (PiP) ===
-    "float on, pin on, match:title ^(Picture-in-Picture)$, match:class ${mkRegex browserApps}"
-    # Using monitor variables instead of % for precise positioning (Hyprland v0.47+)
-    "size 25% 25%, move 73% 4%, match:title ^(Picture-in-Picture)$"
-
-    # === Gaming Rules ===
-    "tag +games, match:class ${mkRegex gameApps}"
-    "tag +games, match:initial_class ^(.*\\.exe)$"
-
-    # Optimization for games (Combined into single line)
-    "immediate on, fullscreen on, border_size 0, no_shadow on, no_blur on, no_anim on, no_initial_focus on, idle_inhibit always, match:tag games"
-
-    # === Specific App Fixes ===
-    # Steam: Fix menus and tooltips
-    "min_size 1 1, match:class ^(steam)$"
-    "float on, center on, match:title ^(Steam)$, match:class ^()$"
-
-    # Thunar file operation dialog should float instead of joining tiling layout.
+    # Floating
+    "float on, match:class yad"
+    "float on, match:class org\\.gnome\\.FileRoller"
+    "float on, match:class file-roller"
+    "float on, match:class peazip"
+    "float on, match:class PeaZip"
+    "float on, match:class blueman-manager"
+    "float on, match:class org\\.quickshell"
+    "center on, match:title ^(Open File)(.*)$"
+    "float on, match:title ^(Open File)(.*)$"
+    "center on, match:title ^(Select a File)(.*)$"
+    "float on, match:title ^(Select a File)(.*)$"
+    "center on, match:title ^(Choose wallpaper)(.*)$"
+    "float on, match:title ^(Choose wallpaper)(.*)$"
+    "size 60% 65%, match:title ^(Choose wallpaper)(.*)$"
+    "center on, match:title ^(Open Folder)(.*)$"
+    "float on, match:title ^(Open Folder)(.*)$"
+    "center on, match:title ^(Save As)(.*)$"
+    "float on, match:title ^(Save As)(.*)$"
+    "center on, match:title ^(Library)(.*)$"
+    "float on, match:title ^(Library)(.*)$"
+    "center on, match:title ^(File Upload)(.*)$"
+    "float on, match:title ^(File Upload)(.*)$"
+    "center on, match:title ^(.*)(wants to save)$"
+    "float on, match:title ^(.*)(wants to save)$"
+    "center on, match:title ^(.*)(wants to open)$"
+    "float on, match:title ^(.*)(wants to open)$"
     "float on, center on, match:class ^(thunar)$, match:title ^(File Operation Progress)$"
     "size 500 100, match:class ^(thunar)$, match:title ^(File Operation Progress)$"
-
-    # === Portal Dialogs (GTK) ===
-    "no_blur on, match:class ^(Xdg-desktop-portal-gtk)$"
+    "float on, match:class ^(pavucontrol)$"
+    "size 60% 70%, match:class ^(pavucontrol)$"
+    "center on, match:class ^(pavucontrol)$"
+    "float on, match:class ^(org\\.pulseaudio\\.pavucontrol|yad-icon-browser)$"
+    "size 60% 70%, match:class ^(org\\.pulseaudio\\.pavucontrol|yad-icon-browser)$"
+    "center on, match:class ^(org\\.pulseaudio\\.pavucontrol|yad-icon-browser)$"
+    "float on, match:class ^(nm-connection-editor)$"
+    "size 45% 45%, match:class ^(nm-connection-editor)$"
+    "center on, match:class ^(nm-connection-editor)$"
+    "float on, match:title .*Welcome"
+    # "no_blur on, match:class ^(Xdg-desktop-portal-gtk)$"
     "border_size 0, match:class ^(Xdg-desktop-portal-gtk)$"
+    # Special workspaces
+    "workspace special:sysmon, match:class btop"
+    "workspace special:music, match:class Spotify|com.github.th_ch.youtube_music"
+    "workspace special:music, match:initial_title Spotify( Free)?"
+    "workspace special:communication, match:class discord|vesktop"
+    "workspace special:rider, match:class rider|jetbrains-rider"
+    "workspace special:jellyfin, match:class jellyfin-desktop|Jellyfin Media Player|com.github.iwalton3.jellyfin-media-player"
+    "workspace special:virt-manager, match:class virt-manager|org.virt-manager.virt-manager"
+    "workspace special:rustdesk, match:class rustdesk|RustDesk"
+    "workspace special:pear, match:class pear-desktop"
+    "workspace special:obs, match:class com.obsproject.Studio|obs"
+    "workspace special:steam, match:class steam"
 
-    # === Idle Inhibit (Prevent sleep while media playing) ===
-    "idle_inhibit focus, match:class ^(mpv|vlc|celluloid|com.github.rafostar.Clapper)$"
-    "idle_inhibit focus, match:class ^(jellyfin|resolve|DaVinci Resolve)$"
-    "idle_inhibit focus, match:title ^(YouTube Music)$"
-    "idle_inhibit fullscreen, match:class ^(firefox)$"
+    # Dialogs
+    "float on, match:title (Select|Open)( a)? (File|Folder)(s)?"
+    "float on, match:title File (Operation|Upload)( Progress)?"
+    "float on, match:title .* Properties"
+    "float on, match:title Export Image as PNG"
+    "float on, match:title GIMP Crash Debug"
 
-    # === DaVinci Resolve Special Windows (Float) ===
-    # Project Manager and loader should float, not maximize
-    "float on, center on, match:class ^(resolve)$, match:title ^(resolve)$"
-    "float on, center on, match:class ^(resolve)$, match:title ^(Project Manager)$"
-    "float on, center on, match:class ^(resolve)$, match:title ^(Preferences)$"
-    "float on, center on, match:class ^(resolve)$, match:title ^(Quick Export)$"
+    # Picture-in-Picture
+    "move 100%-w-2% 100%-w-3%, match:title Picture(-| )in(-| )[Pp]icture"
+    "keep_aspect_ratio on, match:title Picture(-| )in(-| )[Pp]icture"
+    "float on, match:title Picture(-| )in(-| )[Pp]icture"
+    "pin on, match:title Picture(-| )in(-| )[Pp]icture"
 
-    # === Size Constraints ===
-    "size 1000 700, match:class ^(pavucontrol|org.pulseaudio.pavucontrol)$"
-    "size 600 800, match:class ^(blueman-manager)$"
-    "size 1200 800, match:class ^(rustdesk|RustDesk)$"
-    "size 900 650, match:class ^(easyeffects|com.github.wwmm.easyeffects)$"
-    # "size 800 600, match:class ^(swappy)$"
-    "size 400 300, match:class ^(hyprpicker)$"
-    "size 1100 700, match:class ^(sqlitebrowser|DB Browser for SQLite)$"
-    "size 1000 700, match:class ^(virt-manager)$"
-    "size 900 600, match:class ^(virt-viewer|remote-viewer)$"
-    "size 800 600, match:class ^(gnome-tweaks|org.gnome.tweaks)$"
-    "size 1000 700, match:class ^(Duplicati|duplicati)$"
+    # Steam
+    "rounding 10, match:class steam"
+    "float on, match:title Friends List, match:class steam"
 
-    # Xwayland tooltips/menus/dialogs often inherit the parent app class.
-    # Force floating Xwayland surfaces to stay fully opaque so app opacity
-    # rules do not turn transient popups into blurred/translucent boxes.
-    "opacity 1.00 override 1.00 override 1.00 override, match:xwayland true, match:float true"
-    "opaque on, match:xwayland true, match:float true"
-    "no_blur on, match:xwayland true, match:float true"
+    # Screen sharing
+    "float on, match:title .*is sharing (a window|your screen).*"
+    "pin on, match:title .*is sharing (a window|your screen).*"
+    "move 50% 100%-12, match:title .*is sharing (a window|your screen).*"
+
+    # Idle inhibit
+    "idle_inhibit focus, match:class ^(mpv)$"
+    "idle_inhibit focus, match:class ^(jellyfin-desktop|Jellyfin Media Player|com.github.iwalton3.jellyfin-media-player)$"
+    "idle_inhibit focus, match:class ^(com.github.th_ch.youtube_music)$"
+    "idle_inhibit fullscreen, match:class ^([Zz]en(-beta|-browser)?)$"
+
+    # XWayland popups
+    "no_dim on, match:xwayland 1, match:title win[0-9]+"
+    "no_shadow on, match:xwayland 1, match:title win[0-9]+"
+    "rounding 10, match:xwayland 1, match:title win[0-9]+"
+
+    # Gaming rules
+    "opaque on, match:class (steam_app_(default|[0-9]+))|gamescope"
+    "immediate on, match:class (steam_app_(default|[0-9]+))|gamescope"
+    "idle_inhibit always, match:class (steam_app_(default|[0-9]+))|gamescope"
+    "tag +games, match:class ${mkRegex gameApps}"
+    "tag +games, match:initial_class ^(.*\\.exe)$"
+    "immediate on, fullscreen on, border_size 0, no_anim on, no_initial_focus on, idle_inhibit always, match:tag games"
+  ];
+
+  layerrule = [
+    "no_anim on, match:namespace walker"
+    "no_anim on, match:namespace overview"
+    "no_anim on, match:namespace anyrun"
+    "no_anim on, match:namespace indicator.*"
+    "no_anim on, match:namespace osk"
+    "no_anim on, match:namespace noanim"
+    "animation fade, match:namespace hyprpicker"
+    "animation fade, match:namespace logout_dialog"
+    "animation fade, match:namespace selection"
+    "animation fade, match:namespace wayfreeze"
+    "animation popin 80%, match:namespace launcher"
+    "blur on, match:namespace launcher"
+    "no_anim on, match:namespace caelestia-(border-exclusion|area-picker)"
+    "animation fade, match:namespace caelestia-(drawers|background)"
+
+    # Quickshell: illogical-impulse
+    "animation slide, match:namespace quickshell:bar"
+    "no_anim on, match:namespace quickshell:actionCenter"
+    "animation slide bottom, match:namespace quickshell:cheatsheet"
+    "animation slide bottom, match:namespace quickshell:dock"
+    "animation popin 120%, match:namespace quickshell:screenCorners"
+    "no_anim on, match:namespace quickshell:lockWindowPusher"
+    "animation fade, match:namespace quickshell:notificationPopup"
+    "no_anim on, match:namespace quickshell:overlay"
+    "ignore_alpha 1, match:namespace quickshell:overlay"
+    "no_anim on, match:namespace quickshell:overview"
+    "animation slide bottom, match:namespace quickshell:osk"
+    "no_anim on, match:namespace quickshell:polkit"
+    "animation slide, match:namespace quickshell:reloadPopup"
+    "no_anim on, match:namespace quickshell:regionSelector"
+    "no_anim on, match:namespace quickshell:screenshot"
+    "no_anim on, match:namespace quickshell:session"
+    "animation slide right, match:namespace quickshell:sidebarRight"
+    "animation slide left, match:namespace quickshell:sidebarLeft"
+    "animation slide, match:namespace quickshell:verticalBar"
+    "order -1, match:namespace quickshell:osk"
+
+    # Launchers need to be FAST
+    "no_anim on, match:namespace gtk4-layer-shell"
   ];
 }

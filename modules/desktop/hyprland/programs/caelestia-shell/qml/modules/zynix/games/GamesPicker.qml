@@ -154,7 +154,7 @@ Scope {
 
                         StyledRect {
                             anchors.fill: parent
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.medium
                             color: parent.ListView.isCurrentItem ? Colours.palette.m3secondaryContainer : "transparent"
                             z: -1
                         }

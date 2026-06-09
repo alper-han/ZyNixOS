@@ -32,6 +32,9 @@
 
   # Workspace to monitor assignments
   workspace = [
+    "w[tv1]s[false], gapsout:20"
+    "f[1]s[false], gapsout:20"
+    "special:special,gapsout:20"
     "1,monitor:DP-2,default:true"
     "2,monitor:DP-2"
     "3,monitor:DP-2"

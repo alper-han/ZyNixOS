@@ -9,6 +9,7 @@
 let
   inherit (lib) getExe getExe';
   batterynotify = pkgs.callPackage ./scripts/batterynotify.nix { };
+  barCommand = if bar == "caelestia-shell" then "caelestia shell -d" else bar;
 in
 {
   # Environment variables are handled by UWSM env files in default.nix.
@@ -22,7 +23,7 @@ in
     #"[workspace special silent] ${browser} --private-window"
     #"[workspace special silent] ${terminal}"
 
-    "uwsm app -s s -- ${bar}"
+    "uwsm app -s s -- ${barCommand}"
     # "wl-clipboard-history -t"
     "uwsm app -s b -- ${getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch cliphist store" # clipboard store text data
     "uwsm app -s b -- ${getExe' pkgs.wl-clipboard "wl-paste"} --type image --watch cliphist store" # clipboard store image data
