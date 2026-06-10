@@ -63,7 +63,7 @@
             "2606:4700:4700::1111"
             "2606:4700:4700::1001"
           ];
-          upstream_timeout = "2s";
+          upstream_timeout = "10s";
           cache_size = 134217728;
           cache_ttl_min = 300;
           cache_optimistic = true;
