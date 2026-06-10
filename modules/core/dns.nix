@@ -49,23 +49,25 @@
             "::1"
           ];
           upstream_dns = [
-            "https://dns.quad9.net/dns-query"
             "https://cloudflare-dns.com/dns-query"
           ];
-          upstream_mode = "parallel";
+          fallback_dns = [
+            "https://dns.quad9.net/dns-query"
+          ];
+          upstream_mode = "load_balance";
           bootstrap_dns = [
-            "9.9.9.9"
-            "149.112.112.112"
-            "2620:fe::fe"
-            "2620:fe::9"
             "1.1.1.1"
             "1.0.0.1"
             "2606:4700:4700::1111"
             "2606:4700:4700::1001"
+            "9.9.9.9"
+            "149.112.112.112"
+            "2620:fe::fe"
+            "2620:fe::9"
           ];
-          upstream_timeout = "10s";
+          upstream_timeout = "3s";
           cache_size = 134217728;
-          cache_ttl_min = 300;
+          cache_ttl_min = 30;
           cache_optimistic = true;
         };
         filtering = {
