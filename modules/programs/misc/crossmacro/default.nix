@@ -13,8 +13,8 @@ in
     inputs.crossmacro.nixosModules.default
   ];
 
-  programs.crossmacro = {
+  services.crossmacro = {
     enable = true;
-    users = [ "${username}" ];
+    users = [ username ];
   };
 }
