@@ -1,0 +1,4 @@
+FROM /home/zynix/Downloads/Qwen3.8-27B-Uncensored-Q4_K_M.gguf
+
+PARAMETER num_ctx 262144
+PARAMETER draft_num_predict 2
