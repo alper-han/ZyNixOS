@@ -5,7 +5,17 @@
   ...
 }:
 let
-  nvidiaDriverChannel = config.boot.kernelPackages.nvidiaPackages.production; # stable, latest, beta, etc.
+  nvidiaDriverChannel = config.boot.kernelPackages.nvidiaPackages.new_feature;
+  nvidiaDriverPackage = nvidiaDriverChannel // {
+    open = nvidiaDriverChannel.open.overrideAttrs (oldAttrs: {
+      patches = (oldAttrs.patches or [ ]) ++ [
+        (pkgs.fetchpatch {
+          url = "https://github.com/NVIDIA/open-gpu-kernel-modules/commit/24e68a854f50e2de5b7ead18bd4d28d22566c005.patch";
+          hash = "sha256-Sywd2R0oublLLkr015Ke0R7CXqhBplh+j+XFQXcKdhk=";
+        })
+      ];
+    });
+  };
 in
 {
   environment.sessionVariables = lib.optionalAttrs config.programs.hyprland.enable {
@@ -20,14 +30,19 @@ in
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [ "nvidia" ]; # or "nvidiaLegacy470", etc.
+  boot.initrd.kernelModules = [
+    "nvidia"
+    "nvidia_modeset"
+    "nvidia_drm"
+  ];
   hardware = {
     nvidia = {
       open = true; # nvdec performance fix
       nvidiaPersistenced = true;
-      nvidiaSettings = true;
+      nvidiaSettings = false;
       powerManagement.enable = true; # This can cause sleep/suspend to fail.
       modesetting.enable = true;
-      package = nvidiaDriverChannel;
+      package = nvidiaDriverPackage;
     };
     graphics = {
       enable = true;

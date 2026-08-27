@@ -45,13 +45,4 @@ in
       ];
     };
   };
-  # Fix black screen issues
-  home-manager.sharedModules = [
-    (
-      { config, ... }:
-      {
-        wayland.windowManager.hyprland.settings.misc.vrr = lib.mkForce 0;
-      }
-    )
-  ];
 }
