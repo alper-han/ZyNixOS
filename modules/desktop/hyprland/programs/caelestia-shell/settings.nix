@@ -86,16 +86,36 @@ in
     dragThreshold = 20;
     persistent = true;
     showOnHover = true;
-    status = {
-      showAudio = true;
-      showBattery = isLaptop;
-      showBluetooth = bluetoothSupport;
-      showKbLayout = false;
-      showLockStatus = false;
-      showMicrophone = true;
-      showNetwork = true;
-      showWifi = false;
-    };
+    statusIcons = [
+      {
+        id = "lockStatus";
+        enabled = false;
+      }
+      {
+        id = "audio";
+        enabled = true;
+      }
+      {
+        id = "microphone";
+        enabled = true;
+      }
+      {
+        id = "kbLayout";
+        enabled = false;
+      }
+      {
+        id = "network";
+        enabled = true;
+      }
+      {
+        id = "bluetooth";
+        enabled = bluetoothSupport;
+      }
+      {
+        id = "battery";
+        enabled = isLaptop;
+      }
+    ];
     tray = {
       background = true;
       compact = false;
@@ -249,6 +269,7 @@ in
       logout = [
         "loginctl"
         "terminate-user"
+        ""
       ];
       shutdown = [
         "systemctl"
