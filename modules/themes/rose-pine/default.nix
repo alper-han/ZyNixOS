@@ -74,6 +74,7 @@ in
 
         # Pointer cursor
         home.pointerCursor = {
+          enable = true;
           gtk.enable = !caelestiaOwnsTheme;
           x11.enable = true;
           package = pkgs.catppuccin-cursors.mochaMauve;

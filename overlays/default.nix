@@ -38,7 +38,7 @@
       };
       discord = prev.discord.override {
         withVencord = true;
-        withOpenASAR = true;
+        withOpenASAR = false;
         enableAutoscroll = true;
       };
 

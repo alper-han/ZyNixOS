@@ -19,6 +19,7 @@ in
       { config, ... }:
       {
         home.packages = [
+          pkgs.catppuccin-cursors.mochaMauve # Force install cursor package
           pkgs.adw-gtk3
           pkgs.papirus-icon-theme
           catppuccin-kvantum-pkg
@@ -66,6 +67,7 @@ in
         };
 
         home.pointerCursor = {
+          enable = true;
           gtk.enable = !caelestiaOwnsTheme;
           x11.enable = true;
           package = pkgs.catppuccin-cursors.mochaMauve;
