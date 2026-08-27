@@ -136,7 +136,7 @@ in
       Status = "locked";
     };
     "dom.event.clipboardevents.enabled" = {
-      Value = false;
+      Value = true;
       Status = "locked";
     };
     "dom.event.contextmenu.enabled" = {

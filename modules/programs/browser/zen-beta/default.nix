@@ -12,6 +12,9 @@
 
       programs.zen-browser = {
         enable = true;
+        env = {
+          MOZ_DISABLE_RDD_SANDBOX = "1";
+        };
         policies = import ./policies.nix { inherit lib; };
         languagePacks = [
           "tr-TR"
@@ -32,6 +35,7 @@
               ${builtins.readFile "${inputs.betterfox}/Peskyfox.js"}
               ${builtins.readFile "${inputs.betterfox}/Securefox.js"}
               ${builtins.readFile "${inputs.betterfox}/Smoothfox.js"}
+
             '';
           };
         };

@@ -11,7 +11,7 @@
   extensionSettings = {
     "*" = {
       # Keep force-installed addons managed by Nix, but allow manual installs.
-      installation_mode = "allowed";
+      installation_mode = "force_installed";
     };
     "uBlock0@raymondhill.net" = {
       private_browsing = true;
@@ -53,7 +53,7 @@
     "jid1-MnnxcxisBPnSXQ@jetpack" = {
       private_browsing = true;
       default_area = "menupanel";
-      installation_mode = "force_installed";
+      installation_mode = "allowed";
       install_url = "https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest.xpi";
     };
   };

@@ -152,6 +152,7 @@ in
   "browser.newtabpage.pinned" = false;
   "browser.bookmarks.defaultLocation" = "toolbar";
   "browser.startup.page" = 3;
+  "browser.sessionstore.restore_on_demand" = true;
   "app.shield.optoutstudies.enabled" = lock-false;
   "dom.security.https_only_mode" = lock-true;
   "dom.security.https_only_mode_ever_enabled" = lock-true;
