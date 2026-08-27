@@ -1,4 +1,6 @@
 {
+  boot.kernelModules = [ "kvm-amd" ];
+
   imports = [
     ./virtualisation/qemu-virt-manager.nix
     # ./virtualisation/docker.nix

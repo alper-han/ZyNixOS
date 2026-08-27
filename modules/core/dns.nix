@@ -55,6 +55,8 @@
             "https://dns.quad9.net/dns-query"
           ];
           upstream_mode = "load_balance";
+          ratelimit = 1000;
+          enable_dnssec = true;
           bootstrap_dns = [
             "1.1.1.1"
             "1.0.0.1"

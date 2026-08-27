@@ -1,13 +1,13 @@
 {
   # User Configuration
   username = "zynix"; # Your username (auto-set with install.sh, live-install.sh, rebuild)
-  desktop = "hyprland"; # Options: hyprland, plasma6, gnome
+  desktop = "hyprland"; # Options: hyprland, niri, wayfire, plasma6, gnome, sway
   terminal = "kitty"; # Options: kitty, alacritty
   editor = "kate"; # Options:  vscode, kate, kwrite, gedit
   browser = "zen-beta"; # Options: firefox, floorp, zen-beta
   fileManager = "thunar"; # Options: thunar, yazi, lf
   bar = "caelestia-shell"; # Options: waybar, caelestia-shell
-  displayManager = "greetd"; # Options: sddm, greetd
+  displayManager = "sddm"; # Options: sddm, greetd
   sddmTheme = "purple_leaves"; # Options: astronaut, black_hole, purple_leaves, jake_the_dog, hyprland_kath
   defaultWallpaper = "evening-sky.jpg"; # SUPER+SHIFT+W is only enabled when bar != "caelestia-shell"
   hyprlockWallpaper = "dark-forest.jpg"; # See modules/themes/wallpapers for options

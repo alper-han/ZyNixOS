@@ -12,32 +12,7 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  boot.initrd.availableKernelModules = [
-    "nvme"
-    "xhci_pci"
-    "usbhid"
-  ];
-  boot.initrd.kernelModules = [
-    "xhci_pci"
-    "usbhid"
-    "nvidia"
-    "nvidia_modeset"
-    "nvidia_drm"
-  ];
-  boot.initrd.systemd.services.early-usb-hid = {
-    description = "Load USB keyboard support before LUKS prompt";
-    wantedBy = [ "initrd.target" ];
-    before = [ "systemd-cryptsetup@luks\\x2droot.service" ];
-    unitConfig.DefaultDependencies = false;
-    path = [ pkgs.kmod ];
-    serviceConfig.Type = "oneshot";
-    script = ''
-      modprobe xhci_pci
-      modprobe usbhid
-    '';
-  };
   boot.kernelModules = [
-    "kvm-amd"
     "k10temp"
     "zenergy"
     "nct6775"
@@ -45,23 +20,21 @@
   boot.kernelParams = [
     "amd_pstate=active"
     "8250.nr_uarts=0"
-    "nowatchdog"
-    "nmi_watchdog=0"
 
     # MT7925 Bluetooth Fix
     "usbcore.autosuspend=-1"
   ];
+
+  boot.extraModprobeConfig = ''
+    options mt7925e disable_aspm=1
+  '';
+
   boot.extraModulePackages = [
     config.boot.kernelPackages.zenergy
   ];
   boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
   hardware.deviceTree.enable = false;
   system.boot.loader.kernelFile = "bzImage";
-  boot.blacklistedKernelModules = [ ];
-
-  boot.extraModprobeConfig = ''
-    options mt7925e disable_aspm=1
-  '';
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/e01615ee-1128-44b1-b5f4-3735af0cec57";

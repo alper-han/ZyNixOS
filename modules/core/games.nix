@@ -22,7 +22,7 @@
     # steam-run
     # wineWow64Packages.staging
     # gamescope
-    # protonup-qt # Used to manually download CachyOS Proton v4
+    # protonup-qt # Used to manually download CachyOS Proton
     # protonplus
   ];
   programs = {
@@ -71,7 +71,7 @@
           no_display = true;
           fps_limit = [
             0
-            144
+            141
             60
           ];
           fps_limit_method = "late";

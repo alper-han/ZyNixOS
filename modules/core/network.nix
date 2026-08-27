@@ -18,6 +18,8 @@ in
       ];
     };
 
+    interfaces.eno1.mtu = 1492;
+
     firewall = {
       enable = true;
       # Loose reverse-path filtering keeps spoofing protection while allowing

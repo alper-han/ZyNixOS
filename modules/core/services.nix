@@ -27,7 +27,7 @@ in
     scx = {
       enable = true;
       package = pkgs.scx.full; # scx.rustscheds or scx.full
-      scheduler = "scx_lavd"; # scx_lavd verified good for gaming
+      scheduler = "scx_rusty"; # scx_lavd verified good for gaming
     };
 
     blueman.enable = bar != "caelestia-shell"; # Bluetooth UI frontend; Caelestia handles this in-shell.

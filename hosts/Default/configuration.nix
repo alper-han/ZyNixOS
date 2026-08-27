@@ -27,7 +27,7 @@ in
     ../../modules/themes/wallpaper-bank.nix
     # ../../modules/core/ssh.nix
     # ../../modules/core/flatpak.nix
-    ../../modules/core/virtualisation.nix
+    # ../../modules/core/virtualisation.nix
     # ../../modules/core/nix-ld.nix
     ../../modules/core/dns.nix
 

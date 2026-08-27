@@ -51,10 +51,7 @@ in
   environment.systemPackages = with pkgs; [ tuigreet ];
 
   security.pam.services.greetd = {
-    # tuigreet + uwsm do not provide a reliable gkr-pam handoff here, so keep
-    # the keyring available via D-Bus activation instead of a noisy PAM hook.
     enableGnomeKeyring = false;
-    # greetd runs unconfined here, so pam_apparmor only generates change_hat denials.
     enableAppArmor = false;
   };
 }

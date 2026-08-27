@@ -30,6 +30,7 @@ let
     pkgs.kdePackages.qtsvg
     pkgs.kdePackages.qtmultimedia
     pkgs.kdePackages.qtvirtualkeyboard
+    pkgs.catppuccin-cursors.mochaMauve
   ];
 in
 {
@@ -39,7 +40,7 @@ in
     enableHidpi = true;
     autoNumlock = true;
     extraPackages = sddmDependencies;
-    settings.Theme.CursorTheme = "BreezeX-RosePine-Linux";
+    settings.Theme.CursorTheme = "catppuccin-mocha-mauve-cursors";
     theme = "sddm-astronaut-theme";
   };
 

@@ -1,15 +1,5 @@
 { pkgs, config, ... }:
 {
-  # I/O Scheduler Optimization (NVMe/SSD)
-  # NVMe -> none (low latency), SATA SSD -> none
-  services.udev.extraRules = ''
-    # Only whole-disk block devices expose queue/scheduler; partitions do not.
-    ACTION=="add|change", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", KERNEL=="nvme[0-9]*n[0-9]*", TEST=="queue/scheduler", ATTR{queue/scheduler}="none"
-    ACTION=="add|change", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", TEST=="queue/scheduler", ATTR{queue/scheduler}="none"
-    # Optional Bluetooth workaround for the MediaTek USB device (13d3:3602):
-    # ACTION=="add|change", SUBSYSTEM=="usb", ATTR{idVendor}=="13d3", ATTR{idProduct}=="3602", TEST=="power/control", ATTR{power/control}="on"
-  '';
-
   boot = {
 
     # Filesystems support
@@ -59,7 +49,7 @@
       timeout = 1;
       systemd-boot = {
         enable = true;
-        configurationLimit = 3;
+        configurationLimit = 5;
         editor = false;
         consoleMode = "max";
         memtest86.enable = true;

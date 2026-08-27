@@ -15,6 +15,6 @@ in
   environment.systemPackages = with pkgs; [
     # nix-output-monitor
     nvd
-    vulnix
+    # vulnix
   ];
 }

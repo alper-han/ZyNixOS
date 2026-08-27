@@ -3,14 +3,14 @@
 
   environment.systemPackages = with pkgs; [
     rustdesk
-    jellyfin-desktop
+    # jellyfin-desktop
     # jellyfin-mpv-shim
     # kdiskmark
     # qbittorrent
     # mission-center
     # remmina # rdp&vnc
 
-    # ffmpeg-full
+    ffmpeg-full
     # chromium
     github-desktop
     # hoppscotch
