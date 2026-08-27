@@ -63,9 +63,9 @@ in
   programs.gpu-screen-recorder.enable = bar == "caelestia-shell";
 
   # TODO: Drop after Hyprland 0.55.2 if portal access works without this wrapper override.
-  security.wrappers.Hyprland.capabilities = lib.mkIf (lib.versionAtLeast pkgs.hyprland.version "0.55.2" && lib.versionOlder pkgs.hyprland.version "0.55.3") (
-    lib.mkForce ""
-  );
+  security.wrappers.Hyprland.capabilities = lib.mkIf (
+    lib.versionAtLeast pkgs.hyprland.version "0.55.2" && lib.versionOlder pkgs.hyprland.version "0.55.3"
+  ) (lib.mkForce "");
 
   home-manager.sharedModules =
     let
@@ -187,54 +187,79 @@ in
             "hypr/binds.lua".source = ./lua/binds.lua;
             "hypr/rules.lua".source = ./lua/rules.lua;
             "hypr/monitors.lua".source = ./lua/monitors.lua;
-            "hypr/variables.lua".text = let
-              luaString = value: builtins.toJSON value;
-              editorExe = getExe' (
-                if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor}
-              ) editor;
-              app = "uwsm app --";
-              backgroundApp = "uwsm app -s b --";
-              serviceApp = "uwsm app -s s --";
-              caelestia = "${app} caelestia";
-              launcher = "${app} launcher";
-              barCommand = if bar == "caelestia-shell" then "${serviceApp} caelestia shell -d" else "${serviceApp} ${bar}";
-              barToggle = ''pkill -x "waybar|caelestia-shell|quickshell" || ${barCommand}'';
-              clearClipboardCommand = "${app} ${getExe' pkgs.coreutils "rm"} -f \${XDG_CACHE_HOME:-\$HOME/.cache}/cliphist/db";
-            in ''
-              mainMod = "SUPER"
-              isCaelestia = ${lib.boolToString (bar == "caelestia-shell")}
-              barCommand = ${luaString barCommand}
-              bar_toggle = ${luaString barToggle}
-              nmAppletCommand = ${if bar == "caelestia-shell" then "nil" else luaString "uwsm app -s b -- nm-applet --indicator"}
-              batteryNotifyCommand = ${if isLaptop then luaString "uwsm app -s b -- ${getExe (pkgs.callPackage ./scripts/batterynotify.nix { })}" else "nil"}
+            "hypr/variables.lua".text =
+              let
+                luaString = value: builtins.toJSON value;
+                editorExe = getExe' (
+                  if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor}
+                ) editor;
+                app = "uwsm app --";
+                backgroundApp = "uwsm app -s b --";
+                serviceApp = "uwsm app -s s --";
+                caelestia = "${app} caelestia";
+                launcher = "${app} launcher";
+                barCommand =
+                  if bar == "caelestia-shell" then "${serviceApp} caelestia shell -d" else "${serviceApp} ${bar}";
+                barToggle = ''pkill -x "waybar|caelestia-shell|quickshell" || ${barCommand}'';
+                clearClipboardCommand = "${app} ${getExe' pkgs.coreutils "rm"} -f \${XDG_CACHE_HOME:-\$HOME/.cache}/cliphist/db";
+              in
+              ''
+                mainMod = "SUPER"
+                isCaelestia = ${lib.boolToString (bar == "caelestia-shell")}
+                barCommand = ${luaString barCommand}
+                bar_toggle = ${luaString barToggle}
+                nmAppletCommand = ${
+                  if bar == "caelestia-shell" then "nil" else luaString "uwsm app -s b -- nm-applet --indicator"
+                }
+                batteryNotifyCommand = ${
+                  if isLaptop then
+                    luaString "uwsm app -s b -- ${getExe (pkgs.callPackage ./scripts/batterynotify.nix { })}"
+                  else
+                    "nil"
+                }
 
-              term = ${luaString "${app} ${getExe pkgs.${terminal}}"}
-              editor = ${luaString "${app} ${editorExe}"}
-              browser = ${luaString "${app} ${browser}"}
-              file_manager = ${luaString fileManager}
-              file_manager_script = ${luaString "${app} ${getExe fileManagerScript}"}
-              launcher = ${luaString launcher}
-              caelestia = ${luaString caelestia}
-              games = ${luaString (if bar == "caelestia-shell" then "${app} caelestia shell games open" else "${launcher} games")}
-              tmux = ${luaString (if bar == "caelestia-shell" then "${app} caelestia shell tmux open" else "${launcher} tmux")}
-              music = ${luaString (if bar == "caelestia-shell" then "${app} caelestia shell music open" else "${app} ${getExe (pkgs.callPackage ./scripts/rofimusic.nix { })}")}
-              pear = ${luaString "${app} ${getExe pkgs.pear-desktop}"}
-              btop = ${luaString (getExe pkgs.btop)}
-              clipmanager = ${luaString "${app} ${getExe (pkgs.callPackage ./scripts/clipmanager.nix { })}"}
-              gamemode = ${luaString (getExe (pkgs.callPackage ./scripts/gamemode.nix { }))}
-              keyboardswitch = ${luaString (getExe (pkgs.callPackage ./scripts/keyboardswitch.nix { }))}
-              keybinds_yad = ${luaString "${app} ${getExe (pkgs.callPackage ./scripts/keybinds-yad.nix { inherit host; })}"}
-              screen_record = ${luaString (getExe (pkgs.callPackage ./scripts/screen-record.nix { }))}
-              screenshot = ${luaString (getExe (pkgs.callPackage ./scripts/screenshot.nix { }))}
-              zoom = ${luaString (getExe (pkgs.callPackage ./scripts/zoom.nix { }))}
-              night_mode = ${luaString "${backgroundApp} ${getExe pkgs.hyprsunset} --temperature 3500"}
-              clipboardTextCommand = ${luaString "uwsm app -s b -- ${getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch cliphist store"}
-              clipboardImageCommand = ${luaString "uwsm app -s b -- ${getExe' pkgs.wl-clipboard "wl-paste"} --type image --watch cliphist store"}
-              clearClipboardCommand = ${luaString clearClipboardCommand}
-              kbdLayout = ${luaString kbdLayout}
-              kbdVariant = ${luaString kbdVariant}
-              vrr = ${toString (if videoDriver == "nvk" then 0 else 2)}
-            '';
+                term = ${luaString "${app} ${getExe pkgs.${terminal}}"}
+                editor = ${luaString "${app} ${editorExe}"}
+                browser = ${luaString "${app} ${browser}"}
+                file_manager = ${luaString fileManager}
+                file_manager_script = ${luaString "${app} ${getExe fileManagerScript}"}
+                launcher = ${luaString launcher}
+                caelestia = ${luaString caelestia}
+                games = ${
+                  luaString (
+                    if bar == "caelestia-shell" then "${app} caelestia shell games open" else "${launcher} games"
+                  )
+                }
+                tmux = ${
+                  luaString (
+                    if bar == "caelestia-shell" then "${app} caelestia shell tmux open" else "${launcher} tmux"
+                  )
+                }
+                music = ${
+                  luaString (
+                    if bar == "caelestia-shell" then
+                      "${app} caelestia shell music open"
+                    else
+                      "${app} ${getExe (pkgs.callPackage ./scripts/rofimusic.nix { })}"
+                  )
+                }
+                pear = ${luaString "${app} ${getExe pkgs.pear-desktop}"}
+                btop = ${luaString (getExe pkgs.btop)}
+                clipmanager = ${luaString "${app} ${getExe (pkgs.callPackage ./scripts/clipmanager.nix { })}"}
+                gamemode = ${luaString (getExe (pkgs.callPackage ./scripts/gamemode.nix { }))}
+                keyboardswitch = ${luaString (getExe (pkgs.callPackage ./scripts/keyboardswitch.nix { }))}
+                keybinds_yad = ${luaString "${app} ${getExe (pkgs.callPackage ./scripts/keybinds-yad.nix { inherit host; })}"}
+                screen_record = ${luaString (getExe (pkgs.callPackage ./scripts/screen-record.nix { }))}
+                screenshot = ${luaString (getExe (pkgs.callPackage ./scripts/screenshot.nix { }))}
+                zoom = ${luaString (getExe (pkgs.callPackage ./scripts/zoom.nix { }))}
+                night_mode = ${luaString "${backgroundApp} ${getExe pkgs.hyprsunset} --temperature 3500"}
+                clipboardTextCommand = ${luaString "uwsm app -s b -- ${getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch cliphist store"}
+                clipboardImageCommand = ${luaString "uwsm app -s b -- ${getExe' pkgs.wl-clipboard "wl-paste"} --type image --watch cliphist store"}
+                clearClipboardCommand = ${luaString clearClipboardCommand}
+                kbdLayout = ${luaString kbdLayout}
+                kbdVariant = ${luaString kbdVariant}
+                vrr = ${toString (if videoDriver == "nvk" then 0 else 2)}
+              '';
           };
         }
       )

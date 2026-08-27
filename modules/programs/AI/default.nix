@@ -26,23 +26,23 @@
 
   # imports = [ ./ollama.nix ];
 
-#  home-manager.sharedModules = [
-#    (_: {
-#      home.file.".local/bin/oh-my-openagent" = {
-#        executable = true;
-#        text = ''
-#          #!${pkgs.runtimeShell}
-#          exec ${pkgs.bun}/bin/bun "$HOME/.config/opencode/node_modules/oh-my-openagent/dist/cli/index.js" "$@"
-#        '';
-#      };
-#
-#      home.file.".local/bin/oh-my-opencode" = {
-#        executable = true;
-#        text = ''
-#          #!${pkgs.runtimeShell}
-#          exec ${pkgs.bun}/bin/bun "$HOME/.config/opencode/node_modules/oh-my-opencode/dist/cli/index.js" "$@"
-#        '';
-#      };
-#    })
-#  ];
+  #  home-manager.sharedModules = [
+  #    (_: {
+  #      home.file.".local/bin/oh-my-openagent" = {
+  #        executable = true;
+  #        text = ''
+  #          #!${pkgs.runtimeShell}
+  #          exec ${pkgs.bun}/bin/bun "$HOME/.config/opencode/node_modules/oh-my-openagent/dist/cli/index.js" "$@"
+  #        '';
+  #      };
+  #
+  #      home.file.".local/bin/oh-my-opencode" = {
+  #        executable = true;
+  #        text = ''
+  #          #!${pkgs.runtimeShell}
+  #          exec ${pkgs.bun}/bin/bun "$HOME/.config/opencode/node_modules/oh-my-opencode/dist/cli/index.js" "$@"
+  #        '';
+  #      };
+  #    })
+  #  ];
 }

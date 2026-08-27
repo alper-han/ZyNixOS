@@ -1,7 +1,8 @@
 # Checksum Thunar Custom Actions
 { checksumCommandFor, isCaelestia }:
 let
-  checksumCommand = algorithm:
+  checksumCommand =
+    algorithm:
     if isCaelestia then
       "caelestia shell thunar checksum %f ${algorithm}"
     else

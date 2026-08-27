@@ -20,7 +20,8 @@ let
 
   wallpapersDir = ../../themes/wallpapers;
   terminalPackage = pkgs.${terminal};
-  editorPackage = if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor};
+  editorPackage =
+    if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor};
   wallpaper = "${wallpapersDir}/${defaultWallpaper}";
   fileManagerCommand =
     if fileManager == "thunar" then

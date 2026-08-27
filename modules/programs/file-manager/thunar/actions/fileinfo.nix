@@ -1,5 +1,5 @@
 # File Info Thunar Custom Actions
-{ 
+{
   isCaelestia,
   exifCommandFallback,
   fileInfoCommandFallback,
@@ -7,20 +7,10 @@
 }:
 let
   fileInfoCommand =
-    if isCaelestia then
-      "caelestia shell thunar fileinfo %f"
-    else
-      fileInfoCommandFallback;
-  exifCommand =
-    if isCaelestia then
-      "caelestia shell thunar exif %f"
-    else
-      exifCommandFallback;
+    if isCaelestia then "caelestia shell thunar fileinfo %f" else fileInfoCommandFallback;
+  exifCommand = if isCaelestia then "caelestia shell thunar exif %f" else exifCommandFallback;
   mediaInfoCommand =
-    if isCaelestia then
-      "caelestia shell thunar mediainfo %f"
-    else
-      mediaInfoCommandFallback;
+    if isCaelestia then "caelestia shell thunar mediainfo %f" else mediaInfoCommandFallback;
   uiBackendName = if isCaelestia then "Caelestia" else "Rofi";
   fileInfoId = if isCaelestia then "fileinfo-caelestia" else "fileinfo-rofi";
   exifInfoId = if isCaelestia then "exifinfo-caelestia" else "exifinfo-rofi";
