@@ -46,6 +46,7 @@
     };
     nixpkgs-davinci-20-2-3.url = "github:NixOS/nixpkgs/4652ba995a945108fb891191c1e910b9a6ed9064";
     nixpkgs-qemu-10-2-2.url = "github:NixOS/nixpkgs/331800de5053fcebacf6813adb5db9c9dca22a0c";
+    serena.url = "github:oraios/serena/v1.7.0";
   };
 
   outputs =
