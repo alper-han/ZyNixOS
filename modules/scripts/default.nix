@@ -6,10 +6,9 @@
   ...
 }:
 let
-  inherit (import ../../hosts/${host}/variables.nix) terminal bar;
+  inherit (import ../../hosts/${host}/variables.nix) terminal;
 in
 let
-  # Define your custom args once
   scriptArgs = {
     inherit
       host
@@ -17,21 +16,14 @@ let
       lib
       config
       terminal
-      bar
       ;
   };
 
   scripts = [
     (import ./rebuild.nix scriptArgs)
     (import ./rollback.nix scriptArgs)
-    (import ./launcher.nix scriptArgs)
     (import ./tmux-sessionizer.nix scriptArgs)
-    (import ./extract.nix scriptArgs)
     (import ./driverinfo.nix scriptArgs)
-    (import ./underwatt.nix scriptArgs)
-    (import ./update-devshells.nix scriptArgs)
-    (import ./change-devshells-source.nix scriptArgs)
-    # Add new scripts here as you create them
   ];
 in
 {
