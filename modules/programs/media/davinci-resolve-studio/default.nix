@@ -167,6 +167,5 @@ in
 {
   environment.systemPackages = [ davinci-resolve-studio-cracked ];
 
-  # Zynix
   # Reference: https://wiki.nixos.org/wiki/DaVinci_Resolve
 }

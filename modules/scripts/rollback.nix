@@ -8,7 +8,7 @@ pkgs.writeShellScriptBin "rollback" ''
   RED='\033[0;31m'
   YELLOW='\033[1;33m'
   GREEN='\033[0;32m'
-  NC='\033[0m' # No Color
+  NC='\033[0m'
   flake="${flake}"
 
   info() {

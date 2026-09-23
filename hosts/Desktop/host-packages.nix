@@ -1,16 +1,14 @@
 { pkgs, ... }:
 {
 
-  # Host applications; shared CLI tools belong in modules/core/packages.nix.
   environment.systemPackages = with pkgs; [
     rustdesk
-    # Optional packages
     # jellyfin-desktop
     # jellyfin-mpv-shim
     # kdiskmark
     # qbittorrent
     # mission-center
-    # remmina # rdp&vnc
+    # remmina
 
     # ffmpeg-full
     # chromium

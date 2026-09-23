@@ -82,7 +82,7 @@
       "NixOS Wiki" = {
         inherit icon;
         urls = [ { template = "https://nixos.wiki/index.php?search={searchTerms}"; } ];
-        updateInterval = 24 * 60 * 60 * 1000; # every day
+        updateInterval = 24 * 60 * 60 * 1000;
         definedAliases = [ "@nw" ];
       };
       "Home Manager" = {

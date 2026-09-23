@@ -45,7 +45,6 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     ./hardware-configuration.nix
     ./host-packages.nix
 
-    # Core modules
     ../../modules/scripts
     ../../modules/core/shell-common.nix
     ../../modules/core/boot.nix
@@ -66,7 +65,6 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     ../../modules/themes/wallpaper-bank.nix
     ../../modules/core/flatpak.nix
 
-    # Profile-selected modules
     ../../modules/hardware/video/${vars.videoDriver}.nix
     ../../modules/desktop/hyprland
     ../../modules/programs/browser/zen-beta
@@ -87,20 +85,19 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     ../../modules/programs/misc/crossmacro
     ../../modules/programs/misc/kde-connect
 
-    # Optional modules; uncomment to enable.
-    # ../../modules/core/virtualisation/qemu-virt-manager.nix # QEMU/KVM virtual machines
-    # ../../modules/core/virtualisation/docker.nix # Docker engine
-    # ../../modules/core/virtualisation/podman.nix # Podman engine
-    # ../../modules/core/ssh.nix # SSH server
-    # ../../modules/core/nix-ld.nix # Run selected non-Nix binaries
-    # ../../modules/programs/misc/openrgb # RGB controller
-    # ../../modules/programs/misc/opensnitch # Application firewall
-    # ../../modules/programs/misc/tailscale # Mesh VPN
-    # ../../modules/programs/media/davinci-resolve-studio # DaVinci Resolve
-    # ../../modules/programs/misc/zapret # Network filtering workaround
-    # ../../modules/programs/misc/duplicati # Backup service
-    # ../../modules/programs/media/easyeffects # Audio effects
-    # ../../modules/programs/media/thunderbird # Thunderbird mail client
+    # ../../modules/core/virtualisation/qemu-virt-manager.nix
+    # ../../modules/core/virtualisation/docker.nix
+    # ../../modules/core/virtualisation/podman.nix
+    # ../../modules/core/ssh.nix
+    # ../../modules/core/nix-ld.nix
+    # ../../modules/programs/misc/openrgb
+    # ../../modules/programs/misc/opensnitch
+    # ../../modules/programs/misc/tailscale
+    # ../../modules/programs/media/davinci-resolve-studio
+    # ../../modules/programs/misc/zapret
+    # ../../modules/programs/misc/duplicati
+    # ../../modules/programs/media/easyeffects
+    # ../../modules/programs/media/thunderbird
   ]
   ++ lib.optional vars.games ../../modules/core/games.nix
   ++ lib.optional (

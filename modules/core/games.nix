@@ -15,7 +15,7 @@
     # steam-run
     # wineWow64Packages.staging
     # gamescope
-    # protonup-qt # Used to manually download CachyOS Proton
+    # protonup-qt
     # protonplus
   ];
 

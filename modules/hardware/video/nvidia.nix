@@ -15,12 +15,8 @@ in
 
   environment.sessionVariables = lib.optionalAttrs config.programs.hyprland.enable {
     NVD_BACKEND = "direct";
-    # GBM_BACKEND = "nvidia-drm";
-    # WLR_NO_HARDWARE_CURSORS = "1";
     LIBVA_DRIVER_NAME = "nvidia";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    # __GL_MaxFramesAllowed = "1"; # Reduces input lag
-    # __GL_SYNC_TO_VBLANK = "0"; # Disable VSync for lower input lag (works with allow_tearing)
   };
 
   services.xserver.videoDrivers = [ "nvidia" ]; # or "nvidiaLegacy470", etc.

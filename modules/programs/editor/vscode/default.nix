@@ -156,7 +156,6 @@
               }
             ];
             "vim.normalModeKeyBindingsNonRecursive" = [
-              # Buffers
               {
                 "before" = [ "<S-h>" ];
                 "commands" = [ ":bprevious" ];
@@ -166,7 +165,6 @@
                 "commands" = [ ":bnext" ];
               }
 
-              # splits
               {
                 "before" = [
                   "leader"
@@ -182,7 +180,6 @@
                 "commands" = [ ":split" ];
               }
 
-              # panes
               {
                 "before" = [ "<C-h>" ];
                 "commands" = [ "workbench.action.focusLeftGroup" ];

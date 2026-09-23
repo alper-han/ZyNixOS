@@ -30,7 +30,6 @@ in
   "privacy.userContext.ui.enabled" = true;
   "privacy.userContext.longPressBehavior" = 2;
 
-  # Smooth Scroll
   "general.smoothScroll" = true;
   "general.smoothScroll.lines.durationMaxMS" = 125;
   "general.smoothScroll.lines.durationMinMS" = 125;
@@ -53,7 +52,6 @@ in
   # "network.trr.custom_uri" = "https://dns.quad9.net/dns-query";
   # "network.trr.uri" = "https://dns.quad9.net/dns-query";
 
-  # Remove trackers
   "privacy.purge_trackers.enabled" = lock-true;
   "privacy.trackingprotection.enabled" = lock-true;
   "privacy.trackingprotection.fingerprinting.enabled" = lock-true;
@@ -72,7 +70,6 @@ in
   "browser.safebrowsing.downloads.enabled" = lock-true;
   "media.videocontrols.picture-in-picture.auto-pip" = true;
 
-  # Block telemetry
   "toolkit.telemetry.enabled" = lock-false;
   "toolkit.telemetry.unified" = lock-false;
   "toolkit.telemetry.server" = "data:,";
@@ -124,7 +121,6 @@ in
   "dom.webnotifications.enabled" = lock-false;
   "dom.webnotifications.serviceworker.enabled" = lock-false;
 
-  # Permissions
   # 0=always ask (default), 1=allow, 2=block
   "permissions.default.geo" = 2;
   "permissions.default.camera" = 2;
@@ -132,7 +128,6 @@ in
   "permissions.default.desktop-notification" = 2;
   "permissions.default.xr" = 2; # Virtual Reality
 
-  # General settings
   "general.autoScroll" = true;
   "browser.preferences.defaultPerformanceSettings.enabled" = false;
   "ui.key.accelKey" = 17; # Set CTRL as master key

@@ -36,7 +36,6 @@ in
           # }
         ];
         extraConfig = ''
-          # Options
           set -g @catppuccin_flavour 'mocha'
           set -g mouse on
           set -g allow-rename off
@@ -50,7 +49,6 @@ in
           # Keep tmux's default prefix bindings intact (f, r, w, x, *, -, c, z).
           bind-key -r F run-shell "tmux neww tmux-sessionizer"
 
-          # Additional non-conflicting bindings.
           bind R source-file ~/.config/tmux/tmux.conf
           bind S choose-session
           bind u choose-session
@@ -58,12 +56,10 @@ in
           bind -n C-M-c kill-pane
           bind X swap-pane -D
 
-          # Select panes
           bind h select-pane -L
           bind j select-pane -D
           bind k select-pane -U
           bind l select-pane -R
-          # Resize panes
           bind -n M-Left resize-pane -L 2
           bind -n M-Right resize-pane -R 2
           bind -n M-Up resize-pane -U 2
@@ -73,7 +69,6 @@ in
           # split remains available on prefix + ".
           bind | split-window -h -c "#{pane_current_path}"
 
-          # Select windows
           bind -n S-Left  previous-window
           bind -n S-Right next-window
         '';

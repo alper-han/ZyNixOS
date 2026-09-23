@@ -31,7 +31,6 @@
       # CachyOS ruleset. Leave it off until both are deliberately verified.
       apply_latnice = false;
 
-      # Enable rule logging only for diagnostics.
       loglevel = "warn";
       log_applied_rule = false;
 

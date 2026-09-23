@@ -26,7 +26,6 @@
             mouse_hide_wait = 60;
             update_check_interval = 0;
 
-            # Tabs
             tab_title_template = "{index}";
             active_tab_font_style = "normal";
             inactive_tab_font_style = "normal";

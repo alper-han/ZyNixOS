@@ -21,7 +21,6 @@
       libglvnd
       vulkan-loader
 
-      # Xorg & GUI
       libx11
       libxcursor
       libxrandr

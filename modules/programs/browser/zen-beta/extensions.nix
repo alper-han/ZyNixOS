@@ -75,7 +75,6 @@
       previewNewDesign = true;
       # previewNewestDesign = true; # TODO: test
 
-      # Catppuccin mocha theme
       /*
         theme = {
           mode = 1;
