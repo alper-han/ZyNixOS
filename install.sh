@@ -1,25 +1,38 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
+
+script_dir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
+cd -- "$script_dir"
+validate_host_name() {
+  [[ "${1-}" =~ ^[A-Za-z0-9]([A-Za-z0-9_-]{0,61}[A-Za-z0-9])?$ ]]
+}
+
+is_nixos_live_iso() {
+  [[ "$(findmnt -n -o TARGET --mountpoint /iso 2>/dev/null)" == /iso &&
+     "$(findmnt -n -o FSTYPE --mountpoint /nix/.ro-store 2>/dev/null)" == squashfs ]]
+}
 
 # If in the live environment then start the live-install.sh script
-if [ -d "/iso" ] || [ "$(findmnt -o FSTYPE -n /)" = "tmpfs" ]; then
-  sudo ./live-install.sh
+if is_nixos_live_iso; then
+  if [[ $EUID -eq 0 ]]; then
+    ./live-install.sh
+  else
+    sudo ./live-install.sh
+  fi
   exit 0
 fi
 
-# Check if running as root. If root, script will exit.
 if [[ $EUID -eq 0 ]]; then
   echo "This script should not be executed as root! Exiting..."
   exit 1
 fi
 
-# Check if using NixOS. If not using NixOS, script will exit.
-if [[ ! "$(grep -i nixos </etc/os-release)" ]]; then
+if ! grep -qi nixos /etc/os-release; then
   echo "This installation script only works on NixOS! Download an iso at https://nixos.org/download/"
   echo "You can either use this script in the live environment or booted into a system."
   exit 1
 fi
 
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -48,17 +61,26 @@ error() {
   echo -e "${RED}Error: $1${NC}" >&2
 }
 
-currentUser=$(logname)
+currentUser=$(id -un)
 
 list_hosts() {
-  local hosts=()
+  local host_name
   for host_dir in ./hosts/*/; do
-    if [ -d "$host_dir" ]; then
-      host_name=$(basename "$host_dir")
-      hosts+=("$host_name")
+    [[ -d "$host_dir" ]] || continue
+    host_name=${host_dir%/}
+    host_name=${host_name##*/}
+    # Default is a portable template, not an installed machine.
+    if [[ "$host_name" != Default ]] && validate_host_name "$host_name" &&
+      [[ -f "$host_dir/configuration.nix" && -f "$host_dir/variables.nix" ]]; then
+      printf '%s\n' "$host_name"
     fi
   done
-  printf '%s\n' "${hosts[@]}"
+}
+
+valid_host_choice() {
+  local choice=$1
+  [[ "$choice" =~ ^[1-9][0-9]*$ && ${#choice} -le 9 ]] || return 1
+  (( choice <= ${#available_hosts[@]} ))
 }
 
 choose_drivers() {
@@ -68,7 +90,7 @@ choose_drivers() {
   echo "2) amdgpu"
   echo "3) intel"
   while true; do
-    read -p "Enter choice (1, 2 or 3): " driver_choice
+    IFS= read -r -p "Enter choice (1, 2 or 3): " driver_choice || return 1
     case $driver_choice in
     1)
       sed -i -e "s/videoDriver = .*/videoDriver = \"nvidia\";/" "./hosts/$host/variables.nix"
@@ -89,46 +111,49 @@ choose_drivers() {
 
 open_variables() {
   local host="$1"
-  read -p "Edit variables.nix for host: $host? (Y/n): " edit_vars
+  local editor
+  IFS= read -r -p "Edit variables.nix for host: $host? (Y/n): " edit_vars || return 1
   if [[ ! "$edit_vars" =~ ^[nN]$ ]]; then
-    for editor in "${EDITOR}" nano vim vi; do
-      if command -v "$editor" &>/dev/null; then
-        $editor "./hosts/$host/variables.nix"
-        break
+    for editor in "${EDITOR:-}" nano vim vi; do
+      [[ -n "$editor" ]] && command -v "$editor" &>/dev/null || continue
+      if ! "$editor" "./hosts/$host/variables.nix"; then
+        error "Editor '$editor' failed; review variables.nix before continuing."
+        return 1
       fi
+      return 0
     done
+    error "No editor available; set EDITOR or install nano, vim, or vi."
+    return 1
   fi
 }
 
 create_new_host() {
   local new_name="$1"
-  local template="$2"
 
-  if [ -z "$new_name" ]; then
-    error "Host name cannot be empty"
+  if ! validate_host_name "$new_name"; then
+    error "Invalid host name. Use only letters, numbers, hyphens, and underscores."
     return 1
   fi
 
-  if [ -d "./hosts/$new_name" ]; then
+  if [ -e "./hosts/$new_name" ] || [ -L "./hosts/$new_name" ]; then
     error "Host '$new_name' already exists"
     return 1
   fi
 
-  if [ ! -d "./hosts/$template" ]; then
-    error "Template host '$template' does not exist"
+  if [ ! -d "./hosts/Default" ]; then
+    error "Portable Default host template is missing"
     return 1
   fi
 
-  info "Creating new host '$new_name' from template '$template'..."
-  cp -r "./hosts/$template" "./hosts/$new_name" || {
+  info "Creating new host '$new_name' from portable Default template..."
+  cp -R -- "./hosts/Default" "./hosts/$new_name" || {
     error "Failed to copy template"
     return 1
   }
 
-  # Remove old hardware config
+  # Never inherit hardware generated for another machine.
   rm -f "./hosts/$new_name/hardware-configuration.nix"
 
-  # Update hostname in the new host's variables.nix if it exists
   if [ -f "./hosts/$new_name/variables.nix" ]; then
     sed -i -e "s/hostname = .*/hostname = \"$new_name\";/" "./hosts/$new_name/variables.nix"
   fi
@@ -137,86 +162,43 @@ create_new_host() {
   return 0
 }
 
-add_host_to_flake() {
-  local host_name="$1"
-
-  info "Adding host '$host_name' to flake.nix..."
-
-  # Check if host already exists in flake
-  if grep -q "\"$host_name\"" flake.nix; then
-    warn "Host '$host_name' already exists in flake.nix"
-    return 0
-  fi
-
-  # Find the nixosConfigurations section and add the new host
-  # This uses awk to insert the new host line after the opening brace
-  awk -v host="$host_name" '
-    /nixosConfigurations = {/ {
-      print
-      getline
-      print
-      print "        " host " = mkHost \"" host "\";"
-      next
-    }
-    { print }
-  ' flake.nix >flake.nix.tmp && mv flake.nix.tmp flake.nix
-
-  info "Host '$host_name' added to flake.nix"
-  return 0
-}
-
 info "NixOS Configuration Host Selection"
 
-available_hosts=($(list_hosts))
-
-if [ ${#available_hosts[@]} -eq 0 ]; then
-  error "No hosts found in hosts directory"
-  exit 1
-fi
+mapfile -t available_hosts < <(list_hosts)
+current_hostname=$(hostname)
+default_choice=
+for i in "${!available_hosts[@]}"; do
+  if [[ "${available_hosts[$i]}" == "$current_hostname" ]]; then
+    default_choice=$((i + 1))
+    break
+  fi
+done
 
 echo -e "\nAvailable hosts:"
 for i in "${!available_hosts[@]}"; do
   echo "  $((i + 1))) ${available_hosts[$i]}"
 done
-echo "  n) Create new host"
+echo "  n) Create new host from portable Default"
 
 while true; do
-  read -p "Select host to use [Default: 1]: " host_choice
-  host_choice=${host_choice:-1}
+  if [[ -n "$default_choice" ]]; then
+    IFS= read -r -p "Select host to use [Default: $current_hostname]: " host_choice || exit 1
+  else
+    IFS= read -r -p "Select host to use (n to create a host): " host_choice || exit 1
+  fi
+  host_choice=${host_choice:-$default_choice}
 
-  if [[ "$host_choice" == "n" ]] || [[ "$host_choice" == "N" ]]; then
-    # Create new host
-    read -p "Enter name for new host: " new_host_name
-
-    # Validate host name (alphanumeric, hyphens, and underscores only)
-    if [[ ! "$new_host_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+  if [[ "$host_choice" == [nN] ]]; then
+    IFS= read -r -p "Enter name for new host: " new_host_name || exit 1
+    if ! validate_host_name "$new_host_name"; then
       error "Invalid host name. Use only letters, numbers, hyphens, and underscores."
       continue
     fi
-
-    echo "Select template host:"
-    for i in "${!available_hosts[@]}"; do
-      echo "  $((i + 1))) ${available_hosts[$i]}"
-    done
-
-    read -p "Template choice [Default: 1]: " template_choice
-    template_choice=${template_choice:-1}
-
-    if [[ "$template_choice" =~ ^[0-9]+$ ]] && [ "$template_choice" -ge 1 ] && [ "$template_choice" -le ${#available_hosts[@]} ]; then
-      template_host="${available_hosts[$((template_choice - 1))]}"
-
-      if create_new_host "$new_host_name" "$template_host"; then
-        selected_host="$new_host_name"
-
-        # Add host to flake.nix
-        add_host_to_flake "$selected_host"
-        break
-      fi
-    else
-      error "Invalid template choice"
+    if create_new_host "$new_host_name"; then
+      selected_host="$new_host_name"
+      break
     fi
-
-  elif [[ "$host_choice" =~ ^[0-9]+$ ]] && [ "$host_choice" -ge 1 ] && [ "$host_choice" -le ${#available_hosts[@]} ]; then
+  elif valid_host_choice "$host_choice"; then
     selected_host="${available_hosts[$((host_choice - 1))]}"
     break
   else
@@ -226,34 +208,52 @@ done
 
 info "Using host: $selected_host"
 
-# Ask if user wants to edit variables.nix
 open_variables "$selected_host"
-
-# Choose GPU drivers
 choose_drivers "$selected_host"
+sed -i -e "s/username = .*/username = \"$currentUser\";/" "./hosts/$selected_host/variables.nix"
 
-# replace username variable in variables.nix with $USER
-sudo sed -i -e "s/username = .*/username = \"$currentUser\";/" "./hosts/$selected_host/variables.nix"
-
-# Generate Hardware Configuration
-info "Generating hardware configuration..."
-if [ -f "/etc/nixos/hardware-configuration.nix" ]; then
-  sudo cp "/etc/nixos/hardware-configuration.nix" "./hosts/$selected_host/hardware-configuration.nix"
-else
-  sudo nixos-generate-config --show-hardware-config | sudo tee "./hosts/$selected_host/hardware-configuration.nix" >/dev/null
+hardware_path="./hosts/$selected_host/hardware-configuration.nix"
+if [[ -L "$hardware_path" || ( -e "$hardware_path" && ! -f "$hardware_path" ) ]]; then
+  error "Hardware configuration is not a regular file; refusing to replace it."
+  exit 1
 fi
 
-sudo git -C . add "hosts/$selected_host/*" 2>/dev/null || true
-sudo git -C . add "flake.nix" 2>/dev/null || true
+replace_hardware=true
+if [[ -f "$hardware_path" ]]; then
+  IFS= read -r -p "Keep existing hardware configuration for $selected_host? (Y/n): " keep_hardware || exit 1
+  [[ "$keep_hardware" == [nN] ]] || replace_hardware=false
+fi
 
-# Build the new configuration
+if [[ "$replace_hardware" == true ]]; then
+  info "Generating hardware configuration..."
+  hardware_tmp=$(mktemp -- "$hardware_path.XXXXXXXX")
+  if [[ -f /etc/nixos/hardware-configuration.nix ]]; then
+    if ! sudo cp -- /etc/nixos/hardware-configuration.nix "$hardware_tmp"; then
+      rm -f -- "$hardware_tmp"
+      error "Failed to copy hardware configuration."
+      exit 1
+    fi
+  elif ! sudo nixos-generate-config --show-hardware-config >"$hardware_tmp"; then
+    rm -f -- "$hardware_tmp"
+    error "Failed to generate hardware configuration."
+    exit 1
+  fi
+  chmod 644 -- "$hardware_tmp"
+  mv -f -- "$hardware_tmp" "$hardware_path"
+fi
+
+IFS= read -r -p "Type 'BOOT $selected_host' to check and build its boot entry: " boot_confirmation || exit 1
+if [[ "$boot_confirmation" != "BOOT $selected_host" ]]; then
+  warn "Boot build cancelled; no Nix evaluation or rebuild was started."
+  exit 0
+fi
+
+# Nix flakes include only Git-visible files. Stage intent to add for this host only.
+git add -N -- "hosts/$selected_host/configuration.nix" "hosts/$selected_host/host-packages.nix" \
+  "hosts/$selected_host/variables.nix" "hosts/$selected_host/hardware-configuration.nix"
+info "Checking NixOS configuration for host: $selected_host"
+nix flake check --no-build --no-write-lock-file
 info "Building NixOS configuration for host: $selected_host"
 sudo nixos-rebuild boot --flake ".#$selected_host"
-
-if [ $? -eq 0 ]; then
-  echo
-  success
-# else
-#   echo
-#   failed
-fi
+echo
+success
