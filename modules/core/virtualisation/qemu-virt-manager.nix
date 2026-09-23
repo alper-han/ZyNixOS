@@ -9,6 +9,8 @@ let
   inherit (import ../../../hosts/${host}/variables.nix) username;
 in
 {
+  boot.kernelModules = [ "kvm-amd" ];
+
   users.users.${username}.extraGroups = lib.optionals config.virtualisation.libvirtd.enable [
     "libvirtd"
     "kvm"
