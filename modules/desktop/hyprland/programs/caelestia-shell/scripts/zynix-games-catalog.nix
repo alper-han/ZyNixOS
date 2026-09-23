@@ -19,9 +19,6 @@ pkgs.writeShellApplication {
       sed -n "s/^''${field}=//p" "$file" | sed -n '1p'
     }
 
-    clean_desktop_exec() {
-      printf '%s' "$1" | sed -E 's/(^|[[:space:]])%[fFuUdDnNickvm]($|[[:space:]])/ /g; s/[[:space:]]+/ /g; s/^ //; s/ $//'
-    }
 
     emit_game() {
       local name="$1"
@@ -49,7 +46,6 @@ pkgs.writeShellApplication {
       local desktop
       local name
       local categories
-      local exec_value
       local icon
       local command_json
 
@@ -68,18 +64,15 @@ pkgs.writeShellApplication {
 
           categories="$(desktop_field Categories "$desktop")"
           [[ "$categories" == *Game* ]] || continue
-
           name="$(desktop_field Name "$desktop")"
           [[ -n "$name" ]] || name="$(basename "$desktop" .desktop)"
           if [[ "''${name,,}" == steam || "$(basename "$desktop")" == steam.desktop ]]; then
             continue
           fi
 
-          exec_value="$(clean_desktop_exec "$(desktop_field Exec "$desktop")")"
-          [[ -n "$exec_value" ]] || continue
 
           icon="$(desktop_field Icon "$desktop")"
-          command_json="$(jq -cn --arg execValue "$exec_value" '["uwsm", "app", "--", "sh", "-lc", $execValue]')"
+          command_json="$(jq -cn --arg gio "${pkgs.glib}/bin/gio" --arg desktop "$desktop" '["uwsm", "app", "--", $gio, "launch", $desktop]')"
           emit_game "$name" "Desktop Entry" "''${icon:-sports_esports}" "" "$command_json"
         done < <(find "$app_dir" -maxdepth 1 -type f -name '*.desktop' -print0 2>/dev/null)
       done

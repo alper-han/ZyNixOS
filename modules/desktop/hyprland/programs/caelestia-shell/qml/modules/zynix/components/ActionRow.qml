@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import QtCore
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -54,7 +55,7 @@ Item {
                 anchors.centerIn: parent
                 width: parent.width
                 height: parent.height
-                source: root.iconPath.length > 0 ? Qt.resolvedUrl(`file://${root.iconPath}`) : ""
+                source: root.iconPath.length > 0 ? QUrl.fromLocalFile(root.iconPath) : ""
                 fillMode: Image.PreserveAspectFit
                 smooth: true
                 asynchronous: true

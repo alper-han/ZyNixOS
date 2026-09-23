@@ -124,7 +124,11 @@ pkgs.writeShellScript "caelestia-theme-post-hook" ''
     ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/icon-theme "'$icon_theme'" || true
   fi
 
-  portal_restart_state="''${XDG_RUNTIME_DIR:-/tmp}/caelestia-theme-portal-restart"
+  ${pkgs.hyprland}/bin/hyprctl reload >/dev/null 2>&1 || true
+
+  portal_restart_dir="''${XDG_RUNTIME_DIR:-''${XDG_STATE_HOME:-$HOME/.local/state}}/caelestia"
+  ${pkgs.coreutils}/bin/mkdir -p "$portal_restart_dir"
+  portal_restart_state="$portal_restart_dir/theme-portal-restart"
   portal_restart_token="$(${pkgs.coreutils}/bin/date +%s%N)"
   if printf '%s\n' "$portal_restart_token" > "$portal_restart_state" 2>/dev/null; then
     (

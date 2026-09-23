@@ -10,6 +10,7 @@ Scope {
     property var sessions: []
     property bool loading: false
     property string errorText: ""
+    property int requestId: 0
 
     signal refreshed
     signal failed(string message)
@@ -17,10 +18,12 @@ Scope {
     readonly property list<string> listCommand: ["tmux", "ls", "-F", "#{session_name}: #{session_path} (#{session_windows} windows)"]
 
     function refresh(): void {
+        if (root.loading && root.requestId > 0)
+            runner.cancel(root.requestId);
         root.loading = true;
         root.errorText = "";
         console.info(lc, "zynix.tmux.refresh");
-        runner.run(root.listCommand);
+        root.requestId = runner.run(root.listCommand);
     }
 
     function parseOutput(output: string): var {
@@ -57,7 +60,9 @@ Scope {
     CommandRunner {
         id: runner
 
-        onFinished: (command, exitCode, output, error) => {
+        onFinished: (requestId, command, exitCode, output, error) => {
+            if (requestId !== root.requestId)
+                return;
             root.loading = false;
 
             if (exitCode !== 0) {

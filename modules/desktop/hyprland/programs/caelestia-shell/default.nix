@@ -8,17 +8,17 @@
 let
   inherit (import ../../../../../hosts/${host}/variables.nix)
     bluetoothSupport
-    fileManager
     isLaptop
     terminal
+    fileManager
     ;
 
   caelestiaSettings = import ./settings.nix {
     inherit
       bluetoothSupport
-      fileManager
       isLaptop
       terminal
+      fileManager
       ;
   };
   caelestiaShellJson = pkgs.writeText "caelestia-shell.json" (builtins.toJSON caelestiaSettings);
@@ -38,12 +38,15 @@ in
           pkgs.adw-gtk3
           pkgs.papirus-folders
           pkgs.papirus-icon-theme
-          pkgs.libsForQt5.qt5ct
           pkgs.libsForQt5.qtstyleplugin-kvantum
-          pkgs.qtengine
+          caelestiaPackages.qtenginePackage
+          caelestiaPackages.darklyPackage
         ];
 
-        xdg.configFile."uwsm/env.d/50-caelestia-theme".text = import ./uwsm-env.nix { inherit pkgs; };
+        xdg.configFile."uwsm/env.d/50-caelestia-theme".text = import ./uwsm-env.nix {
+          inherit pkgs;
+          inherit (caelestiaPackages) qtenginePackage darklyPackage;
+        };
         xdg.configFile."swappy/config".text = ''
           [Default]
           save_dir=$HOME/Pictures/Screenshots
@@ -73,17 +76,10 @@ in
               enableTerm = true;
               enableHypr = true;
               enableDiscord = true;
-              enableSpicetify = true;
-              enablePandora = true;
               enableFuzzel = true;
               enableBtop = true;
-              enableNvtop = true;
-              enableHtop = true;
               enableGtk = true;
               enableQt = true;
-              enableWarp = true;
-              enableChromium = true;
-              enableZed = true;
               enableCava = true;
               iconTheme = "Papirus-Dark";
               iconThemeLight = "Papirus";

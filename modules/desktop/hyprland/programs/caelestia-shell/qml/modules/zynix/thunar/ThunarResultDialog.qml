@@ -27,11 +27,15 @@ Scope {
     property string algorithm: ""
     property string errorText: ""
     property var rows: []
+    property int helperRequestId: 0
+    property int copyRequestId: 0
     property int selectedIndex: rows.length > 0 ? 0 : -1
 
     signal closed
 
     function openCommand(command: string, path: string, algorithmName: string): void {
+        if (root.helperRequestId > 0)
+            helperRunner.cancel(root.helperRequestId);
         root.commandName = command;
         root.targetPath = path;
         root.algorithm = algorithmName;
@@ -45,13 +49,18 @@ Scope {
         const args = ["thunar-backend-helper", command, path];
         if (command === "checksum")
             args.push(algorithmName);
-        helperRunner.run(args);
+        root.helperRequestId = helperRunner.run(args);
     }
 
     function close(): void {
+        if (root.helperRequestId > 0)
+            helperRunner.cancel(root.helperRequestId);
+        if (root.copyRequestId > 0)
+            copyRunner.cancel(root.copyRequestId);
+        root.helperRequestId = 0;
+        root.copyRequestId = 0;
         if (!root.shown)
             return;
-
         root.shown = false;
         root.loading = false;
         root.closed();
@@ -139,13 +148,17 @@ Scope {
     function copyText(text: string): void {
         if (text.length === 0)
             return;
-        copyRunner.run(["thunar-backend-helper", "copy", text]);
+        if (root.copyRequestId > 0)
+            copyRunner.cancel(root.copyRequestId);
+        root.copyRequestId = copyRunner.run(["thunar-backend-helper", "copy", text]);
     }
 
     CommandRunner {
         id: helperRunner
 
-        onFinished: (command, exitCode, output, error) => {
+        onFinished: (requestId, command, exitCode, output, error) => {
+            if (requestId !== root.helperRequestId)
+                return;
             root.loading = false;
             const payload = root.parseResult(output, error);
             if (exitCode !== 0 || !payload.ok) {
@@ -166,7 +179,9 @@ Scope {
     CommandRunner {
         id: copyRunner
 
-        onFinished: (command, exitCode, output, error) => {
+        onFinished: (requestId, command, exitCode, output, error) => {
+            if (requestId !== root.copyRequestId)
+                return;
             if (exitCode === 0)
                 console.info(lc, `zynix.thunar.copy.ok command=${root.commandName}`);
             else

@@ -10,16 +10,19 @@ Scope {
     property var games: []
     property bool loading: false
     property string errorText: ""
+    property int requestId: 0
 
     signal refreshed
 
     readonly property list<string> listCommand: ["zynix-games-catalog"]
 
     function refresh(): void {
+        if (root.loading && root.requestId > 0)
+            runner.cancel(root.requestId);
         root.loading = true;
         root.errorText = "";
         console.info(lc, "zynix.games.refresh");
-        runner.run(root.listCommand);
+        root.requestId = runner.run(root.listCommand);
     }
 
     function parseOutput(output: string): var {
@@ -62,7 +65,9 @@ Scope {
     CommandRunner {
         id: runner
 
-        onFinished: (command, exitCode, output, error) => {
+        onFinished: (requestId, command, exitCode, output, error) => {
+            if (requestId !== root.requestId)
+                return;
             root.loading = false;
 
             if (exitCode !== 0) {

@@ -1,36 +1,17 @@
 {
   bluetoothSupport,
-  fileManager,
   isLaptop,
   terminal,
+  fileManager,
 }:
 let
-  useTwelveHourClock = false;
-
-  favouriteApps = [
-    "zen-beta"
-    "kitty"
-    "vesktop"
-    "rider"
-    "com.github.th_ch.youtube_music"
-    "btop"
-    "org.kde.kate"
-    "github-desktop"
-    "mpv"
-    "com.obsproject.Studio"
-    "steam"
-    "rustdesk"
-  ];
+  favouriteApps = [ ];
 
   hiddenApps = [
-    "yad-icon-browser"
     "org.kde.kdeconnect.nonplasma"
     "org.kde.kdeconnect.sms"
     "kvantummanager"
-    "rofi"
-    "rofi-theme-selector"
     "thunar-settings"
-    "yad-settings"
     "org.kde.kwrite"
   ];
 in
@@ -43,7 +24,15 @@ in
       terminal = [ terminal ];
       audio = [ "pavucontrol" ];
       playback = [ "mpv" ];
-      explorer = [ fileManager ];
+      explorer =
+        if fileManager == "yazi" then
+          [
+            terminal
+            "--"
+            "yazi"
+          ]
+        else
+          [ fileManager ];
     };
 
     idle = {
@@ -122,12 +111,11 @@ in
       recolour = false;
     };
     workspaces = {
-      perMonitorWorkspaces = true;
       activeIndicator = true;
       activeTrail = true;
       occupiedBg = true;
       showWindows = true;
-      shown = 10;
+      shown = 20;
     };
     entries = [
       {
@@ -248,10 +236,10 @@ in
       }
     ];
     weatherLocation = "Istanbul";
-    useFahrenheit = false;
-    useFahrenheitPerformance = false;
+    weatherUnits = "Celsius";
+    sensorUnits = "Celsius";
+    clockFormat = "TwentyFourHour";
     smartScheme = true;
-    inherit useTwelveHourClock;
   };
 
   osd = {
@@ -274,10 +262,6 @@ in
       shutdown = [
         "systemctl"
         "poweroff"
-      ];
-      hibernate = [
-        "systemctl"
-        "hibernate"
       ];
       reboot = [
         "systemctl"

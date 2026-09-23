@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 import Caelestia
 import Caelestia.Config
@@ -18,6 +19,7 @@ Scope {
     property bool shown: false
     property var filteredSources: []
     property int currentIndex: -1
+    property var currentPlayback: null
 
     signal closed
 
@@ -46,9 +48,12 @@ Scope {
         if (!source)
             return;
 
+        root.stopPlayback();
         console.info(lc, `zynix.music.launch label=${source.label} playlist=${source.playlist}`);
-        Quickshell.execDetached(["pkill", "mpv"]);
-        Quickshell.execDetached(source.command);
+        const process = playbackProcess.createObject(root);
+        process.command = source.command;
+        root.currentPlayback = process;
+        process.running = true;
         root.close();
     }
 
@@ -62,9 +67,30 @@ Scope {
     }
 
     function stopPlayback(): void {
-        console.info(lc, "zynix.music.stop command=pkill mpv");
-        Quickshell.execDetached(["pkill", "mpv"]);
+        const process = root.currentPlayback;
+        if (!process) {
+            console.info(lc, "zynix.music.stop.empty");
+            root.close();
+            return;
+        }
+
+        console.info(lc, "zynix.music.stop owned-process");
+        root.currentPlayback = null;
+        process.terminate();
+        process.destroy();
         root.close();
+    }
+
+    Component {
+        id: playbackProcess
+
+        Process {
+            onExited: {
+                if (root.currentPlayback === this)
+                    root.currentPlayback = null;
+                destroy();
+            }
+        }
     }
 
     MusicSources {
@@ -166,7 +192,7 @@ Scope {
                     Layout.fillWidth: true
                     icon: "stop_circle"
                     title: qsTr("Stop current playback")
-                    subtitle: qsTr("Runs pkill mpv")
+                    subtitle: qsTr("Stops the owned playback process")
                     trailingText: qsTr("stop")
                     onActivated: root.stopPlayback()
                 }
