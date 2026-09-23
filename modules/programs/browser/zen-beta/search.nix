@@ -9,7 +9,9 @@
     "NixOS Packages"
     "NixOS Options"
     "NixOS Wiki"
-    "Home Manager Options"
+    "Home Manager"
+    "My NixOS"
+    "youtube"
     "google"
   ];
   engines =
@@ -63,7 +65,7 @@
             params = [
               {
                 name = "type";
-                value = "packages";
+                value = "options";
               }
               {
                 name = "query";
@@ -89,7 +91,7 @@
         definedAliases = [
           "@hm"
           "@home"
-          "'homeman"
+          "@homeman"
         ];
       };
       "My NixOS" = {

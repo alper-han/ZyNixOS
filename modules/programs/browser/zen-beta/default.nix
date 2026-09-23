@@ -12,9 +12,6 @@
 
       programs.zen-browser = {
         enable = true;
-        env = {
-          MOZ_DISABLE_RDD_SANDBOX = "1";
-        };
         policies = import ./policies.nix { inherit lib; };
         languagePacks = [
           "tr-TR"
@@ -22,11 +19,11 @@
         ];
         profiles = {
           default = {
-            id = 0; # 0 is the default profile; see also option "isDefault"
-            name = "default"; # name as listed in about:profiles
-            isDefault = true; # can be omitted; true if profile ID is 0
+            id = 0;
+            name = "default";
+            isDefault = true;
             settings = import ./settings.nix { inherit lib; };
-            bookmarks = import ../bookmarks.nix;
+            bookmarks = import ./bookmarks.nix;
             search = import ./search.nix { inherit pkgs; };
             userChrome = builtins.readFile ./userChrome.css;
             userContent = builtins.readFile ./userContent.css;

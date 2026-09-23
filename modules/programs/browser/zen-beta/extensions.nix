@@ -10,8 +10,9 @@
   ];
   extensionSettings = {
     "*" = {
-      # Keep force-installed addons managed by Nix, but allow manual installs.
-      installation_mode = "force_installed";
+      # Explicit entries below remain Nix-managed; the wildcard only permits
+      # user-installed extensions without forcing an install URL.
+      installation_mode = "allowed";
     };
     "uBlock0@raymondhill.net" = {
       private_browsing = true;
@@ -109,7 +110,7 @@
           uiTheme = "dark";
           uiAccentCustom = true;
           uiAccentCustom0 = "#CA9EE6";
-          cloudStorageEnabled = lib.mkForce false; # Security liability?
+          cloudStorageEnabled = lib.mkForce false;
           advancedUserEnabled = true;
           showIconBadge = false;
           importedLists = [

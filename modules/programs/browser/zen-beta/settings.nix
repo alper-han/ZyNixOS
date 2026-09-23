@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  extensions = import ../extensions.nix { inherit lib; };
+  extensions = import ./extensions.nix { inherit lib; };
   lock-false = {
     Value = false;
     Status = "locked";
@@ -20,7 +20,6 @@ in
   "zen.watermark.enabled" = false;
   "zen.welcome-screen.seen" = true;
 
-  # enable custom userchrome
   "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
   "svg.context-properties.content.enabled" = true;
   "layout.css.color-mix.enabled" = true;
@@ -49,7 +48,7 @@ in
   "toolkit.scrollbox.horizontalScrollDistance" = 6;
   "toolkit.scrollbox.verticalScrollDistance" = 2;
 
-  # Commented because we are using adguard + cloudflare dns in modules/core/dns.nix
+  # Use system DNS from modules/core/dns.nix; leave browser DoH disabled.
   # "network.trr.mode" = 3; # 2 if your havng DNS problems
   # "network.trr.custom_uri" = "https://dns.quad9.net/dns-query";
   # "network.trr.uri" = "https://dns.quad9.net/dns-query";
@@ -87,7 +86,6 @@ in
   "browser.newtabpage.activity-stream.telemetry" = lock-false;
   "browser.ping-centre.telemetry" = lock-false;
 
-  # Block more unwanted stuff
   "dom.block_multiple_popups" = lock-true;
   "browser.privatebrowsing.forceMediaMemoryCache" = lock-true;
   "browser.contentblocking.category" = {
@@ -144,7 +142,7 @@ in
   "browser.aboutwelcome.enabled" = lock-false;
   "browser.tabs.firefox-view" = lock-false;
   "browser.startup.homepage_override.mstone" = "ignore";
-  "trailhead.firstrun.didSeeAboutWelcome" = lock-true; # Disable welcome splash
+  "trailhead.firstrun.didSeeAboutWelcome" = lock-true;
   "browser.newtab.url" = "about:blank";
   "browser.newtabpage.activity-stream.enabled" = lock-false;
   "browser.newtabpage.enhanced" = lock-false;

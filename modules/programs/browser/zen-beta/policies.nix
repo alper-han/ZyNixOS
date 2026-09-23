@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  extensions = import ../extensions.nix { inherit lib; };
+  extensions = import ./extensions.nix { inherit lib; };
 in
 {
   AllowFileSelectionDialogs = true;
@@ -123,10 +123,6 @@ in
       Value = 0;
       Status = "locked";
     };
-    "floorp.browser.sidebar.enable" = {
-      Value = false;
-      Status = "locked";
-    };
     "geo.enabled" = {
       Value = false;
       Status = "locked";
@@ -153,14 +149,6 @@ in
     };
     "extensions.autoDisableScopes" = {
       Value = 0;
-      Status = "locked";
-    };
-    "browser.newtabpage.activity-stream.floorp.newtab.imagecredit.hide" = {
-      Value = true;
-      Status = "locked";
-    };
-    "browser.newtabpage.activity-stream.floorp.newtab.releasenote.hide" = {
-      Value = true;
       Status = "locked";
     };
     "browser.search.separatePrivateDefault" = {
