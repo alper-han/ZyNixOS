@@ -20,7 +20,7 @@ let
   };
 
   scripts = [
-    (import ./rebuild.nix { inherit pkgs; })
+    (import ./rebuild.nix { inherit host pkgs; })
     (import ./rollback.nix scriptArgs)
     (import ./tmux-sessionizer.nix scriptArgs)
     (import ./driverinfo.nix scriptArgs)

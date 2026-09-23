@@ -1,11 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, host, ... }:
+let
+  inherit (import ../../hosts/${host}/variables.nix) hostname;
+in
 pkgs.writeShellScriptBin "rebuild" ''
   set -euo pipefail
   RED='\033[0;31m'
   GREEN='\033[0;32m'
   NC='\033[0m'
   flake="$HOME/ZyNixOS"
-  host="$(hostname)"
+  host="${hostname}"
   if [[ ! "$host" =~ ^[A-Za-z0-9]([A-Za-z0-9_-]{0,61}[A-Za-z0-9])?$ ]]; then
     echo "Error: invalid hostname '$host'; it must match a configured host name." >&2
     exit 1
