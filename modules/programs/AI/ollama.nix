@@ -1,5 +1,6 @@
 { pkgs, ... }:
 {
+  # Optional local-only service: keep the API on loopback and the firewall closed.
   services.ollama = {
     enable = true;
 
