@@ -57,11 +57,11 @@ pkgs.writeShellApplication {
       local algorithm="$1"
       local target="$2"
       case "$algorithm" in
-        sha256) sha256sum "$target" | cut -d' ' -f1 ;;
-        sha512) sha512sum "$target" | cut -d' ' -f1 ;;
-        blake3|b3) b3sum "$target" | cut -d' ' -f1 ;;
-        md5) md5sum "$target" | cut -d' ' -f1 ;;
-        sha1) sha1sum "$target" | cut -d' ' -f1 ;;
+        sha256) sha256sum -- "$target" | cut -d' ' -f1 ;;
+        sha512) sha512sum -- "$target" | cut -d' ' -f1 ;;
+        blake3|b3) b3sum -- "$target" | cut -d' ' -f1 ;;
+        md5) md5sum -- "$target" | cut -d' ' -f1 ;;
+        sha1) sha1sum -- "$target" | cut -d' ' -f1 ;;
         *) return 2 ;;
       esac
     }
@@ -70,7 +70,7 @@ pkgs.writeShellApplication {
       local tag="$1"
       local target="$2"
       local value
-      value=$(exiftool -s3 "$tag" "$target" 2>/dev/null || true)
+      value=$(exiftool -s3 "$tag" -- "$target" 2>/dev/null || true)
       if [[ -n "$value" ]]; then
         one_line "$value"
       else
@@ -82,7 +82,7 @@ pkgs.writeShellApplication {
       local format="$1"
       local target="$2"
       local value
-      value=$(mediainfo --Inform="$format" "$target" 2>/dev/null || true)
+      value=$(mediainfo --Inform="$format" -- "$target" 2>/dev/null || true)
       if [[ -n "$value" ]]; then
         one_line "$value"
       fi
@@ -104,18 +104,18 @@ pkgs.writeShellApplication {
         target="''${1-}"
         require_existing_path fileinfo "$target" || exit 1
 
-        basename_value=$(basename "$target")
-        realpath_value=$(realpath "$target")
-        file_type=$(file -b "$target")
+        basename_value=$(basename -- "$target")
+        realpath_value=$(realpath -- "$target")
+        file_type=$(file -b -- "$target")
         mime_type=$(xdg-mime query filetype "$target" 2>/dev/null || true)
         [[ -n "$mime_type" ]] || mime_type='unknown'
-        size_bytes=$(stat --printf='%s' "$target")
+        size_bytes=$(stat --printf='%s' -- "$target")
         size_human=$(numfmt --to=iec-i --suffix=B "$size_bytes" 2>/dev/null || printf '%s bytes' "$size_bytes")
-        permissions=$(stat --printf='%A' "$target")
-        owner=$(stat --printf='%U:%G' "$target")
-        modified_time=$(stat --printf='%y' "$target" | cut -d'.' -f1)
-        accessed_time=$(stat --printf='%x' "$target" | cut -d'.' -f1)
-        inode=$(stat --printf='%i' "$target")
+        permissions=$(stat --printf='%A' -- "$target")
+        owner=$(stat --printf='%U:%G' -- "$target")
+        modified_time=$(stat --printf='%y' -- "$target" | cut -d'.' -f1)
+        accessed_time=$(stat --printf='%x' -- "$target" | cut -d'.' -f1)
+        inode=$(stat --printf='%i' -- "$target")
 
         jq -cn \
           --arg command fileinfo \
@@ -184,7 +184,7 @@ pkgs.writeShellApplication {
       exif)
         target="''${1-}"
         require_regular_file exif "$target" || exit 1
-        basename_value=$(basename "$target")
+        basename_value=$(basename -- "$target")
         model=$(exif_field -Model "$target")
         lens_model=$(exif_field -LensModel "$target")
         date_time_original=$(exif_field -DateTimeOriginal "$target")
@@ -219,7 +219,7 @@ pkgs.writeShellApplication {
       mediainfo)
         target="''${1-}"
         require_regular_file mediainfo "$target" || exit 1
-        if ! mediainfo "$target" >/dev/null 2>&1; then
+        if ! mediainfo -- "$target" >/dev/null 2>&1; then
           emit_error mediainfo command-failed 'Could not read media information'
           exit 1
         fi
@@ -251,7 +251,7 @@ pkgs.writeShellApplication {
         fi
         audio_sample_rate=$(or_na "$(media_field 'Audio;%SamplingRate/String%' "$target")")
         audio_bitrate=$(or_na "$(media_field 'Audio;%BitRate/String%' "$target")")
-        basename_value=$(basename "$target")
+        basename_value=$(basename -- "$target")
         jq -cn \
           --arg command mediainfo \
           --arg path "$target" \

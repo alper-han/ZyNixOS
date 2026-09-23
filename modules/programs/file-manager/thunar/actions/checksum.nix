@@ -1,16 +1,9 @@
-# Checksum Thunar Custom Actions
-{ checksumCommandFor, isCaelestia }:
+{ }:
 let
-  checksumCommand =
-    algorithm:
-    if isCaelestia then
-      "caelestia shell thunar checksum %f ${algorithm}"
-    else
-      checksumCommandFor algorithm;
+  checksumCommand = algorithm: "caelestia shell thunar checksum %f ${algorithm}";
 in
 {
   xml = ''
-    <!-- SHA256 -->
     <action>
       <icon>dialog-password</icon>
       <name>SHA256</name>
@@ -26,7 +19,6 @@ in
       <other-files/>
     </action>
 
-    <!-- SHA512 -->
     <action>
       <icon>dialog-password</icon>
       <name>SHA512</name>
@@ -42,7 +34,6 @@ in
       <other-files/>
     </action>
 
-    <!-- BLAKE3 -->
     <action>
       <icon>dialog-password</icon>
       <name>BLAKE3</name>
@@ -58,7 +49,6 @@ in
       <other-files/>
     </action>
 
-    <!-- MD5 -->
     <action>
       <icon>dialog-password</icon>
       <name>MD5</name>
@@ -74,7 +64,6 @@ in
       <other-files/>
     </action>
 
-    <!-- SHA1 -->
     <action>
       <icon>dialog-password</icon>
       <name>SHA1</name>
@@ -90,7 +79,6 @@ in
       <other-files/>
     </action>
 
-    <!-- Calculate All -->
     <action>
       <icon>dialog-password</icon>
       <name>Calculate All</name>

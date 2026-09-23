@@ -1,24 +1,15 @@
-# File Info Thunar Custom Actions
-{
-  isCaelestia,
-  exifCommandFallback,
-  fileInfoCommandFallback,
-  mediaInfoCommandFallback,
-}:
+{ }:
 let
-  fileInfoCommand =
-    if isCaelestia then "caelestia shell thunar fileinfo %f" else fileInfoCommandFallback;
-  exifCommand = if isCaelestia then "caelestia shell thunar exif %f" else exifCommandFallback;
-  mediaInfoCommand =
-    if isCaelestia then "caelestia shell thunar mediainfo %f" else mediaInfoCommandFallback;
-  uiBackendName = if isCaelestia then "Caelestia" else "Rofi";
-  fileInfoId = if isCaelestia then "fileinfo-caelestia" else "fileinfo-rofi";
-  exifInfoId = if isCaelestia then "exifinfo-caelestia" else "exifinfo-rofi";
-  mediaInfoId = if isCaelestia then "mediainfo-caelestia" else "mediainfo-rofi";
+  fileInfoCommand = "caelestia shell thunar fileinfo %f";
+  exifCommand = "caelestia shell thunar exif %f";
+  mediaInfoCommand = "caelestia shell thunar mediainfo %f";
+  uiBackendName = "Caelestia";
+  fileInfoId = "fileinfo-caelestia";
+  exifInfoId = "exifinfo-caelestia";
+  mediaInfoId = "mediainfo-caelestia";
 in
 {
   xml = ''
-    <!-- General Info (${uiBackendName}) -->
     <action>
       <icon>dialog-information</icon>
       <name>File Info</name>
@@ -34,7 +25,6 @@ in
       <other-files/>
     </action>
 
-    <!-- EXIF Data (${uiBackendName}) -->
     <action>
       <icon>image-x-generic</icon>
       <name>EXIF Data</name>
@@ -46,7 +36,6 @@ in
       <other-files/>
     </action>
 
-    <!-- Media Info (${uiBackendName}) -->
     <action>
       <icon>video-x-generic</icon>
       <name>Media Info</name>

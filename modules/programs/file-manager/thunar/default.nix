@@ -6,9 +6,8 @@
 }:
 
 let
-  inherit (import ../../../../hosts/${host}/variables.nix) bar terminal;
+  inherit (import ../../../../hosts/${host}/variables.nix) terminal;
   inherit (lib) getExe getExe';
-  isCaelestia = bar == "caelestia-shell";
 
   terminalPackage = pkgs.${terminal};
   terminalExe = getExe terminalPackage;
@@ -20,7 +19,7 @@ let
 
     target="$1"
     if [[ ! -d "$target" ]]; then
-      target="$(${getExe' pkgs.coreutils "dirname"} "$target")"
+      target="$(${getExe' pkgs.coreutils "dirname"} -- "$target")"
     fi
 
     if [[ ! -d "$target" ]]; then
@@ -46,7 +45,8 @@ let
   '';
 
   peazip-action = pkgs.writeShellScriptBin "thunar-peazip" ''
-    operation="$1"
+    set -u
+    operation="''${1:-}"
     shift || true
 
     if [[ -z "$operation" || "$#" -lt 1 ]]; then
@@ -55,8 +55,11 @@ let
     fi
 
     case "$operation" in
-      -add2archive|-add2zip|-add27z|-ext2here|-ext2newfolder|-ext2smart|-ext2browse|-ext2test|-add2convert)
-        exec ${getExe pkgs.peazip} "$operation" "$@"
+      -add2archive|-add2zip|-add27z|-ext2here|-ext2folder|-ext2smart|-ext2browse|-ext2test|-add2convert)
+        if ! ${getExe pkgs.peazip} "$operation" "$@"; then
+          ${getExe pkgs.libnotify} "PeaZip" "Operation failed: $operation" -i dialog-error
+          exit 1
+        fi
         ;;
       *)
         ${getExe pkgs.libnotify} "PeaZip" "Unsupported operation: $operation" -i dialog-error
@@ -65,51 +68,10 @@ let
     esac
   '';
 
-  # Import custom actions
   generalActions = import ./actions/general.nix { inherit copy-path open-terminal-here; };
-  checksumActions = import ./actions/checksum.nix {
-    inherit isCaelestia;
-    checksumCommandFor = rofiFallbacks.checksumCommandFor;
-  };
-  fileinfoActions = import ./actions/fileinfo.nix {
-    inherit isCaelestia;
-    inherit (rofiFallbacks)
-      exifCommandFallback
-      fileInfoCommandFallback
-      mediaInfoCommandFallback
-      ;
-  };
+  checksumActions = import ./actions/checksum.nix { };
+  fileinfoActions = import ./actions/fileinfo.nix { };
   peazipActions = import ./actions/peazip.nix { inherit peazip-action; };
-
-  rofiFallbacks =
-    if isCaelestia then
-      {
-        checksumCommandFor = _: throw "Rofi checksum fallback is disabled for caelestia-shell";
-        fileInfoCommandFallback = throw "Rofi fileinfo fallback is disabled for caelestia-shell";
-        exifCommandFallback = throw "Rofi exif fallback is disabled for caelestia-shell";
-        mediaInfoCommandFallback = throw "Rofi mediainfo fallback is disabled for caelestia-shell";
-        packages = [ ];
-      }
-    else
-      let
-        rofiTheme = "${../../../desktop/hyprland/programs/rofi/launchers/type-1}/style-6.rasi";
-        checksum-rofi = pkgs.callPackage ./scripts/checksum-rofi.nix { inherit rofiTheme; };
-        fileinfo-rofi = pkgs.callPackage ./scripts/fileinfo-rofi.nix { inherit rofiTheme; };
-        exifinfo-rofi = pkgs.callPackage ./scripts/exifinfo-rofi.nix { inherit rofiTheme; };
-        mediainfo-rofi = pkgs.callPackage ./scripts/mediainfo-rofi.nix { inherit rofiTheme; };
-      in
-      {
-        checksumCommandFor = algorithm: "${checksum-rofi}/bin/checksum-rofi %f ${algorithm}";
-        fileInfoCommandFallback = "${fileinfo-rofi}/bin/fileinfo-rofi %f";
-        exifCommandFallback = "${exifinfo-rofi}/bin/exifinfo-rofi %f";
-        mediaInfoCommandFallback = "${mediainfo-rofi}/bin/mediainfo-rofi %f";
-        packages = [
-          checksum-rofi
-          fileinfo-rofi
-          exifinfo-rofi
-          mediainfo-rofi
-        ];
-      };
 
   backendHelpers = {
     thunar-backend-helper = pkgs.callPackage ./scripts/thunar-backend-helper.nix { };
@@ -128,7 +90,6 @@ in
     (checksumActions.packages pkgs)
     ++ (fileinfoActions.packages pkgs)
     ++ (peazipActions.packages pkgs)
-    ++ rofiFallbacks.packages
     ++ [
       backendHelpers.thunar-backend-helper
       open-terminal-here
@@ -136,10 +97,8 @@ in
       peazip-action
     ];
 
-  # Thunar Custom Actions
   home-manager.sharedModules = [
     {
-      # Custom Actions XML
       xdg.configFile."Thunar/uca.xml".text = ''
         <?xml version="1.0" encoding="UTF-8"?>
         <actions>

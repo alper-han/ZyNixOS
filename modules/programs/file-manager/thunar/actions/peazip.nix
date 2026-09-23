@@ -1,8 +1,68 @@
-# PeaZip Thunar Custom Actions
 { peazip-action }:
+let
+  archivePatterns = builtins.concatStringsSep ";" [
+    "*.zip"
+    "*.ZIP"
+    "*.7z"
+    "*.7Z"
+    "*.rar"
+    "*.RAR"
+    "*.tar"
+    "*.TAR"
+    "*.gz"
+    "*.GZ"
+    "*.tgz"
+    "*.TGZ"
+    "*.bz2"
+    "*.BZ2"
+    "*.tbz2"
+    "*.TBZ2"
+    "*.xz"
+    "*.XZ"
+    "*.txz"
+    "*.TXZ"
+    "*.zst"
+    "*.ZST"
+    "*.lz4"
+    "*.LZ4"
+    "*.z"
+    "*.Z"
+    "*.cab"
+    "*.CAB"
+    "*.arj"
+    "*.ARJ"
+    "*.lzh"
+    "*.LZH"
+    "*.iso"
+    "*.ISO"
+    "*.pea"
+    "*.PEA"
+    "*.ace"
+    "*.ACE"
+    "*.jar"
+    "*.JAR"
+    "*.war"
+    "*.WAR"
+    "*.apk"
+    "*.APK"
+    "*.deb"
+    "*.DEB"
+    "*.rpm"
+    "*.RPM"
+    "*.cpio"
+    "*.CPIO"
+    "*.wim"
+    "*.WIM"
+    "*.chm"
+    "*.CHM"
+    "*.msi"
+    "*.MSI"
+    "*.xpi"
+    "*.XPI"
+  ];
+in
 {
   xml = ''
-    <!-- Add to Archive -->
     <action>
       <icon>package-x-generic</icon>
       <name>Add to Archive</name>
@@ -19,7 +79,6 @@
       <other-files/>
     </action>
 
-    <!-- Add to ZIP -->
     <action>
       <icon>package-x-generic</icon>
       <name>Add to ZIP</name>
@@ -36,7 +95,6 @@
       <other-files/>
     </action>
 
-    <!-- Add to 7Z -->
     <action>
       <icon>package-x-generic</icon>
       <name>Add to 7Z</name>
@@ -53,7 +111,6 @@
       <other-files/>
     </action>
 
-    <!-- Extract Here -->
     <action>
       <icon>extract-archive</icon>
       <name>Extract Here</name>
@@ -61,23 +118,21 @@
       <unique-id>peazip-extract-here</unique-id>
       <command>${peazip-action}/bin/thunar-peazip -ext2here %F</command>
       <description>Extract to current folder</description>
-      <patterns>*.zip;*.7z;*.rar;*.tar;*.gz;*.bz2;*.xz;*.iso;*.pea;*.zst;*.lz4</patterns>
+      <patterns>${archivePatterns}</patterns>
       <other-files/>
     </action>
 
-    <!-- Extract to New Folder -->
     <action>
       <icon>extract-archive</icon>
       <name>Extract to New Folder</name>
       <submenu>PeaZip</submenu>
       <unique-id>peazip-extract-folder</unique-id>
-      <command>${peazip-action}/bin/thunar-peazip -ext2newfolder %F</command>
+      <command>${peazip-action}/bin/thunar-peazip -ext2folder %F</command>
       <description>Extract to new folder</description>
-      <patterns>*.zip;*.7z;*.rar;*.tar;*.gz;*.bz2;*.xz;*.iso;*.pea;*.zst;*.lz4</patterns>
+      <patterns>${archivePatterns}</patterns>
       <other-files/>
     </action>
 
-    <!-- Smart Extract -->
     <action>
       <icon>extract-archive</icon>
       <name>Smart Extract</name>
@@ -85,11 +140,10 @@
       <unique-id>peazip-extract-smart</unique-id>
       <command>${peazip-action}/bin/thunar-peazip -ext2smart %F</command>
       <description>Smart extract (auto-detect structure)</description>
-      <patterns>*.zip;*.7z;*.rar;*.tar;*.gz;*.bz2;*.xz;*.iso;*.pea;*.zst;*.lz4</patterns>
+      <patterns>${archivePatterns}</patterns>
       <other-files/>
     </action>
 
-    <!-- Open with PeaZip -->
     <action>
       <icon>archive-manager</icon>
       <name>Open with PeaZip</name>
@@ -97,11 +151,10 @@
       <unique-id>peazip-browse</unique-id>
       <command>${peazip-action}/bin/thunar-peazip -ext2browse %F</command>
       <description>Browse archive contents</description>
-      <patterns>*.zip;*.7z;*.rar;*.tar;*.gz;*.bz2;*.xz;*.iso;*.pea;*.zst;*.lz4</patterns>
+      <patterns>${archivePatterns}</patterns>
       <other-files/>
     </action>
 
-    <!-- Test Archive -->
     <action>
       <icon>dialog-information</icon>
       <name>Test Archive</name>
@@ -109,11 +162,10 @@
       <unique-id>peazip-test</unique-id>
       <command>${peazip-action}/bin/thunar-peazip -ext2test %F</command>
       <description>Test archive integrity</description>
-      <patterns>*.zip;*.7z;*.rar;*.tar;*.gz;*.bz2;*.xz;*.iso;*.pea;*.zst;*.lz4</patterns>
+      <patterns>${archivePatterns}</patterns>
       <other-files/>
     </action>
 
-    <!-- Convert Archive -->
     <action>
       <icon>document-save-as</icon>
       <name>Convert Archive</name>
@@ -121,7 +173,7 @@
       <unique-id>peazip-convert</unique-id>
       <command>${peazip-action}/bin/thunar-peazip -add2convert %F</command>
       <description>Convert to another format</description>
-      <patterns>*.zip;*.7z;*.rar;*.tar;*.gz;*.bz2;*.xz;*.iso;*.pea;*.zst;*.lz4</patterns>
+      <patterns>${archivePatterns}</patterns>
       <other-files/>
     </action>
   '';

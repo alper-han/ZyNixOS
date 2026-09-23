@@ -1,8 +1,6 @@
-# General Thunar Custom Actions
 { copy-path, open-terminal-here }:
 {
   xml = ''
-    <!-- Open Terminal Here -->
     <action>
       <icon>utilities-terminal</icon>
       <name>Open Terminal Here</name>
@@ -14,7 +12,6 @@
       <directories/>
     </action>
 
-    <!-- Copy Path -->
     <action>
       <icon>edit-copy</icon>
       <name>Copy Path</name>
