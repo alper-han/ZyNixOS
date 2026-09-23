@@ -1,12 +1,7 @@
 {
-  host,
   pkgs,
   ...
 }:
-let
-  inherit (import ../../../../hosts/${host}/variables.nix) bar;
-  caelestiaOwnsTheme = bar == "caelestia-shell";
-in
 {
   home-manager.sharedModules = [
     (_: {
@@ -14,9 +9,9 @@ in
         enable = true;
         package = pkgs.btop;
         settings = {
-          color_theme = if caelestiaOwnsTheme then "caelestia" else "catppuccin-mocha";
-          show_gpu_info = "on";
-          cpu_sensor = "auto";
+          color_theme = "caelestia";
+          show_gpu_info = "On";
+          cpu_sensor = "Auto";
           vim_keys = true;
           rounded_corners = true;
           proc_tree = false;
@@ -28,43 +23,35 @@ in
           io_graph_combined = false;
         };
         themes.catppuccin-mocha = ''
-          # Main background, empty for terminal default, need to be empty if you want transparent background
+          # Empty main_bg uses the terminal background/transparency.
           theme[main_bg]="#1E1E2E"
 
-          # Main text color
           theme[main_fg]="#CDD6F4"
 
-          # Title color for boxes
           theme[title]="#CDD6F4"
 
           # Highlight color for keyboard shortcuts
           theme[hi_fg]="#89B4FA"
 
-          # Background color of selected item in processes box
           theme[selected_bg]="#45475A"
 
-          # Foreground color of selected item in processes box
           theme[selected_fg]="#89B4FA"
 
-          # Color of inactive/disabled text
           theme[inactive_fg]="#7F849C"
 
-          # Color of text appearing on top of graphs, i.e uptime and current network graph scaling
+          # Graph overlay text (uptime/scaling).
           theme[graph_text]="#F5E0DC"
 
-          # Background color of the percentage meters
           theme[meter_bg]="#45475A"
 
-          # Misc colors for processes box including mini cpu graphs, details memory graph and details status text
+          # Process mini-graphs and status text.
           theme[proc_misc]="#F5E0DC"
 
-          # CPU, Memory, Network, Proc box outline colors
           theme[cpu_box]="#cba6f7" #Mauve
           theme[mem_box]="#a6e3a1" #Green
           theme[net_box]="#eba0ac" #Maroon
           theme[proc_box]="#89b4fa" #Blue
 
-          # Box divider line and small boxes line color
           theme[div_line]="#6C7086"
 
           # Temperature graph color (Green -> Yellow -> Red)
