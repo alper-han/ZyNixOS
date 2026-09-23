@@ -21,4 +21,3 @@ hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 2.7, bezier = "st
 hl.animation({ leaf = "workspaces", enabled = true, speed = 7, bezier = "menu_decel", style = "slide" })
 hl.animation({ leaf = "specialWorkspaceIn", enabled = true, speed = 2.8, bezier = "emphasizedDecel", style = "slidevert" })
 hl.animation({ leaf = "specialWorkspaceOut", enabled = true, speed = 1.2, bezier = "emphasizedAccel", style = "slidevert" })
-hl.animation({ leaf = "zoomFactor", enabled = true, speed = 3, bezier = "standardDecel" })

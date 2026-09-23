@@ -1,3 +1,13 @@
+local schemeValues = caelestiaScheme or {}
+
+local function schemeColor(name, fallback, alpha)
+  local value = tostring(schemeValues[name] or fallback):gsub("^#", "")
+  if not value:match("^%x%x%x%x%x%x$") then
+    value = fallback
+  end
+  return "rgba(" .. value .. alpha .. ")"
+end
+
 hl.config({
   general = {
     gaps_workspaces = 20,
@@ -5,8 +15,8 @@ hl.config({
     gaps_out = 10,
     border_size = 1,
     col = {
-      active_border = { colors = { "rgba(ca9ee6ff)", "rgba(f2d5cfff)" }, angle = 45 },
-      inactive_border = { colors = { "rgba(b4befecc)", "rgba(6c7086cc)" }, angle = 45 },
+      active_border = { colors = { schemeColor("primary", "ca9ee6", "ff"), schemeColor("secondary", "f2d5cf", "ff") }, angle = 45 },
+      inactive_border = { colors = { schemeColor("outline", "b4befe", "cc"), schemeColor("surfaceVariant", "6c7086", "cc") }, angle = 45 },
     },
     resize_on_border = false,
     layout = "dwindle",
@@ -19,7 +29,7 @@ hl.config({
       render_power = 4,
       color = "rgba(59599210)",
     },
-    rounding = isCaelestia and 15 or 0,
+    rounding = 15,
     dim_special = 0.3,
     blur = {
       enabled = true,
@@ -35,10 +45,10 @@ hl.config({
   },
   group = {
     col = {
-      border_active = { colors = { "rgba(ca9ee6ff)", "rgba(f2d5cfff)" }, angle = 45 },
-      border_inactive = { colors = { "rgba(b4befecc)", "rgba(6c7086cc)" }, angle = 45 },
-      border_locked_active = { colors = { "rgba(ca9ee6ff)", "rgba(f2d5cfff)" }, angle = 45 },
-      border_locked_inactive = { colors = { "rgba(b4befecc)", "rgba(6c7086cc)" }, angle = 45 },
+      border_active = { colors = { schemeColor("primary", "ca9ee6", "ff"), schemeColor("secondary", "f2d5cf", "ff") }, angle = 45 },
+      border_inactive = { colors = { schemeColor("outline", "b4befe", "cc"), schemeColor("surfaceVariant", "6c7086", "cc") }, angle = 45 },
+      border_locked_active = { colors = { schemeColor("primary", "ca9ee6", "ff"), schemeColor("secondary", "f2d5cf", "ff") }, angle = 45 },
+      border_locked_inactive = { colors = { schemeColor("outline", "b4befe", "cc"), schemeColor("surfaceVariant", "6c7086", "cc") }, angle = 45 },
     },
   },
   input = {
@@ -58,10 +68,6 @@ hl.config({
     sensitivity = 0,
     accel_profile = "flat",
   },
-  render = {
-    cm_auto_hdr = 0,
-    direct_scanout = 2,
-  },
   ecosystem = {
     no_update_news = true,
     no_donation_nag = true,
@@ -78,8 +84,6 @@ hl.config({
     animate_manual_resizes = false,
     animate_mouse_windowdragging = false,
     force_default_wallpaper = 0,
-    swallow_regex = "(foot|kitty|allacritty|Alacritty)",
-    enable_swallow = false,
     disable_autoreload = true,
     disable_hyprland_guiutils_check = true,
     vrr = vrr,
@@ -93,9 +97,6 @@ hl.config({
     no_hardware_cursors = 2,
     enable_hyprcursor = true,
     sync_gsettings_theme = false,
-    zoom_factor = 1.0,
-    zoom_rigid = false,
-    zoom_disable_aa = true,
     hotspot_padding = 1,
   },
   xwayland = {
@@ -114,11 +115,6 @@ hl.config({
     smart_split = false,
     smart_resizing = false,
   },
-  master = {
-    new_status = "master",
-    new_on_top = true,
-    mfact = 0.5,
-  },
   debug = {
     disable_logs = false,
     enable_stdout_logs = false,
@@ -130,16 +126,10 @@ hl.gesture({ fingers = 3, direction = "pinch", action = "fullscreen" })
 hl.gesture({ fingers = 4, direction = "horizontal", action = "workspace" })
 
 hl.on("hyprland.start", function()
-  hl.exec_cmd(barCommand)
+  hl.exec_cmd(shell_command)
   hl.exec_cmd(clipboardTextCommand)
   hl.exec_cmd(clipboardImageCommand)
   hl.exec_cmd(clearClipboardCommand)
   hl.exec_cmd("uwsm app -s b -- kdeconnect-indicator")
   hl.exec_cmd("hyprctl setcursor catppuccin-mocha-mauve-cursors 24")
-  if nmAppletCommand ~= nil then
-    hl.exec_cmd(nmAppletCommand)
-  end
-  if batteryNotifyCommand ~= nil then
-    hl.exec_cmd(batteryNotifyCommand)
-  end
 end)

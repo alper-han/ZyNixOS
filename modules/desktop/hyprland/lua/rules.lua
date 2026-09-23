@@ -8,7 +8,7 @@ window({ class = ".*" }, { suppress_event = "maximize" })
 window({ class = "org\\.quickshell|swappy" }, { opaque = true })
 window({ float = true, xwayland = false }, { center = true })
 
-for _, class in ipairs({ "yad", "org\\.gnome\\.FileRoller", "file-roller", "peazip", "PeaZip", "blueman-manager", "org\\.quickshell" }) do
+for _, class in ipairs({ "org\\.gnome\\.FileRoller", "file-roller", "peazip", "PeaZip", "blueman-manager", "org\\.quickshell" }) do
   window({ class = class }, { float = true })
 end
 
@@ -25,7 +25,7 @@ window({ title = "^(.*)(wants to open)$" }, { float = true })
 window({ class = "^(thunar)$", title = "^(File Operation Progress)$" }, { float = true, center = true })
 window({ class = "^(thunar)$", title = "^(File Operation Progress)$" }, { size = { 500, 100 } })
 window({ class = "^(pavucontrol)$" }, { float = true, size = { "monitor_w * 0.60", "monitor_h * 0.70" }, center = true })
-window({ class = "^(org\\.pulseaudio\\.pavucontrol|yad-icon-browser)$" }, { float = true, size = { "monitor_w * 0.60", "monitor_h * 0.70" }, center = true })
+window({ class = "^(org\\.pulseaudio\\.pavucontrol)$" }, { float = true, size = { "monitor_w * 0.60", "monitor_h * 0.70" }, center = true })
 window({ class = "^(nm-connection-editor)$" }, { float = true, size = { "monitor_w * 0.45", "monitor_h * 0.45" }, center = true })
 window({ title = ".*Welcome" }, { float = true })
 window({ class = "^(Xdg-desktop-portal-gtk)$" }, { border_size = 0 })
@@ -68,23 +68,11 @@ local function layer(namespace, effects)
   hl.layer_rule(effects)
 end
 
-for _, namespace in ipairs({ "walker", "overview", "anyrun", "indicator.*", "osk", "noanim", "caelestia-(border-exclusion|area-picker)", "quickshell:actionCenter", "quickshell:lockWindowPusher", "quickshell:overlay", "quickshell:overview", "quickshell:polkit", "quickshell:regionSelector", "quickshell:screenshot", "quickshell:session", "gtk4-layer-shell" }) do
+for _, namespace in ipairs({ "caelestia-(border-exclusion|area-picker)", "gtk4-layer-shell" }) do
   layer(namespace, { no_anim = true })
 end
 layer("hyprpicker", { animation = "fade" })
 layer("logout_dialog", { animation = "fade" })
 layer("selection", { animation = "fade" })
-layer("wayfreeze", { animation = "fade" })
 layer("launcher", { animation = "popin 80%", blur = true })
 layer("caelestia-(drawers|background)", { animation = "fade" })
-layer("quickshell:bar", { animation = "slide" })
-layer("quickshell:cheatsheet", { animation = "slide bottom" })
-layer("quickshell:dock", { animation = "slide bottom" })
-layer("quickshell:screenCorners", { animation = "popin 120%" })
-layer("quickshell:notificationPopup", { animation = "fade" })
-layer("quickshell:overlay", { no_anim = true, ignore_alpha = 1 })
-layer("quickshell:osk", { animation = "slide bottom", order = -1 })
-layer("quickshell:reloadPopup", { animation = "slide" })
-layer("quickshell:sidebarRight", { animation = "slide right" })
-layer("quickshell:sidebarLeft", { animation = "slide left" })
-layer("quickshell:verticalBar", { animation = "slide" })
