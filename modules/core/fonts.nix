@@ -3,11 +3,9 @@
   fonts = {
     fontDir.enable = true;
     packages = with pkgs; [
-      # Nerd Fonts
       maple-mono.NF
       pkgs.nerd-fonts.jetbrains-mono
 
-      # Normal Fonts
       noto-fonts
       noto-fonts-color-emoji
 
@@ -21,17 +19,17 @@
           "JetBrainsMono Nerd Font"
           "Maple Mono NF"
           "Noto Mono"
-          "DejaVu Sans Mono" # Default
+          "DejaVu Sans Mono"
         ];
         sansSerif = [
           "Noto Sans"
           "Font Awesome 6 Free"
           "Adwaita Sans"
-          "DejaVu Sans" # Default
+          "DejaVu Sans"
         ];
         serif = [
           "Noto Serif"
-          "DejaVu Serif" # Default
+          "DejaVu Serif"
         ];
         emoji = [ "Noto Color Emoji" ];
       };

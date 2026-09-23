@@ -1,6 +1,7 @@
 { host, pkgs, ... }:
 let
   inherit (import ../../hosts/${host}/variables.nix) username;
+  flakePath = "/home/${username}/ZyNixOS";
 in
 {
   programs.nh = {
@@ -9,7 +10,7 @@ in
       enable = true;
       extraArgs = "--keep-since 7d --keep 3";
     };
-    flake = "/home/${username}/ZyNixOS";
+    flake = flakePath;
   };
 
   environment.systemPackages = with pkgs; [

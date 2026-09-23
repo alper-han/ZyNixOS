@@ -1,12 +1,5 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "steam"
-      "steam-original"
-      "steam-run"
-    ];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -25,8 +18,9 @@
     # protonup-qt # Used to manually download CachyOS Proton
     # protonplus
   ];
+
   programs = {
-    gamemode.enable = lib.mkForce false;
+    gamemode.enable = true;
     steam = {
       enable = true;
       remotePlay.openFirewall = false;
@@ -57,6 +51,7 @@
       package = pkgs.gamescope;
     };
   };
+
   home-manager.sharedModules = [
     (_: {
       programs.mangohud = {
@@ -81,23 +76,19 @@
           horizontal_separator_color = "00FFFF";
           horizontal_stretch = true;
 
-          # Keybinds
           toggle_hud = "Shift_R+F12";
           toggle_hud_position = "Shift_R+F11";
           toggle_fps_limit = "Shift_R+F1";
 
-          # Use legacy layout for better control over display order
+          # Legacy layout preserves display order.
           legacy_layout = true;
 
-          # Display order (top to bottom)
-          # CPU section
           cpu_stats = true;
           cpu_temp = true;
           cpu_power = true;
           cpu_mhz = true;
           cpu_text = "CPU";
 
-          # GPU section
           gpu_stats = true;
           gpu_temp = true;
           gpu_core_clock = true;
@@ -108,14 +99,12 @@
           proc_vram = true;
           throttling_status = true;
 
-          # FPS and performance metrics
           fps = true;
           show_fps_limit = true;
           frametime = true;
           resolution = true;
           present_mode = true;
 
-          # System information
           ram = true;
           gamemode = false;
           display_server = true;
