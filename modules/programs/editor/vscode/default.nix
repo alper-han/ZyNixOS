@@ -9,7 +9,7 @@
     (_: {
       programs.vscode = {
         enable = true;
-        mutableExtensionsDir = true;
+        mutableExtensionsDir = false;
         # package = pkgs.vscodium;
         package = pkgs.vscode;
         profiles.default = {
@@ -51,7 +51,8 @@
           ];
           userSettings = {
             "update.mode" = "none";
-            # "extensions.autoUpdate" = false; # Fixes vscode freaking out when theres an update
+            "extensions.autoCheckUpdates" = false;
+            "extensions.autoUpdate" = false;
             "window.titleBarStyle" = "custom"; # needed otherwise vscode crashes, see https://github.com/NixOS/nixpkgs/issues/246509
             "window.menuBarVisibility" = "classic";
             # "window.zoomLevel" = 0.5;
@@ -66,11 +67,12 @@
             "telemetry.enableCrashReporter" = false;
             "telemetry.enableTelemetry" = false;
 
-            "security.workspace.trust.untrustedFiles" = "open";
+            "security.workspace.trust.enabled" = true;
+            "security.workspace.trust.untrustedFiles" = "prompt";
 
-            "git.enableSmartCommit" = true;
-            "git.autofetch" = true;
-            "git.confirmSync" = false;
+            "git.enableSmartCommit" = false;
+            "git.autofetch" = false;
+            "git.confirmSync" = true;
             "gitlens.hovers.annotations.changes" = false;
             "gitlens.hovers.avatars" = false;
 
@@ -99,7 +101,7 @@
             "explorer.openEditors.visible" = 0;
             "breadcrumbs.enabled" = true;
             "editor.renderControlCharacters" = false;
-            "editor.stickyScroll.enabled" = false; # Top code preview
+            "editor.stickyScroll.enabled" = false;
             "editor.scrollbar.verticalScrollbarSize" = 2;
             "editor.scrollbar.horizontalScrollbarSize" = 2;
             "editor.scrollbar.vertical" = "hidden";
@@ -154,8 +156,7 @@
               }
             ];
             "vim.normalModeKeyBindingsNonRecursive" = [
-              # NAVIGATION
-              # switch b/w buffers
+              # Buffers
               {
                 "before" = [ "<S-h>" ];
                 "commands" = [ ":bprevious" ];
@@ -198,7 +199,6 @@
                 "before" = [ "<C-l>" ];
                 "commands" = [ "workbench.action.focusRightGroup" ];
               }
-              # NICE TO HAVE
               {
                 "before" = [
                   "leader"
@@ -293,7 +293,6 @@
                 "before" = [ "K" ];
                 "commands" = [ "editor.action.moveLinesUpAction" ];
               }
-              # toggle comment selection
               {
                 "before" = [
                   "leader"
