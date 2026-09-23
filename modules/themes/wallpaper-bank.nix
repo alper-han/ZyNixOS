@@ -27,13 +27,14 @@ let
       done
     }
 
-    write_manifest_entries ${alperHanWallpapers} wallpapers > "$out/manifest.tsv"
+    write_manifest_entries ${alperHanWallpapers} wallpapers | sort -t $'\t' -k2,2 > "$out/manifest.tsv"
   '';
 
   wallpaperSync = pkgs.writeShellApplication {
     name = "zynix-sync-wallpapers";
     runtimeInputs = with pkgs; [
       coreutils
+      gnugrep
     ];
     text = ''
       set -euo pipefail
@@ -42,29 +43,43 @@ let
       manifest="${wallpaperBank}/manifest.tsv"
       state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/zynix"
       stamp_file="$state_dir/wallpaper-bank-rev"
+      state_manifest="$state_dir/wallpaper-bank-files"
+      current_manifest="$state_manifest.tmp"
       wallpaper_rev="${wallpaperRev}"
 
-      if [ -f "$stamp_file" ] && [ "$(cat "$stamp_file")" = "$wallpaper_rev" ]; then
+      if [ -f "$stamp_file" ] && [ "$(cat -- "$stamp_file")" = "$wallpaper_rev" ]; then
         exit 0
       fi
 
-      mkdir -p "$destination"
-      mkdir -p "$state_dir"
+      mkdir -p -- "$destination" "$state_dir"
+      cut -f2 -- "$manifest" > "$current_manifest"
 
-      copy_wallpaper() {
-        local source_file="$1"
-        local rel="$2"
-        local base
-
-        base="$(basename "$rel")"
-        install -m 0644 "$source_file" "$destination/$base"
+      safe_relative_path() {
+        case "$1" in
+          ""|.|..|/*|../*|*/../*|*/..)
+            return 1
+            ;;
+        esac
       }
+
+      if [ -f "$state_manifest" ]; then
+        while IFS= read -r rel; do
+          safe_relative_path "$rel" || continue
+          if ! grep -Fqx -- "$rel" "$current_manifest"; then
+            rm -f -- "$destination/$rel"
+          fi
+        done < "$state_manifest"
+      fi
 
       while IFS=$'\t' read -r source_file rel; do
         [ -n "$source_file" ] || continue
-        copy_wallpaper "$source_file" "$rel"
+        safe_relative_path "$rel" || continue
+        target="$destination/$rel"
+        mkdir -p -- "$(dirname -- "$target")"
+        install -m 0644 -- "$source_file" "$target"
       done < "$manifest"
 
+      mv -f -- "$current_manifest" "$state_manifest"
       printf '%s' "$wallpaper_rev" > "$stamp_file"
     '';
   };
