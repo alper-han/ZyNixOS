@@ -1,180 +1,251 @@
-{ ... }:
 {
   home-manager.sharedModules = [
-    (_: {
+    {
       programs.starship = {
         enable = true;
         settings = {
+          # Show session identity over SSH; retain Starship's privileged-user warning.
           add_newline = false;
           scan_timeout = 100;
-          format = "$username$hostname$directory$git_branch$git_state$git_status$cmd_duration$python$nix_shell$character";
+          format = "$os$container($username$hostname )$sudo$directory$git_branch$git_state$direnv$nix_shell$docker_context$nodejs$bun$deno$lua$rust$golang$dotnet$java$kotlin$swift$dart$elixir$haskell$scala$ruby$php$zig$c$cpp$cmake$python$git_status$cmd_duration$jobs$memory_usage$status$character";
+          right_format = "$time";
+
+          # Explicit OS badges keep local and remote identities readable.
+          os = {
+            disabled = false;
+            format = "[$symbol]($style)";
+            style = "#8AADF4";
+            symbols = {
+              AIX = "AIX ";
+              Alpaquita = "Alpaquita Linux ";
+              AlmaLinux = " ";
+              Alpine = " ";
+              ALTLinux = "ALT Linux ";
+              Amazon = "Amazon Linux ";
+              Android = " ";
+              AOSC = " ";
+              Arch = " ";
+              Artix = " ";
+              Bluefin = "Bluefin ";
+              CachyOS = " ";
+              CentOS = " ";
+              Debian = " ";
+              Elementary = " ";
+              DragonFly = "DragonFly BSD ";
+              Emscripten = "Emscripten ";
+              EndeavourOS = " ";
+              Fedora = " ";
+              FreeBSD = " ";
+              Garuda = " ";
+              Gentoo = " ";
+              HardenedBSD = "HardenedBSD ";
+              Illumos = " ";
+              Ios = "iOS ";
+              InstantOS = "InstantOS ";
+              Kali = " ";
+              Linux = " ";
+              Mabox = "Mabox ";
+              Macos = " ";
+              Manjaro = " ";
+              Mariner = "Azure Linux ";
+              MidnightBSD = "MidnightBSD ";
+              Mint = " ";
+              NetBSD = "NetBSD ";
+              NixOS = " ";
+              Nobara = " ";
+              OpenBSD = " ";
+              OpenCloudOS = "OpenCloudOS ";
+              openEuler = "openEuler ";
+              openSUSE = " ";
+              OracleLinux = "Oracle Linux ";
+              PikaOS = "PikaOS ";
+              Pop = " ";
+              Raspbian = " ";
+              Redhat = " ";
+              RedHatEnterprise = " ";
+              RockyLinux = " ";
+              Redox = "Redox ";
+              Solus = " ";
+              SUSE = "SUSE ";
+              Ubuntu = " ";
+              Ultramarine = "Ultramarine ";
+              Unknown = "Unknown ";
+              Uos = "UnionTech OS ";
+              Void = " ";
+              Windows = " ";
+              Zorin = " ";
+            };
+          };
+
+          username = {
+            show_always = false;
+            style_user = "#A6DA95";
+            style_root = "#ED8796";
+            format = "[$user]($style)";
+          };
+
+          hostname = {
+            ssh_only = true;
+            style = "#F4DBD6";
+            format = "[@$hostname]($style)";
+          };
+
+          shell = {
+            disabled = false;
+            format = "[$indicator]($style) ";
+            style = "#A5ADCB";
+            bash_indicator = "bash";
+            zsh_indicator = "zsh";
+            fish_indicator = "fish";
+            powershell_indicator = "pwsh";
+            nu_indicator = "nu";
+            unknown_indicator = "";
+          };
+
+          # Shield: cached sudo credentials, not persistent root access.
+          sudo = {
+            disabled = false;
+            symbol = " ";
+            format = "[$symbol]($style)";
+            style = "#EED49F";
+          };
+
           directory = {
             truncate_to_repo = false;
             read_only = " ro";
             style = "#57C7FF";
-            # style = "bold italic bright-blue";
           };
-          /*
-               username = {
-              style_user = "green bold";
-              style_root = "red bold";
-              format = "[$user]($style)";
-              disabled = false;
-              show_always = true;
-            };
-          */
+
           character = {
             success_symbol = "[❯](#FF6AC1)";
             error_symbol = "[❯](#FF5C57)";
             vimcmd_symbol = "[❮](bright-green)";
           };
+
           git_branch = {
-            format = "[$branch]($style)";
-            symbol = "git ";
-            style = "242";
-          };
-          git_status = {
-            format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)";
-            style = "cyan";
-            conflicted = "​";
-            untracked = "​";
-            modified = "​";
-            staged = "​";
-            renamed = "​";
-            deleted = "​";
-            stashed = "≡";
-          };
-          git_state = {
-            format = ''\([$state( $progress_current/$progress_total)]($style)\) '';
-            style = "bright-black";
-          };
-          cmd_duration = {
-            format = "[$duration]($style) ";
-            style = "yellow";
-          };
-          aws = {
-            symbol = "aws ";
-          };
-          azure = {
-            symbol = "az ";
-          };
-          bun = {
-            symbol = "bun ";
+            format = "[ $branch]($style) ";
+            style = "#A5ADCB";
           };
 
-          cmake = {
-            symbol = "cmake ";
+          git_status = {
+            format = "$staged$modified$deleted$untracked$renamed$conflicted$stashed$ahead_behind";
+            staged = "[ \${count}](#A6DA95) ";
+            modified = "[ \${count}](#EED49F) ";
+            deleted = "[ \${count}](#ED8796) ";
+            untracked = "[ \${count}](#EED49F) ";
+            renamed = "[ \${count}](#57C7FF) ";
+            conflicted = "[ \${count}](#ED8796) ";
+            stashed = "[ \${count}](#A5ADCB) ";
+            ahead = "[ \${count}](#A6DA95) ";
+            behind = "[ \${count}](#EED49F) ";
+            diverged = "[ \${ahead_count}](#A6DA95) [ \${behind_count}](#EED49F) ";
           };
-          deno = {
-            symbol = "deno ";
+
+          git_state = {
+            format = ''\([$state( $progress_current/$progress_total)]($style)\) '';
+            style = "#EED49F";
           };
-          docker_context = {
-            symbol = "docker ";
-          };
-          golang = {
-            symbol = "go ";
-          };
-          # hostname = {
-          #   ssh_only = false;
-          #   format = " on [$hostname](bold red)\n";
-          #   disabled = false;
-          # };
-          lua = {
-            symbol = "lua ";
-          };
-          nodejs = {
-            symbol = "nodejs ";
-          };
-          memory_usage = {
-            symbol = "memory ";
-          };
-          nim = {
-            symbol = "nim ";
+
+          direnv = {
+            disabled = false;
+            symbol = "direnv ";
+            format = "[$symbol$loaded/$allowed]($style) ";
+            style = "#EED49F";
           };
 
           nix_shell = {
-            symbol = "❄️ ";
-            format = "[$symbol]($style)";
+            symbol = " ";
+            format = ''[$symbol$state( \($name\))]($style) '';
+            style = "#8AADF4";
           };
 
-          shell = {
+          docker_context = {
+            symbol = " ";
+            only_with_files = true;
+            style = "blue";
+          };
+
+          container = {
             disabled = false;
-            style = "cyan";
-            bash_indicator = "";
-            powershell_indicator = "";
+            symbol = " ";
+            format = "[$symbol$name]($style) ";
+            style = "#C6A0F6";
           };
 
-          os.symbols = {
-            Alpaquita = "alq ";
-            Alpine = "alp ";
-            Amazon = "amz ";
-            Android = "andr ";
-            Arch = "rch ";
-            Artix = "atx ";
-            CentOS = "cent ";
-            Debian = "deb ";
-            DragonFly = "dfbsd ";
-            Emscripten = "emsc ";
-            EndeavourOS = "ndev ";
-            Fedora = "fed ";
-            FreeBSD = "fbsd ";
-            Garuda = "garu ";
-            Gentoo = "gent ";
-            HardenedBSD = "hbsd ";
-            Illumos = "lum ";
-            Linux = "lnx ";
-            Mabox = "mbox ";
-            Macos = "mac ";
-            Manjaro = "mjo ";
-            Mariner = "mrn ";
-            MidnightBSD = "mid ";
-            Mint = "mint ";
-            NetBSD = "nbsd ";
-            NixOS = "nix ";
-            OpenBSD = "obsd ";
-            OpenCloudOS = "ocos ";
-            openEuler = "oeul ";
-            openSUSE = "osuse ";
-            OracleLinux = "orac ";
-            Pop = "pop ";
-            Raspbian = "rasp ";
-            Redhat = "rhl ";
-            RedHatEnterprise = "rhel ";
-            Redox = "redox ";
-            Solus = "sol ";
-            SUSE = "suse ";
-            Ubuntu = "ubnt ";
-            Unknown = "unk ";
-            Windows = "win ";
+          nodejs.symbol = " ";
+          bun.symbol = " ";
+          deno.symbol = " ";
+          lua = {
+            disabled = false;
+            symbol = " ";
+            format = "[$symbol$version]($style) ";
+            style = "#8AADF4";
           };
-          package = {
-            symbol = "pkg ";
+          rust.symbol = " ";
+          golang.symbol = " ";
+          dotnet.symbol = " ";
+          java.symbol = " ";
+          kotlin.symbol = " ";
+          swift.symbol = " ";
+          dart.symbol = " ";
+          elixir.symbol = " ";
+          haskell.symbol = " ";
+          scala.symbol = " ";
+          ruby.symbol = " ";
+          php.symbol = " ";
+          zig.symbol = " ";
+          c.symbol = " ";
+          cpp = {
+            disabled = false;
+            symbol = " ";
           };
-          purescript = {
-            symbol = "purs ";
-          };
+          # Detect C/C++ build trees without local sources.
+          cmake.symbol = " ";
+
           python = {
-            format = "[$virtualenv]($style) ";
-            style = "bright-black";
-            symbol = "py ";
+            format = ''[$symbol($version )(\($virtualenv\))]($style) '';
+            style = "#A5ADCB";
+            symbol = " ";
           };
-          rust = {
-            symbol = "rs ";
+
+          memory_usage = {
+            disabled = false;
+            threshold = 80;
+            symbol = "󰍛";
+            format = "[$symbol$ram_pct]($style) ";
+            style = "#F5A97F";
           };
+
+          cmd_duration = {
+            min_time = 1000;
+            format = "[ $duration]($style) ";
+            style = "#EED49F";
+          };
+
+          time = {
+            disabled = false;
+            time_format = "%R";
+            format = "[$time]($style)";
+            style = "#A5ADCB";
+          };
+
+          jobs = {
+            symbol = "jobs:";
+            symbol_threshold = 1;
+            number_threshold = 1;
+            format = "[$symbol$number]($style) ";
+            style = "#8AADF4";
+          };
+
           status = {
-            symbol = "[x](bold red) ";
-          };
-          sudo = {
-            symbol = "sudo ";
-          };
-          terraform = {
-            symbol = "terraform ";
-          };
-          zig = {
-            symbol = "zig ";
+            disabled = false;
+            symbol = "";
+            format = "[$symbol$status]($style) ";
+            style = "#ED8796";
+            pipestatus = false;
           };
         };
       };
-    })
+    }
   ];
 }
