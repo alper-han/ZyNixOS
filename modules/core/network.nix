@@ -1,11 +1,10 @@
 {
   host,
-  lib,
   pkgs,
   ...
 }:
 let
-  inherit (import ../../hosts/${host}/variables.nix) hostname bar;
+  inherit (import ../../hosts/${host}/variables.nix) hostname;
 in
 {
   networking = {
@@ -18,8 +17,9 @@ in
       ];
     };
 
-    interfaces.eno1.mtu = 1492;
-
+    # Keep the firewall backend explicit so OpenSnitch and custom rules use the
+    # same nftables implementation. Do not add public service ports here.
+    nftables.enable = true;
     firewall = {
       enable = true;
       # Loose reverse-path filtering keeps spoofing protection while allowing
@@ -99,13 +99,11 @@ in
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.network.wait-online.enable = false;
 
-  environment.systemPackages =
-    (with pkgs; [
-      iproute2
-      ethtool
-      openvpn
-      wireguard-tools
-      # proton-vpn
-    ])
-    ++ lib.optional (bar != "caelestia-shell") pkgs.networkmanagerapplet;
+  environment.systemPackages = with pkgs; [
+    iproute2
+    ethtool
+    openvpn
+    wireguard-tools
+    # proton-vpn
+  ];
 }

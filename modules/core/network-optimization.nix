@@ -25,11 +25,10 @@
 
         ETHTOOL="${pkgs.ethtool}/bin/ethtool"
 
-        # Keep only reversible low-risk NIC latency knobs here. Do not force
-        # IRQ affinity, ring sizes, offloads, or qdiscs without fresh measurements;
-        # those are driver-specific and can regress throughput or latency.
-        "$ETHTOOL" -A "$IFACE" rx off tx off 2>/dev/null || true
-        "$ETHTOOL" --set-eee "$IFACE" eee off 2>/dev/null || true
+        # Report NIC capabilities only. Changes stay out of the declarative
+        # baseline until a measured, interface-specific tuning decision exists.
+        "$ETHTOOL" -k "$IFACE" >&2 || true
+        "$ETHTOOL" --show-eee "$IFACE" >&2 || true
       '';
     }
   ];
