@@ -14,8 +14,7 @@ in
     "docker"
   ];
 
-  hardware.nvidia-container-toolkit.enable =
-    isNvidia && config.virtualisation.docker.enable;
+  hardware.nvidia-container-toolkit.enable = isNvidia && config.virtualisation.docker.enable;
 
   virtualisation.docker = {
     enable = true;

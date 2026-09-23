@@ -67,7 +67,9 @@
       checks = forAllSystems (
         _system:
         nixpkgs.lib.mapAttrs' (
-          host: _: nixpkgs.lib.nameValuePair "nixos-${host}" self.nixosConfigurations.${host}.config.system.build.toplevel
+          host: _:
+          nixpkgs.lib.nameValuePair "nixos-${host}"
+            self.nixosConfigurations.${host}.config.system.build.toplevel
         ) configuredHosts
       );
       nixosConfigurations = nixpkgs.lib.mapAttrs (host: _: mkHost host) configuredHosts;

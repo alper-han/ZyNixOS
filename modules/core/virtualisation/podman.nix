@@ -14,8 +14,7 @@ in
     "podman"
   ];
 
-  hardware.nvidia-container-toolkit.enable =
-    isNvidia && config.virtualisation.podman.enable;
+  hardware.nvidia-container-toolkit.enable = isNvidia && config.virtualisation.podman.enable;
 
   virtualisation.podman = {
     enable = true;
