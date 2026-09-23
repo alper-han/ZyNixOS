@@ -1,12 +1,9 @@
 {
-  host,
   pkgs,
   ...
 }:
 let
-  inherit (import ../../../../hosts/${host}/variables.nix) bar;
-  caelestiaOwnsTheme = bar == "caelestia-shell";
-  enabledThemes = if caelestiaOwnsTheme then [ "caelestia.theme.css" ] else [ "theme.css" ];
+  enabledThemes = [ "caelestia.theme.css" ];
   enabledThemesJson = builtins.toJSON enabledThemes;
 in
 {
@@ -17,12 +14,7 @@ in
         apps = [
           "Vencord"
           "vesktop"
-          "equibop"
         ];
-        themeFile = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/alper-han/discord-css/refs/heads/main/theme.css";
-          hash = "sha256-you8qGKpO5Czb6FLsYLveQVXGjRWiaaBjRYNvH2OEjg=";
-        };
         discordSettings = {
           autoUpdate = false;
           autoUpdateNotification = false;
@@ -381,45 +373,37 @@ in
               legacy_settings_file="${legacyWritableSettingsPath app}"
 
               if [ -L "$settings_file" ]; then
-                linked_target="$(${pkgs.coreutils}/bin/readlink "$settings_file")"
-                rm "$settings_file"
+                linked_target="$(${pkgs.coreutils}/bin/readlink -- "$settings_file")"
+                rm -- "$settings_file"
 
                 if [ -f "$legacy_settings_file" ]; then
-                  cp "$legacy_settings_file" "$settings_file"
+                  cp -- "$legacy_settings_file" "$settings_file"
                 elif [ -n "$linked_target" ] && [ -f "$linked_target" ]; then
-                  cp "$linked_target" "$settings_file"
+                  cp -- "$linked_target" "$settings_file"
                 else
-                  cp ${defaultSettingsFile} "$settings_file"
+                  cp -- ${defaultSettingsFile} "$settings_file"
                 fi
               elif ! [ -f "$settings_file" ]; then
-                mkdir -p "$(dirname "$settings_file")"
+                mkdir -p -- "$(dirname -- "$settings_file")"
                 if [ -f "$legacy_settings_file" ]; then
-                  cp "$legacy_settings_file" "$settings_file"
+                  cp -- "$legacy_settings_file" "$settings_file"
                 else
-                  cp ${defaultSettingsFile} "$settings_file"
+                  cp -- ${defaultSettingsFile} "$settings_file"
                 fi
               fi
 
-              chmod u+w "$settings_file"
+              chmod u+w -- "$settings_file"
 
               tmp_file="$(${pkgs.coreutils}/bin/mktemp)"
-              if ${pkgs.jq}/bin/jq '.enabledThemes = ${enabledThemesJson}' "$settings_file" > "$tmp_file"; then
-                ${pkgs.coreutils}/bin/mv "$tmp_file" "$settings_file"
+              if ${pkgs.jq}/bin/jq ".enabledThemes = ${enabledThemesJson}" -- "$settings_file" > "$tmp_file"; then
+                ${pkgs.coreutils}/bin/mv -- "$tmp_file" "$settings_file"
               else
-                ${pkgs.coreutils}/bin/rm -f "$tmp_file"
+                ${pkgs.coreutils}/bin/rm -f -- "$tmp_file"
               fi
             '') apps
           )}
         '';
 
-        xdg.configFile = lib.mkIf (!caelestiaOwnsTheme) (
-          builtins.listToAttrs (
-            map (app: {
-              name = "${app}/themes/theme.css";
-              value.source = themeFile;
-            }) apps
-          )
-        );
       }
     )
   ];
