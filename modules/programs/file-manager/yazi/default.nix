@@ -22,9 +22,9 @@
           preview = {
             # wrap = "yes";
             tab_size = 4;
-            image_filter = "triangle"; # from fast to slow but high quality: nearest, triangle, catmull-rom, lanczos3
-            max_width = 1920; # maybe 1000
-            max_height = 1080; # maybe 1000
+            image_filter = "triangle"; # Fast to high-quality: nearest, triangle, catmull-rom, lanczos3
+            max_width = 1920;
+            max_height = 1080;
             # max_width = 1500;
             # max_height = 1500;
             image_quality = 90;
@@ -38,7 +38,7 @@
             }
             {
               on = [ "d" ];
-              run = "remove --force";
+              run = "remove";
             }
           ];
         };
