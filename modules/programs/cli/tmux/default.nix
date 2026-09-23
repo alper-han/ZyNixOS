@@ -47,20 +47,16 @@ in
           set-window-option -g pane-base-index 1
           set -ga terminal-overrides ",*:Tc"
 
-          # Tmux sessionizer
-          bind-key -r f run-shell "tmux neww tmux-sessionizer"
+          # Keep tmux's default prefix bindings intact (f, r, w, x, *, -, c, z).
+          bind-key -r F run-shell "tmux neww tmux-sessionizer"
 
-          # Tmux binds
-          bind r command-prompt "rename-window %%"
+          # Additional non-conflicting bindings.
           bind R source-file ~/.config/tmux/tmux.conf
           bind S choose-session
           bind u choose-session
-          bind w list-windows
-          bind * setw synchronize-panes
-          bind P set pane-border-status
+          bind Y setw synchronize-panes
           bind -n C-M-c kill-pane
-          bind x swap-pane -D
-          bind z resize-pane -Z
+          bind X swap-pane -D
 
           # Select panes
           bind h select-pane -L
@@ -73,12 +69,9 @@ in
           bind -n M-Up resize-pane -U 2
           bind -n M-Down resize-pane -D 2
 
-          # Splits
+          # Keep the convenient horizontal split alias; the default vertical
+          # split remains available on prefix + ".
           bind | split-window -h -c "#{pane_current_path}"
-          bind [ split-window -h -c "#{pane_current_path}"
-          bind - split-window -v -c "#{pane_current_path}"
-          bind ] split-window -v -c "#{pane_current_path}"
-          bind c new-window -c "#{pane_current_path}"
 
           # Select windows
           bind -n S-Left  previous-window
