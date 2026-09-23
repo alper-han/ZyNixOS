@@ -1,6 +1,5 @@
-# Tested on Davinci 20.2.3 It works for loading videos and exporting in H264/5 & AV1
-# Even if following this guide https://www.reddit.com/r/LinuxCrackSupport/comments/1nfqhld/davinci_resolve_studio_202_fix_linux_crack_guide/
-# nixpkgs rev used for this tests: 4652ba995a945108fb891191c1e910b9a6ed9064
+# Previously tested: DaVinci 20.2.3 video loading and H264/5 & AV1 export,
+# with nixpkgs revision 4652ba995a945108fb891191c1e910b9a6ed9064.
 
 { lib, pkgs, ... }:
 let
@@ -35,12 +34,9 @@ let
   davinci-resolve-studio-cracked =
     let
       davinci-patched = pkgs.davinci-resolve-studio.davinci.overrideAttrs (old: {
-        # script based on https://www.reddit.com/r/LinuxCrackSupport/comments/1nfqhld/davinci_resolve_studio_202_fix_linux_crack_guide/
-        #
-        # Additionally, it will install ffmpeg_encoder_plugin to enable H264/5 & AV1 exports:
-        # https://github.com/EdvinNilsson/ffmpeg_encoder_plugin
-        #
-        # Note: $out IS /opt/resolve
+        # Based on https://www.reddit.com/r/LinuxCrackSupport/comments/1nfqhld/davinci_resolve_studio_202_fix_linux_crack_guide/
+        # H264/5 & AV1 export: https://github.com/EdvinNilsson/ffmpeg_encoder_plugin
+        # $out is /opt/resolve.
         postInstall = ''
           ${old.postInstall or ""}
           ${lib.getExe pkgs.perl} -pi -e 's/\x74\x11\xe8\x21\x23\x00\x00/\xeb\x11\xe8\x21\x23\x00\x00/g' $out/bin/resolve
@@ -56,9 +52,7 @@ let
       });
     in
 
-    # the following was copied from davinci's derivation from nixpkgs.
-    # if davinci updates, this should be updated too
-    # but remember to replace "davinci" with "davinci-patched"
+    # Track the upstream nixpkgs DaVinci FHS environment, using davinci-patched.
     pkgs.buildFHSEnv {
       inherit (davinci-patched) pname version;
 
@@ -173,8 +167,6 @@ in
 {
   environment.systemPackages = [ davinci-resolve-studio-cracked ];
 
-  # following configuration was taken from
-  # https://wiki.nixos.org/wiki/DaVinci_Resolve
-
   # Zynix
+  # Reference: https://wiki.nixos.org/wiki/DaVinci_Resolve
 }
