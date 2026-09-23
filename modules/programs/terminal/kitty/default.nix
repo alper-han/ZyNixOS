@@ -1,12 +1,7 @@
 {
-  host,
   lib,
   ...
 }:
-let
-  inherit (import ../../../../hosts/${host}/variables.nix) bar;
-  caelestiaOwnsTheme = bar == "caelestia-shell";
-in
 {
   home-manager.sharedModules = [
     (_: {
@@ -31,19 +26,13 @@ in
             mouse_hide_wait = 60;
             update_check_interval = 0;
 
-            ## Tabs
+            # Tabs
             tab_title_template = "{index}";
             active_tab_font_style = "normal";
             inactive_tab_font_style = "normal";
             tab_bar_style = "powerline";
             tab_powerline_style = "round";
           }
-          (lib.mkIf (!caelestiaOwnsTheme) {
-            active_tab_foreground = "#1e1e2e";
-            active_tab_background = "#cba6f7";
-            inactive_tab_foreground = "#bac2de";
-            inactive_tab_background = "#313244";
-          })
         ];
         # shellIntegration.mode = "no-sudo";
         keybindings = {
@@ -61,15 +50,11 @@ in
           "alt+9" = "goto_tab 9";
           "alt+0" = "goto_tab 10";
 
-          # Tmux
           "ctrl+t" = "launch --cwd=current --type=overlay tmux-sessionizer";
           # "ctrl+t" = "launch --cwd=current --title tmux-sessionizer tmux-sessionizer";
           "ctrl+shift+left" = "no_op";
           "ctrl+shift+right" = "no_op";
         };
-      }
-      // lib.optionalAttrs (!caelestiaOwnsTheme) {
-        themeFile = "Catppuccin-Mocha";
       };
     })
   ];
