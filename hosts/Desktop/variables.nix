@@ -12,7 +12,7 @@
 
   videoDriver = "nvidia";
   bluetoothSupport = true;
-  hostname = "NixOS";
+  hostname = "Desktop";
   isLaptop = false;
   powerManager = "cpufreq";
 
