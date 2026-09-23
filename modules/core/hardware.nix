@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   host,
   ...
@@ -11,19 +12,19 @@ in
     enableAllFirmware = false;
     graphics.enable = true;
     enableRedistributableFirmware = true;
-    bluetooth = {
-      enable = bluetoothSupport;
-      powerOnBoot = bluetoothSupport;
+    bluetooth = lib.mkIf bluetoothSupport {
+      enable = true;
+      powerOnBoot = true;
       settings = {
         General = {
           Name = hostname;
           ControllerMode = "dual";
           FastConnectable = true;
           # MT7925 Bluetooth audio is more reliable without experimental LE audio.
-          Experimental = false;
           # Experimental = true; # BlueZ userspace experimental features, including newer LE Audio paths.
           # Omit KernelExperimental entirely unless you have a UUID list to pass.
           # KernelExperimental = true; # Kernel-side experimental Bluetooth features for newer transports/codecs.
+          Experimental = false;
           JustWorksRepairing = "always";
           SecureConnections = "on";
         };
@@ -41,7 +42,8 @@ in
     };
   };
 
-  systemd.services.bluetooth-rfkill-unblock = {
+  # Leave rfkill untouched when the host disables Bluetooth.
+  systemd.services.bluetooth-rfkill-unblock = lib.mkIf bluetoothSupport {
     description = "Unblock Bluetooth rfkill on boot";
     wantedBy = [ "bluetooth.service" ];
     before = [ "bluetooth.service" ];
