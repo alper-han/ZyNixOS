@@ -1,13 +1,17 @@
 .direnv/
-target
+.cache/
 result
 result-*
 output-*
-dev-shells/*/flake.lock
 
-.vscode
+# Local editor and runtime state
+.vscode/
 *.log
 *.tmp
+*.backup
 
-[Bb]ackup
+secrets/
+.venv/
+# Installer and backup artifacts
+[Bb]ackup/
 [Bb]ackup/*
