@@ -3,7 +3,10 @@
   services.gnome.gnome-keyring.enable = true;
   security = {
     rtkit.enable = true;
-    polkit.enable = true;
+    polkit = {
+      enable = true;
+      enablePkexecWrapper = true;
+    };
     sudo.execWheelOnly = true;
     apparmor = {
       enable = true;
@@ -11,7 +14,6 @@
       packages = [ pkgs.apparmor-profiles ];
     };
 
-    # Prevent replacing the running kernel without a reboot
     protectKernelImage = true;
   };
 }

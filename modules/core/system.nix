@@ -1,10 +1,8 @@
 {
-  self,
   inputs,
   host,
   lib,
   pkgs,
-  overlays,
   ...
 }:
 let
@@ -12,6 +10,7 @@ let
     consoleKeymap
     kbdLayout
     kbdVariant
+    username
     locale
     timezone
     ;
@@ -22,7 +21,7 @@ in
     nix-index-database.comma.enable = true;
     gnupg.agent = {
       enable = true;
-      enableSSHSupport = true;
+      enableSSHSupport = false;
     };
   };
   services.xserver = {
@@ -41,21 +40,23 @@ in
   };
 
   nix = {
-    # Nix Package Manager Settings
     settings = {
       auto-optimise-store = true; # May make rebuilds longer but less size
-      trusted-users = [
-        "@wheel"
-      ];
-      accept-flake-config = true;
+      # Only root is a trusted Nix user. Normal users can use the daemon without
+      # being able to inject arbitrary settings or substitute-store closures.
+      trusted-users = [ "root" ];
+      accept-flake-config = false;
+      # Every third-party substituter below has a matching pinned public key in
+      # trusted-public-keys. Keep additions explicit and remove a cache and its
+      # key together; a URL alone is never a trust decision.
       substituters = lib.mkForce [
         "https://cache.nixos.org?priority=10"
         "https://nix-community.cachix.org?priority=20"
         "https://hyprland.cachix.org?priority=30"
         "https://cachix.cachix.org?priority=40"
-        "https://cuda-maintainers.cachix.org?priority=60"
-        # Upstream cache for xddxdd/nix-cachyos-kernel release branch.
-        # Keep low priority because global substituters cannot be scoped per-package.
+        "https://cache.nixos-cuda.org?priority=50"
+        # xddxdd/nix-cachyos-kernel release artifacts. This is deliberately
+        # lowest priority because global substituters cannot be package-scoped.
         "https://attic.xuyh0120.win/lantian?priority=120"
         # "https://nixpkgs-wayland.cachix.org"
         # "https://devenv.cachix.org"
@@ -64,7 +65,7 @@ in
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-        "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+        "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
         "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
         # "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
         # "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
@@ -95,7 +96,6 @@ in
     LC_TIME = "${locale}";
   };
   environment.variables = {
-    templates = "${self}/dev-shells";
     NIXOS_OZONE_WL = "1";
 
     # These are the defaults, and xdg.enable does set them, but due to load
@@ -117,10 +117,33 @@ in
 
   console.keyMap = "${consoleKeymap}";
   nixpkgs = {
-    overlays = builtins.attrValues overlays;
+    # Overlay order lives in flake.nix.
     config = {
-      allowUnfree = true;
-      # allowUnfreePredicate = _: true;
+      allowUnfreePredicate =
+        pkg:
+        let
+          name = lib.getName pkg;
+        in
+        lib.hasPrefix "cuda" name
+        || lib.hasPrefix "libcu" name
+        || lib.hasPrefix "libnv" name
+        || lib.hasPrefix "cudnn" name
+        || name == "libnpp"
+        || name == "nccl"
+        || builtins.elem name [
+          "discord"
+          "discord-unwrapped"
+          "github-desktop"
+          "jetbrains-rider"
+          "libsciter"
+          "nvidia-x11"
+          "rider"
+          "steam"
+          "steam-unwrapped"
+          "steam-original"
+          "steam-run"
+          "unrar"
+        ];
     };
   };
   system.stateVersion = "26.11";

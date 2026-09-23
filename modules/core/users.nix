@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   lib,
   inputs,
@@ -10,26 +11,40 @@ let
     username
     editor
     terminal
-    browser
     shell
     ;
 in
 {
   imports = [ inputs.home-manager.nixosModules.home-manager ];
-  programs.dconf.enable = true; # Enable dconf for home-manager
+  assertions = [
+    {
+      assertion = config.users.mutableUsers;
+      message = "Keep users.mutableUsers = true to preserve passwd-managed passwords and prevent account lockout.";
+    }
+    {
+      assertion = lib.all (attribute: config.users.users.${username}.${attribute} == null) [
+        "password"
+        "hashedPassword"
+        "hashedPasswordFile"
+        "initialPassword"
+        "initialHashedPassword"
+      ];
+      message = "Keep password, hashedPassword, hashedPasswordFile, initialPassword, and initialHashedPassword null for users.users.${username}; use passwd to change its password safely.";
+    }
+  ];
+  programs.dconf.enable = true;
   programs.${shell} = {
     enable = true;
   }
   // lib.optionalAttrs (shell == "zsh") {
-    enableGlobalCompInit = false; # Disable global compinit - we lazy load it
+    enableGlobalCompInit = false; # Home Manager owns Zsh compinit.
   };
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    overwriteBackup = true;
+    overwriteBackup = false;
     backupFileExtension = "backup";
     users.${username} = {
-      # Let Home Manager install and manage itself.
       programs.home-manager.enable = true;
       xdg.enable = true;
 
@@ -51,13 +66,14 @@ in
               "gedit"
             else
               "nano";
-          BROWSER = "${browser}";
+          BROWSER = "zen-beta";
           TERMINAL = "${terminal}";
         };
       };
     };
   };
   users = {
+    # Preserve passwords changed with passwd across rebuilds.
     mutableUsers = true;
     users.${username} = {
       isNormalUser = true;
