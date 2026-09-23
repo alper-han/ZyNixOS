@@ -1,8 +1,8 @@
 {
   description = "A simple flake for an atomic system";
+
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nix-flatpak.url = "github:gmodena/nix-flatpak?ref=latest";
+    nixpkgs.url = "github:nixos/nixpkgs/master";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,21 +11,12 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprqt6engine = {
-      url = "github:hyprwm/hyprqt6engine";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     caelestia-shell = {
       url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-cachyos-kernel = {
       url = "github:xddxdd/nix-cachyos-kernel/release";
-    };
-    plasma-manager = {
-      url = "github:nix-community/plasma-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
     };
     betterfox = {
       url = "github:yokoffing/Betterfox";
@@ -40,13 +31,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
-    crossmacro = {
-      url = "github:alper-han/crossmacro";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixpkgs-davinci-20-2-3.url = "github:NixOS/nixpkgs/4652ba995a945108fb891191c1e910b9a6ed9064";
-    nixpkgs-qemu-10-2-2.url = "github:NixOS/nixpkgs/331800de5053fcebacf6813adb5db9c9dca22a0c";
-    serena.url = "github:oraios/serena/v1.7.0";
   };
 
   outputs =
@@ -56,39 +40,36 @@
       ...
     }@inputs:
     let
-      inherit (self) outputs;
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
+      systems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
+      customOverlays = import ./overlays;
+      overlays = [
+        inputs.nix-cachyos-kernel.overlays.pinned
+        customOverlays.modifications
+      ];
+      configuredHosts = nixpkgs.lib.filterAttrs (
+        host: type: type == "directory" && builtins.pathExists ./hosts/${host}/hardware-configuration.nix
+      ) (builtins.readDir ./hosts);
       mkHost =
         host:
         nixpkgs.lib.nixosSystem {
           modules = [
+            ({ ... }: { nixpkgs.overlays = overlays; })
             ./hosts/${host}/configuration.nix
-            {
-              nixpkgs.overlays = [
-                inputs.nix-cachyos-kernel.overlays.pinned
-              ];
-            }
           ];
           specialArgs = {
-            overlays = import ./overlays { inherit inputs host; };
-            inherit
-              self
-              inputs
-              outputs
-              host
-              ;
+            inherit inputs host;
           };
         };
     in
     {
-      templates = import ./dev-shells;
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
-      nixosConfigurations = {
-        Default = mkHost "Default";
-      };
+      checks = forAllSystems (
+        _system:
+        nixpkgs.lib.mapAttrs' (
+          host: _: nixpkgs.lib.nameValuePair "nixos-${host}" self.nixosConfigurations.${host}.config.system.build.toplevel
+        ) configuredHosts
+      );
+      nixosConfigurations = nixpkgs.lib.mapAttrs (host: _: mkHost host) configuredHosts;
     };
 }
