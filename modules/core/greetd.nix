@@ -15,7 +15,7 @@ let
   ]
   ++ lib.optional (
     config.services.displayManager.defaultSession == "hyprland-uwsm"
-  ) ''--cmd "uwsm start hyprland.desktop"'';
+  ) ''--cmd "uwsm start -e -D Hyprland hyprland.desktop"'';
 in
 {
 

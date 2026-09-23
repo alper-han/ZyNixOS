@@ -1,8 +1,11 @@
-{ pkgs, config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   boot = {
-
-    # Filesystems support
     supportedFilesystems = [
       "ntfs"
       "exfat"
@@ -12,16 +15,13 @@
     ];
     tmp.cleanOnBoot = true;
 
-    # CachyOS Kernel Options (via xddxdd/nix-cachyos-kernel):
-    # pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto (generic x86_64)
-    # pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4 (AMD Zen4)
-    # Other variants: _latest, _zen, _lqx, _xanmod_latest, _hardened, _rt
+    # Generic fallback; host hardware policy may intentionally override this.
     kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto;
-
     kernelParams = [
-      "preempt=full" # lower latency but less throughput
-      "systemd.swap=0" # disable GPT auto-discovered disk swap, keep zram-only strategy
-      "zswap.enabled=0" # avoid double-compression path when zram is already enabled
+      "preempt=full"
+      # Avoid auto-activating raw GPT swap; declared swapDevices still use fstab.
+      "systemd.gpt_auto=0"
+      "zswap.enabled=0"
       "quiet"
       "splash"
       "boot.shell_on_fail"
@@ -30,12 +30,6 @@
     ];
 
     kernelModules = [ "ntsync" ];
-
-    # Optional next-step test if Bluetooth audio still crackles after the BlueZ changes:
-    # extraModprobeConfig = ''
-    #   options btusb enable_autosuspend=n
-    # '';
-
     consoleLogLevel = 3;
     initrd = {
       enable = true;
@@ -46,39 +40,33 @@
     loader = {
       efi.canTouchEfiVariables = true;
       efi.efiSysMountPoint = "/boot";
-      timeout = 1;
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 5;
-        editor = false;
-        consoleMode = "max";
-        memtest86.enable = true;
-      };
-      grub = {
-        enable = false;
-        device = "nodev";
-        efiSupport = true;
-        useOSProber = false;
-        memtest86.enable = true;
-        gfxmodeEfi = "2715x1527"; # for 4k: 3840x2160
-        gfxmodeBios = "2715x1527"; # for 4k: 3840x2160
-        # Theme only builds when GRUB is enabled (lazy evaluation)
-        theme =
-          if config.boot.loader.grub.enable then
-            pkgs.stdenv.mkDerivation {
-              pname = "distro-grub-themes";
-              version = "3.1";
-              src = pkgs.fetchFromGitHub {
-                owner = "AdisonCavani";
-                repo = "distro-grub-themes";
-                rev = "v3.1";
-                hash = "sha256-ZcoGbbOMDDwjLhsvs77C7G7vINQnprdfI37a9ccrmPs=";
-              };
-              installPhase = "cp -r customize/nixos $out";
-            }
-          else
-            null;
-      };
+      timeout = 5;
+      systemd-boot.enable = false;
+      grub = lib.mkMerge [
+        {
+          enable = true;
+          configurationLimit = 5;
+          device = "nodev";
+          efiSupport = true;
+          efiInstallAsRemovable = false;
+          useOSProber = false;
+          memtest86.enable = true;
+          gfxmodeEfi = "auto";
+        }
+        (lib.mkIf config.boot.loader.grub.enable {
+          theme = pkgs.stdenv.mkDerivation {
+            pname = "distro-grub-themes";
+            version = "3.1";
+            src = pkgs.fetchFromGitHub {
+              owner = "AdisonCavani";
+              repo = "distro-grub-themes";
+              rev = "v3.1";
+              hash = "sha256-ZcoGbbOMDDwjLhsvs77C7G7vINQnprdfI37a9ccrmPs=";
+            };
+            installPhase = "cp -r customize/nixos $out";
+          };
+        })
+      ];
     };
 
     plymouth = {
@@ -88,7 +76,6 @@
       theme = "catppuccin-macchiato";
     };
 
-    # Appimage Support
     binfmt.registrations.appimage = {
       wrapInterpreterInShell = false;
       interpreter = "${pkgs.appimage-run}/bin/appimage-run";
