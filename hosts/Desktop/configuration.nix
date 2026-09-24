@@ -65,7 +65,6 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     ../../modules/core/users.nix
     ../../modules/themes/wallpaper-bank.nix
     ../../modules/core/dns.nix
-    ../../modules/core/flatpak.nix
 
     ../../modules/hardware/video/${vars.videoDriver}.nix
     ../../modules/desktop/hyprland
@@ -88,6 +87,7 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     ../../modules/programs/misc/kde-connect
     ../../modules/programs/misc/lact
 
+    # ../../modules/core/flatpak.nix
     # ../../modules/core/virtualisation/qemu-virt-manager.nix
     # ../../modules/core/virtualisation/docker.nix
     # ../../modules/core/virtualisation/podman.nix

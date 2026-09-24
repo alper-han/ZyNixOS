@@ -24,6 +24,4 @@
     config.boot.kernelPackages.zenergy
   ];
   boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
-  hardware.deviceTree.enable = false;
-  system.boot.loader.kernelFile = "bzImage";
 }
