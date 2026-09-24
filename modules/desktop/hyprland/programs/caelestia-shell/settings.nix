@@ -115,7 +115,7 @@ in
       activeTrail = true;
       occupiedBg = true;
       showWindows = true;
-      shown = 20;
+      shown = 5;
     };
     entries = [
       {
