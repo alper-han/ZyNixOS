@@ -7,15 +7,14 @@
 let
   inherit (import ../../../hosts/${host}/variables.nix)
     username
+    isLaptop
     terminal
     editor
     fileManager
+    defaultWallpaper
     kbdLayout
     kbdVariant
-    isLaptop
-    defaultWallpaper
     ;
-
   browser = "zen-beta";
 
   wallpapersDir = ../../themes/wallpapers;
@@ -24,7 +23,7 @@ let
 in
 {
   imports = [
-    ../../themes/Catppuccin
+    ../../themes/catppuccin
     ./programs/caelestia-shell
   ];
 
