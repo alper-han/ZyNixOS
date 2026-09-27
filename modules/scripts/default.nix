@@ -7,15 +7,13 @@
 }:
 let
   inherit (import ../../hosts/${host}/variables.nix) terminal;
-in
-let
   scriptArgs = {
     inherit
       host
+      terminal
       pkgs
       lib
       config
-      terminal
       ;
   };
 
