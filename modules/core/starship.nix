@@ -7,9 +7,7 @@
           # Show session identity over SSH; retain Starship's privileged-user warning.
           add_newline = false;
           scan_timeout = 100;
-          format = "$os$container($username$hostname )$sudo$directory$git_branch$git_state$direnv$nix_shell$docker_context$nodejs$bun$deno$lua$rust$golang$dotnet$java$kotlin$swift$dart$elixir$haskell$scala$ruby$php$zig$c$cpp$cmake$python$git_status$cmd_duration$jobs$memory_usage$status$character";
-          right_format = "$time";
-
+          format = "$time $os$container($username$hostname )$sudo$directory$git_branch$git_state$direnv$nix_shell$docker_context$nodejs$bun$deno$lua$rust$golang$dotnet$java$kotlin$swift$dart$elixir$haskell$scala$ruby$php$zig$c$cpp$cmake$python$git_status$cmd_duration$jobs$memory_usage$status$character";
           # Explicit OS badges keep local and remote identities readable.
           os = {
             disabled = false;

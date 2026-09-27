@@ -1,8 +1,4 @@
-{ host, pkgs, ... }:
-let
-  inherit (import ../../hosts/${host}/variables.nix) username;
-  flakePath = "/home/${username}/ZyNixOS";
-in
+{ pkgs, ... }:
 {
   programs.nh = {
     enable = true;
@@ -10,7 +6,6 @@ in
       enable = true;
       extraArgs = "--keep-since 7d --keep 3";
     };
-    flake = flakePath;
   };
 
   environment.systemPackages = with pkgs; [

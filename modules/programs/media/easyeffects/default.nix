@@ -1,9 +1,9 @@
-{ pkgs, ... }:
+{ lib, ... }:
 {
   home-manager.sharedModules = [
     (_: {
       services.easyeffects = {
-        enable = true;
+        enable = lib.mkDefault true;
       };
     })
   ];

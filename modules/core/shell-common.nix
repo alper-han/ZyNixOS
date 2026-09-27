@@ -14,6 +14,23 @@
 
       programs.bash = {
         initExtra = ''
+          resolve_flake() {
+            local flake="''${NH_FLAKE:-}"
+            if [[ -z "$flake" ]]; then
+              if ! flake="$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null)"; then
+                printf '%s\n' 'Error: unable to resolve a flake from the current directory. Set NH_FLAKE or run inside a Git repository.' >&2
+                return 1
+              fi
+            fi
+            if [[ "$flake" != /* ]]; then
+              flake="$PWD/$flake"
+            fi
+            if [[ ! -f "$flake/flake.nix" ]]; then
+              printf 'Error: resolved flake "%s" does not contain flake.nix. Set NH_FLAKE to a valid flake root.\n' "$flake" >&2
+              return 1
+            fi
+            printf '%s\n' "$flake"
+          }
 
           cdown() {
             if [[ $# -ne 1 || ! $1 =~ ^[0-9]+$ ]]; then
@@ -50,6 +67,8 @@
         shellAliases = {
           cls = "clear";
           tml = "tmux list-sessions";
+          sysup = ''flake="$(resolve_flake)" && nix flake update --flake "$flake" && rebuild'';
+          dots = ''flake="$(resolve_flake)" && cd "$flake"'';
           tma = "tmux attach";
           l = "${pkgs.eza}/bin/eza -lh --icons=auto";
           ls = "${pkgs.eza}/bin/eza -1 --icons=auto";
@@ -65,13 +84,28 @@
           tpr = "${pkgs.trash-cli}/bin/trash-restore";
           grep = "grep --color=always";
           list-gens = "nixos-rebuild list-generations";
-          sysup = "nix flake update --flake ~/ZyNixOS && rebuild";
-          dots = "cd ~/ZyNixOS/";
         };
       };
 
       programs.zsh = {
         initContent = lib.mkOrder 500 ''
+          resolve_flake() {
+            local flake="''${NH_FLAKE:-}"
+            if [[ -z "$flake" ]]; then
+              if ! flake="$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null)"; then
+                print -u2 'Error: unable to resolve a flake from the current directory. Set NH_FLAKE or run inside a Git repository.'
+                return 1
+              fi
+            fi
+            if [[ "$flake" != /* ]]; then
+              flake="$PWD/$flake"
+            fi
+            if [[ ! -f "$flake/flake.nix" ]]; then
+              printf 'Error: resolved flake "%s" does not contain flake.nix. Set NH_FLAKE to a valid flake root.\n' "$flake" >&2
+              return 1
+            fi
+            printf '%s\n' "$flake"
+          }
 
           cdown() {
             if [[ $# -ne 1 || $1 != <-> ]]; then
@@ -123,8 +157,8 @@
           tpr = "${pkgs.trash-cli}/bin/trash-restore";
           grep = "grep --color=always";
           list-gens = "nixos-rebuild list-generations";
-          sysup = "nix flake update --flake ~/ZyNixOS && rebuild";
-          dots = "cd ~/ZyNixOS/";
+          sysup = ''flake="$(resolve_flake)" && nix flake update --flake "$flake" && rebuild'';
+          dots = ''flake="$(resolve_flake)" && cd "$flake"'';
         };
       };
     }

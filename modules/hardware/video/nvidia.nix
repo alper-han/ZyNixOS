@@ -5,7 +5,7 @@
   ...
 }:
 let
-  nvidiaDriverChannel = config.boot.kernelPackages.nvidiaPackages.production; # production , new_feature , stable , latest , beta
+  nvidiaDriverChannel = config.boot.kernelPackages.nvidiaPackages.latest; # production , new_feature , stable , latest , beta
 in
 {
   # Limit the NVIDIA VA-API RDD workaround to Zen, not all Firefox processes.

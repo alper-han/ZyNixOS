@@ -67,7 +67,9 @@ in
             else
               "nano";
           BROWSER = "zen-beta";
-          TERMINAL = "${terminal}";
+        }
+        // lib.optionalAttrs (terminal != "none") {
+          TERMINAL = terminal;
         };
       };
     };

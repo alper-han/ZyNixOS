@@ -92,10 +92,6 @@ in
     };
   };
 
-  imports = [
-    ./network-optimization.nix
-  ];
-
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.network.wait-online.enable = false;
 

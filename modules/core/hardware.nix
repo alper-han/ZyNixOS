@@ -5,12 +5,12 @@
   ...
 }:
 let
-  inherit (import ../../hosts/${host}/variables.nix) hostname bluetoothSupport;
+  inherit (import ../../hosts/${host}/variables.nix) hostname bluetoothSupport videoDriver;
 in
 {
   hardware = {
     enableAllFirmware = false;
-    graphics.enable = true;
+    graphics.enable = videoDriver != "none";
     enableRedistributableFirmware = true;
     bluetooth = lib.mkIf bluetoothSupport {
       enable = true;
