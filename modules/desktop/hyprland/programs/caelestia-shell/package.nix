@@ -1,7 +1,4 @@
-{
-  inputs,
-  pkgs,
-}:
+{ pkgs }:
 let
   # Nixpkgs keeps Qt5 KDE Frameworks in this scope after removing its public aliases.
   kf5 = pkgs.libsForQt5.__internalKF5;
@@ -71,44 +68,41 @@ let
       pkgs.darkly
     ];
   };
-  caelestiaCliPackage =
-    inputs.caelestia-shell.inputs.caelestia-cli.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs
-      (old: {
-        # Upstream overrides patchPhase without invoking the postPatch hook.
-        patchPhase = old.patchPhase + ''
-          # GTK4 themes use the CSS variable; GTK3 only supports named colors.
-          substituteInPlace src/caelestia/utils/theme.py \
-            --replace-fail 'atomic_write(gtk_config_dir / "gtk.css", gtk_template)' \
-              'atomic_write(gtk_config_dir / "gtk.css", gtk_template + ("\n:root { --accent-bg-color: @accent_bg_color; }\n" if gtk_version == "gtk-4.0" else ""))'
-          substituteInPlace src/caelestia/data/templates/gtk.css \
-            --replace-fail '@define-color theme_selected_fg_color @primary;' \
-              '@define-color theme_selected_fg_color @accent_color;'
-        '';
-      });
+  caelestiaCliPackage = pkgs.caelestia-cli.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      # GTK4 themes use the CSS variable; GTK3 only supports named colors.
+      substituteInPlace src/caelestia/utils/theme.py \
+        --replace-fail 'atomic_write(gtk_config_dir / "gtk.css", gtk_template)' \
+          'atomic_write(gtk_config_dir / "gtk.css", gtk_template + ("\n:root { --accent-bg-color: @accent_bg_color; }\n" if gtk_version == "gtk-4.0" else ""))'
+      substituteInPlace src/caelestia/data/templates/gtk.css \
+        --replace-fail '@define-color theme_selected_fg_color @primary;' \
+          '@define-color theme_selected_fg_color @accent_color;'
+    '';
+  });
   zynixGamesCatalog = pkgs.callPackage ./scripts/zynix-games-catalog.nix { };
-  baseCaelestiaPackage =
-    inputs.caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.caelestia-shell.override
-      {
-        withCli = true;
-        caelestia-cli = caelestiaCliPackage;
-        extraRuntimeDeps = with pkgs; [
-          tmux
-          mpv
-          procps
-          wl-clipboard
-          file
-          xdg-utils
-          exiftool
-          mediainfo
-          b3sum
-          coreutils
-          uwsm
-          qt6.qtimageformats
-          zynixGamesCatalog
-        ];
-      };
+  extraRuntimeDeps = with pkgs; [
+    tmux
+    mpv
+    procps
+    wl-clipboard
+    file
+    xdg-utils
+    exiftool
+    mediainfo
+    b3sum
+    coreutils
+    uwsm
+    zynixGamesCatalog
+  ];
+  baseCaelestiaPackage = pkgs.caelestia-shell.override {
+    withCli = true;
+    caelestia-cli = caelestiaCliPackage;
+  };
   caelestiaPackage = baseCaelestiaPackage.overrideAttrs (old: {
     postInstall = (old.postInstall or "") + ''
+      wrapProgram "$out/bin/caelestia-shell" \
+        --prefix PATH : "${pkgs.lib.makeBinPath extraRuntimeDeps}"
+
       mkdir -p $out/share/caelestia-shell/modules/zynix
       cp -r ${./qml/modules/zynix}/. $out/share/caelestia-shell/modules/zynix/
 

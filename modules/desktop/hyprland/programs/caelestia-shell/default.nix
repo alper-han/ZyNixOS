@@ -1,5 +1,4 @@
 {
-  inputs,
   pkgs,
   host,
   ...
@@ -12,7 +11,6 @@ let
     terminal
     fileManager
     ;
-
   caelestiaSettings = import ./settings.nix {
     inherit
       bluetoothSupport
@@ -23,7 +21,7 @@ let
   };
   caelestiaShellJson = pkgs.writeText "caelestia-shell.json" (builtins.toJSON caelestiaSettings);
   caelestiaThemePostHook = import ./theme-post-hook.nix { inherit pkgs; };
-  caelestiaPackages = import ./package.nix { inherit inputs pkgs; };
+  caelestiaPackages = import ./package.nix { inherit pkgs; };
 in
 {
   home-manager.sharedModules = [
@@ -31,7 +29,7 @@ in
       { config, lib, ... }:
       {
         imports = [
-          inputs.caelestia-shell.homeManagerModules.default
+          ./hm-module.nix
         ];
 
         home.packages = [

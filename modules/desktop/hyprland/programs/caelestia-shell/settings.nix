@@ -67,6 +67,7 @@ in
   };
 
   bar = {
+    position = "top";
     clock = {
       background = true;
       showIcon = true;
