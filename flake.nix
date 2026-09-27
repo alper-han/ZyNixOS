@@ -2,7 +2,7 @@
   description = "A simple flake for an atomic system";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/master";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,12 +11,8 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    caelestia-shell = {
-      url = "github:caelestia-dots/shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-cachyos-kernel = {
-      url = "github:xddxdd/nix-cachyos-kernel/release";
+      url = "github:xddxdd/nix-cachyos-kernel";
     };
     betterfox = {
       url = "github:yokoffing/Betterfox";
@@ -57,9 +53,7 @@
             ({ ... }: { nixpkgs.overlays = overlays; })
             ./hosts/${host}/configuration.nix
           ];
-          specialArgs = {
-            inherit inputs host;
-          };
+          specialArgs = { inherit inputs host; };
         };
     in
     {

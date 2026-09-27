@@ -1,47 +1,10 @@
 { lib, ... }:
 let
   vars = import ./variables.nix;
-  assertOneOf =
-    name: value: allowed:
-    lib.assertOneOf name value allowed;
 in
-assert assertOneOf "terminal" vars.terminal [
-  "kitty"
-  "alacritty"
-];
-assert assertOneOf "editor" vars.editor [
-  "vscode"
-  "kate"
-];
-assert assertOneOf "fileManager" vars.fileManager [
-  "thunar"
-  "yazi"
-];
-assert assertOneOf "displayManager" vars.displayManager [
-  "sddm"
-  "greetd"
-];
-assert assertOneOf "shell" vars.shell [
-  "bash"
-  "zsh"
-];
-assert assertOneOf "videoDriver" vars.videoDriver [
-  "nvidia"
-  "amdgpu"
-  "intel"
-];
-assert assertOneOf "powerManager" vars.powerManager [
-  "cpufreq"
-  "tlp"
-  "none"
-];
-assert assertOneOf "sddmTheme" vars.sddmTheme [
-  "astronaut"
-  "black_hole"
-  "purple_leaves"
-];
 {
   imports = [
+    ../validation.nix
     ./hardware-configuration.nix
     ./host-packages.nix
 
@@ -63,6 +26,7 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     ../../modules/core/system.nix
     ../../modules/core/users.nix
     ../../modules/themes/wallpaper-bank.nix
+    ../../modules/core/dns.nix
 
     ../../modules/hardware/video/${vars.videoDriver}.nix
     ../../modules/desktop/hyprland
@@ -70,7 +34,7 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     ../../modules/programs/terminal/${vars.terminal}
     ../../modules/programs/editor/${vars.editor}
     ../../modules/programs/file-manager/${vars.fileManager}
-    ../../modules/programs/AI
+    ../../modules/programs/ai
     ../../modules/programs/cli/tmux
     ../../modules/programs/cli/direnv
     ../../modules/programs/cli/lazygit
@@ -83,6 +47,7 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     ../../modules/programs/media/mpv
     ../../modules/programs/misc/crossmacro
     ../../modules/programs/misc/kde-connect
+    ../../modules/programs/misc/lact
 
     # ../../modules/core/flatpak.nix
     # ../../modules/core/virtualisation/qemu-virt-manager.nix
@@ -95,11 +60,10 @@ assert assertOneOf "sddmTheme" vars.sddmTheme [
     # ../../modules/programs/misc/tailscale
     # ../../modules/programs/media/davinci-resolve-studio
     # ../../modules/programs/misc/zapret
-    # ../../modules/programs/misc/duplicati
     # ../../modules/programs/media/easyeffects
     # ../../modules/programs/media/thunderbird
   ]
-  ++ lib.optional vars.games ../../modules/core/games.nix
+  ++ lib.optional (vars ? games && vars.games) ../../modules/core/games.nix
   ++ lib.optional (
     vars.isLaptop && vars.powerManager != "none"
   ) ../../modules/programs/misc/${vars.powerManager};

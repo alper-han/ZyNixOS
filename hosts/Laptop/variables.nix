@@ -1,24 +1,24 @@
 {
   username = "zynix";
-  terminal = "kitty";
-  editor = "kate";
-  fileManager = "thunar";
+  hostname = "Laptop";
+  terminal = "kitty"; # kitty | alacritty | none
+  editor = "kate"; # vscode | kate | none
+  fileManager = "thunar"; # thunar | yazi | none
   bar = "caelestia-shell";
-  displayManager = "sddm";
-  sddmTheme = "purple_leaves";
+  displayManager = "sddm"; # sddm | greetd | none
+  sddmTheme = "purple_leaves"; # astronaut | black_hole | purple_leaves | none
   defaultWallpaper = "evening-sky.jpg";
-  shell = "zsh";
+  shell = "zsh"; # bash | zsh
   games = true;
 
-  videoDriver = "nvidia";
+  videoDriver = "nvidia"; # nvidia | amdgpu | intel | none
   bluetoothSupport = true;
-  hostname = "Laptop";
   isLaptop = true;
-  powerManager = "cpufreq";
+  powerManager = "cpufreq"; # cpufreq | tlp | none
 
   locale = "en_US.UTF-8";
-  timezone = "Europe/Istanbul";
-  kbdLayout = "tr";
+  timezone = "Europe/Istanbul"; # IANA timezone
+  kbdLayout = "tr"; # XKB layout code
   kbdVariant = "";
   consoleKeymap = "trq";
 }

@@ -12,8 +12,8 @@
 
     # ffmpeg-full
     # chromium
-    github-desktop
     # hoppscotch
+    github-desktop
     sqlitebrowser
     jetbrains.rider # .NET / Avalonia development
     dotnet-sdk_10
