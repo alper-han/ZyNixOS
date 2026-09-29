@@ -215,7 +215,7 @@
 
           contextPromotion.enabled = false;
           extendedContext = false;
-          branchSummary.enabled = true;
+          branchSummary.enabled = false;
           compaction = {
             enabled = true;
             experimentalContextManagement = true;
@@ -331,7 +331,7 @@
             enabled = true;
             reminders = true;
             remindersMax = 3;
-            eager = "preferred";
+            eager = "default";
           };
           glob.enabled = true;
           launch.enabled = true;
@@ -373,7 +373,7 @@
           };
           title.refreshOnReplan = true;
           task = {
-            eager = "preferred";
+            eager = "default";
             batch = true;
             enableEffort = true;
             maxConcurrency = 32;
@@ -384,7 +384,7 @@
             softRequestBudgetNotice = true;
             maxEffort = "max";
             prewalk = false;
-            isolation.enabled = true;
+            isolation.enabled = false;
             isolation.apply = true;
             isolation.merge = "patch";
             isolation.commits = "generic";
