@@ -10,7 +10,6 @@ let
   hiddenApps = [
     "org.kde.kdeconnect.nonplasma"
     "org.kde.kdeconnect.sms"
-    "kvantummanager"
     "thunar-settings"
     "org.kde.kwrite"
   ];

@@ -123,8 +123,6 @@ in
           xdg.configFile."systemd/user/xdg-desktop-portal-gtk.service.d/caelestia-theme.conf" = {
             text = ''
               [Service]
-              Environment=GTK_THEME=adw-gtk3-dark
-              Environment=ADW_COLOR_SCHEME=prefer-dark
               Environment=XDG_CONFIG_HOME=${config.xdg.configHome}
             '';
           };

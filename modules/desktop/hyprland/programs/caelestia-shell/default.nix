@@ -34,9 +34,9 @@ in
 
         home.packages = [
           pkgs.adw-gtk3
+          pkgs.kdePackages.frameworkintegration
           pkgs.papirus-folders
           pkgs.papirus-icon-theme
-          pkgs.libsForQt5.qtstyleplugin-kvantum
           caelestiaPackages.qtenginePackage
           caelestiaPackages.darklyPackage
         ];

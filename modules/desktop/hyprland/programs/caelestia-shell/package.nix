@@ -70,13 +70,24 @@ let
   };
   caelestiaCliPackage = pkgs.caelestia-cli.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
-      # GTK4 themes use the CSS variable; GTK3 only supports named colors.
-      substituteInPlace src/caelestia/utils/theme.py \
-        --replace-fail 'atomic_write(gtk_config_dir / "gtk.css", gtk_template)' \
-          'atomic_write(gtk_config_dir / "gtk.css", gtk_template + ("\n:root { --accent-bg-color: @accent_bg_color; }\n" if gtk_version == "gtk-4.0" else ""))'
-      substituteInPlace src/caelestia/data/templates/gtk.css \
-        --replace-fail '@define-color theme_selected_fg_color @primary;' \
-          '@define-color theme_selected_fg_color @accent_color;'
+            # GTK4 themes use the CSS variable; GTK3 only supports named colors.
+            substituteInPlace src/caelestia/utils/theme.py \
+              --replace-fail 'atomic_write(gtk_config_dir / "gtk.css", gtk_template)' \
+                'atomic_write(gtk_config_dir / "gtk.css", gtk_template + ("\n:root { --accent-bg-color: @accent_bg_color; }\n" if gtk_version == "gtk-4.0" else ""))'
+            substituteInPlace src/caelestia/data/templates/gtk.css \
+              --replace-fail '@define-color theme_selected_fg_color @primary;' \
+                '@define-color theme_selected_fg_color @accent_color;'
+            python3 - <<'PY'
+      from pathlib import Path
+
+      path = Path("src/caelestia/utils/theme.py")
+      old = """    subprocess.run(["dconf", "write", "/org/gnome/desktop/interface/gtk-theme", "'adw-gtk3-dark'"])"""
+      new = """    gtk_theme = "adw-gtk3-dark" if mode == "dark" else "adw-gtk3"\n    subprocess.run(["dconf", "write", "/org/gnome/desktop/interface/gtk-theme", f"\x27{gtk_theme}\x27"])"""
+      source = path.read_text()
+      if source.count(old) != 1:
+          raise SystemExit(f"expected one GTK theme setting, found {source.count(old)}")
+      path.write_text(source.replace(old, new, 1))
+      PY
     '';
   });
   zynixGamesCatalog = pkgs.callPackage ./scripts/zynix-games-catalog.nix { };
