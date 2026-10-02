@@ -2,7 +2,7 @@
 {
 
   environment.systemPackages = with pkgs; [
-    rustdesk
+    # rustdesk
     # jellyfin-desktop
     # jellyfin-mpv-shim
     # kdiskmark
