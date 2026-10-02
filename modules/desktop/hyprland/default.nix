@@ -150,7 +150,7 @@ in
                     "${app} ${getExe pkgs.thunar}";
                 caelestia = "${app} caelestia";
                 shellCommand = "${serviceApp} caelestia shell -d";
-                shellToggle = "pkill -x quickshell || ${shellCommand}";
+                shellToggle = "pkill -f '[q]uickshell -p /nix/store/[^ ]*caelestia-shell[^ ]*/share/caelestia-shell -n -d$' || ${shellCommand}";
                 clearClipboardCommand = "${app} ${getExe' pkgs.coreutils "rm"} -f \${XDG_CACHE_HOME:-\$HOME/.cache}/cliphist/db";
               in
               ''
