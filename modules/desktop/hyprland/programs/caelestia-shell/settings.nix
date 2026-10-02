@@ -115,7 +115,7 @@ in
       activeTrail = true;
       occupiedBg = true;
       showWindows = true;
-      shown = 5;
+      shown = 10;
     };
     entries = [
       {
@@ -203,7 +203,7 @@ in
 
   notifs = {
     expire = true;
-    fullscreen = "on";
+    fullscreen = "On";
     actionOnClick = true;
     clearThreshold = 0.3;
     defaultExpireTimeout = 5000;

@@ -78,7 +78,7 @@ in
               enableBtop = true;
               enableGtk = true;
               enableQt = true;
-              enableCava = true;
+              enableCava = false;
               iconTheme = "Papirus-Dark";
               iconThemeLight = "Papirus";
               iconThemeDark = "Papirus-Dark";
