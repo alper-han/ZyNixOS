@@ -27,6 +27,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+    qemu-anti-detect = {
+      url = "git+https://github.com/alper-han/qemu-anti-detect.git?ref=main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Kopuz keeps its own nixpkgs/crane/rust-overlay so its Cachix binary cache stays valid.
+    kopuz.url = "github:Kopuz-org/kopuz";
   };
 
   outputs =
