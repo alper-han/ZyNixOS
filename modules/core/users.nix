@@ -53,22 +53,9 @@ in
         homeDirectory = "/home/${username}";
         stateVersion = "26.11"; # Do not change!
         sessionVariables = {
-          EDITOR =
-            if (editor == "nixvim" || editor == "neovim" || editor == "nvchad") then
-              "nvim"
-            else if editor == "vscode" then
-              "code"
-            else if editor == "kate" then
-              "kate"
-            else if editor == "kwrite" then
-              "kwrite"
-            else if editor == "gedit" then
-              "gedit"
-            else
-              "nano";
+          # GUI editors must block so git commit, sudoedit, etc. wait for them.
+          EDITOR = if editor == "vscode" then "code --wait" else "kate -b";
           BROWSER = "zen-beta";
-        }
-        // lib.optionalAttrs (terminal != "none") {
           TERMINAL = terminal;
         };
       };

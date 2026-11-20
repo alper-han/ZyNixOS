@@ -9,11 +9,14 @@ in
         clock24 = true;
         prefix = "C-b";
         keyMode = "emacs";
-        # terminal = "screen-256color";
-        # terminal = "tmux-256color";
+        terminal = "tmux-256color";
         historyLimit = 100000;
         plugins = with pkgs.tmuxPlugins; [
-          catppuccin
+          {
+            # Plugin extraConfig is emitted before the plugin is loaded.
+            plugin = catppuccin;
+            extraConfig = "set -g @catppuccin_flavor 'mocha'";
+          }
           sensible
 
           # {
@@ -36,7 +39,6 @@ in
           # }
         ];
         extraConfig = ''
-          set -g @catppuccin_flavour 'mocha'
           set -g mouse on
           set -g allow-rename off
           set -g status-position top

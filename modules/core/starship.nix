@@ -88,18 +88,6 @@
             format = "[@$hostname]($style)";
           };
 
-          shell = {
-            disabled = false;
-            format = "[$indicator]($style) ";
-            style = "#A5ADCB";
-            bash_indicator = "bash";
-            zsh_indicator = "zsh";
-            fish_indicator = "fish";
-            powershell_indicator = "pwsh";
-            nu_indicator = "nu";
-            unknown_indicator = "";
-          };
-
           # Shield: cached sudo credentials, not persistent root access.
           sudo = {
             disabled = false;

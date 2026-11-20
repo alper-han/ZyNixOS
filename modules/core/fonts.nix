@@ -23,7 +23,7 @@
         ];
         sansSerif = [
           "Noto Sans"
-          "Font Awesome 6 Free"
+          "Font Awesome 7 Free"
           "Adwaita Sans"
           "DejaVu Sans"
         ];

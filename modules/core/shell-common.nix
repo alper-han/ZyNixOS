@@ -64,7 +64,7 @@
           mkd = "mkdir -pv";
           tp = "${pkgs.trash-cli}/bin/trash-put";
           tpr = "${pkgs.trash-cli}/bin/trash-restore";
-          grep = "grep --color=always";
+          grep = "grep --color=auto";
           list-gens = "nixos-rebuild list-generations";
         };
       };
@@ -119,7 +119,7 @@
           mkd = "mkdir -pv";
           tp = "${pkgs.trash-cli}/bin/trash-put";
           tpr = "${pkgs.trash-cli}/bin/trash-restore";
-          grep = "grep --color=always";
+          grep = "grep --color=auto";
           list-gens = "nixos-rebuild list-generations";
           sysup = ''flake="$(resolve-flake)" && nix flake update --flake "$flake" && rebuild'';
           dots = ''flake="$(resolve-flake)" && cd "$flake"'';
