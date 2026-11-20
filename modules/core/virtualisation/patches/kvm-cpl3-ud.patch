@@ -1,0 +1,25 @@
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -3977,7 +3977,7 @@
+ 
+ static const struct opcode group7_rm0[] = {
+ 	N,
+-	I(SrcNone | Priv | EmulateOnUD,	em_hypercall),
++	I(SrcNone | Priv | PrivUD | EmulateOnUD,	em_hypercall),
+ 	N, N, N, N, N, N,
+ };
+ 
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -3335,6 +3335,11 @@
+ 		return 1;
+ 	}
+ 
++	if (kvm_x86_call(get_cpl)(vcpu)) {
++		kvm_queue_exception(vcpu, UD_VECTOR);
++		return 1;
++	}
++
+ 	return kvm_emulate_hypercall(vcpu);
+ }
+ 

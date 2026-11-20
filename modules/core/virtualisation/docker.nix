@@ -11,7 +11,7 @@ let
 in
 {
   users.users.${username}.extraGroups = lib.optionals config.virtualisation.docker.enable [
-    "docker"
+    # "docker"
   ];
 
   hardware.nvidia-container-toolkit.enable = isNvidia && config.virtualisation.docker.enable;

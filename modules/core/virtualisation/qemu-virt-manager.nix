@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   host,
@@ -22,30 +23,23 @@ in
     libvirtd = {
       enable = true;
       qemu = {
-        package = pkgs.qemu_kvm;
-        runAsRoot = true;
+        package = inputs.qemu-anti-detect.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        runAsRoot = false;
         swtpm.enable = true;
       };
     };
   };
 
-  # Guest integration daemons belong inside the VM guest, not on this VM host.
-  services = lib.mkIf config.virtualisation.libvirtd.enable {
-    qemuGuest.enable = false;
-    spice-vdagentd.enable = false;
-    spice-webdavd.enable = false;
-  };
+  # libvirt's dnsmasq hands out guest IPs; NixOS firewall drops DHCP on bridges otherwise.
+  networking.firewall.interfaces.virbr0.allowedUDPPorts = lib.mkIf config.virtualisation.libvirtd.enable [
+    67
+  ];
 
   programs.virt-manager.enable = config.virtualisation.libvirtd.enable;
 
-  environment.systemPackages =
-    with pkgs;
-    lib.optionals config.virtualisation.libvirtd.enable [
-      virt-viewer
-      spice
-      spice-gtk
-      spice-protocol
-      virtio-win
-      win-spice
-    ];
+  # Existing guests use NVMe/e1000e/VGA over VNC, so virtio-win and the SPICE guest tools
+  # are not needed; virt-manager/virt-viewer already bring the SPICE client libraries.
+  environment.systemPackages = lib.optionals config.virtualisation.libvirtd.enable [
+    pkgs.virt-viewer
+  ];
 }

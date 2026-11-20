@@ -51,7 +51,7 @@ in
     # ../../modules/programs/cli/cava
     # ../../modules/programs/misc/lact
     # ../../modules/core/flatpak.nix
-    # ../../modules/core/virtualisation/qemu-virt-manager.nix
+    ../../modules/core/virtualisation/qemu-virt-manager.nix
     # ../../modules/core/virtualisation/docker.nix
     # ../../modules/core/virtualisation/podman.nix
     # ../../modules/core/ssh.nix

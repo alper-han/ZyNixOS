@@ -23,5 +23,12 @@
   boot.extraModulePackages = [
     config.boot.kernelPackages.zenergy
   ];
-  boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
+  boot.kernelPackages = lib.mkForce (pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4.extend (final: prev: {
+  # boot.kernelPackages = lib.mkForce (pkgs.linuxPackages_latest.extend (final: prev: {
+    kernel = prev.kernel.overrideAttrs (old: {
+      patches = (old.patches or []) ++ [
+        ../../modules/core/virtualisation/patches/kvm-cpl3-ud.patch
+      ];
+    });
+  })); # pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
 }
