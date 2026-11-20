@@ -50,7 +50,7 @@ window({ title = ".*is sharing (a window|your screen).*" }, { float = true })
 window({ title = ".*is sharing (a window|your screen).*" }, { pin = true })
 window({ title = ".*is sharing (a window|your screen).*" }, { move = { "monitor_w * 0.50", "monitor_h - 12" } })
 
-for _, class in ipairs({ "^(mpv)$", "^(jellyfin-desktop|Jellyfin Media Player|com.github.iwalton3.jellyfin-media-player)$", "^(com.github.th_ch.youtube_music)$" }) do
+for _, class in ipairs({ "^(mpv)$", "^(jellyfin-desktop|Jellyfin Media Player|com.github.iwalton3.jellyfin-media-player)$" }) do
   window({ class = class }, { idle_inhibit = "focus" })
 end
 window({ class = "^([Zz]en(-beta|-browser)?)$" }, { idle_inhibit = "fullscreen" })

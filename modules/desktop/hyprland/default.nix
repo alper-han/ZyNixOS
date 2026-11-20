@@ -166,7 +166,7 @@ in
                 games = ${luaString "${app} caelestia shell games open"}
                 tmux = ${luaString "${app} caelestia shell tmux open"}
                 music = ${luaString "${app} caelestia shell music open"}
-                pear = ${luaString "${app} ${getExe pkgs.pear-desktop}"}
+                kopuz = ${luaString "${app} kopuz"}
                 btop = ${luaString (getExe pkgs.btop)}
                 screenshot = ${luaString (getExe (pkgs.callPackage ./scripts/screenshot.nix { }))}
                 night_mode = ${luaString "${backgroundApp} ${getExe pkgs.hyprsunset} --temperature 3500"}

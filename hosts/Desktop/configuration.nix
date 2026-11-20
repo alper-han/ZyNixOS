@@ -41,7 +41,8 @@ in
     ../../modules/programs/cli/btop
     ../../modules/programs/cli/fastfetch
     ../../modules/programs/media/discord
-    ../../modules/programs/media/pear-desktop
+    # ../../modules/programs/media/pear-desktop
+    ../../modules/programs/media/kopuz
     ../../modules/programs/media/obs-studio
     ../../modules/programs/media/mpv
     ../../modules/programs/misc/crossmacro

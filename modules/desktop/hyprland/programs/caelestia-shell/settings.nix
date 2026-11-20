@@ -220,21 +220,8 @@ in
     audioIncrement = 0.05;
     brightnessIncrement = 0.05;
     maxVolume = 1.0;
-    defaultPlayer = "YT Music";
-    playerAliases = [
-      {
-        from = "YoutubeMusic";
-        to = "YT Music";
-      }
-      {
-        from = "pear-desktop";
-        to = "YT Music";
-      }
-      {
-        from = "com.github.th_ch.youtube_music";
-        to = "YT Music";
-      }
-    ];
+    defaultPlayer = "Kopuz";
+    playerAliases = [ ];
     weatherLocation = "Istanbul";
     weatherUnits = "Celsius";
     sensorUnits = "Celsius";
