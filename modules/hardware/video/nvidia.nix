@@ -35,16 +35,10 @@ in
       package = nvidiaDriverChannel;
     };
     graphics = {
-      enable32Bit = true;
-      extraPackages = [
-        pkgs.nvidia-vaapi-driver
-        pkgs.libva-vdpau-driver
-        pkgs.libvdpau-va-gl
-      ];
+      extraPackages = [ pkgs.nvidia-vaapi-driver ];
     };
   };
-  nixpkgs.config = {
-    nvidia.acceptLicense = true;
-    cudaSupport = true;
-  };
+  # No global cudaSupport: across this closure it only rebuilt OBS without
+  # benefit. GPU-aware variants are picked per package (btop, ollama).
+  nixpkgs.config.nvidia.acceptLicense = true;
 }

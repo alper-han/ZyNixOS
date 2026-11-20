@@ -1,12 +1,11 @@
 {
   username = "zynix";
   hostname = "Laptop";
-  terminal = "kitty"; # kitty | alacritty | none
-  editor = "kate"; # vscode | kate | none
-  fileManager = "thunar"; # thunar | yazi | none
-  bar = "caelestia-shell";
-  displayManager = "sddm"; # sddm | greetd | none
-  sddmTheme = "purple_leaves"; # astronaut | black_hole | purple_leaves | none
+  terminal = "kitty"; # kitty | alacritty
+  editor = "kate"; # vscode | kate
+  fileManager = "thunar"; # thunar | yazi
+  displayManager = "sddm"; # sddm | greetd
+  sddmTheme = "purple_leaves"; # astronaut | black_hole | purple_leaves
   defaultWallpaper = "evening-sky.jpg";
   shell = "zsh"; # bash | zsh
   games = true;

@@ -18,9 +18,8 @@ in
         && builtins.elem vars.terminal [
           "kitty"
           "alacritty"
-          "none"
         ];
-      message = "Invalid or missing terminal '${vars.terminal or ""}' in hosts/${host}/variables.nix. Expected: kitty, alacritty, or none.";
+      message = "Invalid or missing terminal '${vars.terminal or ""}' in hosts/${host}/variables.nix. Expected: kitty or alacritty.";
     }
     {
       assertion =
@@ -28,9 +27,8 @@ in
         && builtins.elem vars.editor [
           "vscode"
           "kate"
-          "none"
         ];
-      message = "Invalid or missing editor '${vars.editor or ""}' in hosts/${host}/variables.nix. Expected: vscode, kate, or none.";
+      message = "Invalid or missing editor '${vars.editor or ""}' in hosts/${host}/variables.nix. Expected: vscode or kate.";
     }
     {
       assertion =
@@ -38,9 +36,8 @@ in
         && builtins.elem vars.fileManager [
           "thunar"
           "yazi"
-          "none"
         ];
-      message = "Invalid or missing fileManager '${vars.fileManager or ""}' in hosts/${host}/variables.nix. Expected: thunar, yazi, or none.";
+      message = "Invalid or missing fileManager '${vars.fileManager or ""}' in hosts/${host}/variables.nix. Expected: thunar or yazi.";
     }
     {
       assertion =
@@ -48,9 +45,8 @@ in
         && builtins.elem vars.displayManager [
           "sddm"
           "greetd"
-          "none"
         ];
-      message = "Invalid or missing displayManager '${vars.displayManager or ""}' in hosts/${host}/variables.nix. Expected: sddm, greetd, or none.";
+      message = "Invalid or missing displayManager '${vars.displayManager or ""}' in hosts/${host}/variables.nix. Expected: sddm or greetd.";
     }
     {
       assertion =

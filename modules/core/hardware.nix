@@ -10,7 +10,8 @@ in
 {
   hardware = {
     enableAllFirmware = false;
-    graphics.enable = videoDriver != "none";
+    # mkDefault: modules such as Steam may still force graphics on.
+    graphics.enable = lib.mkDefault (videoDriver != "none");
     enableRedistributableFirmware = true;
     bluetooth = lib.mkIf bluetoothSupport {
       enable = true;

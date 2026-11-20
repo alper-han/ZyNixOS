@@ -28,7 +28,6 @@ in
     ../../modules/themes/wallpaper-bank.nix
     ../../modules/core/dns.nix
 
-    ../../modules/hardware/video/${vars.videoDriver}.nix
     ../../modules/desktop/hyprland
     ../../modules/programs/browser/zen-beta
     ../../modules/programs/terminal/${vars.terminal}
@@ -64,6 +63,7 @@ in
     # ../../modules/programs/media/easyeffects
     # ../../modules/programs/media/thunderbird
   ]
+  ++ lib.optional (vars.videoDriver != "none") ../../modules/hardware/video/${vars.videoDriver}.nix
   ++ lib.optional vars.games ../../modules/core/games.nix
   ++ lib.optional (
     vars.isLaptop && vars.powerManager != "none"

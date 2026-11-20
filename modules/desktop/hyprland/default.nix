@@ -167,7 +167,7 @@ in
                 tmux = ${luaString "${app} caelestia shell tmux open"}
                 music = ${luaString "${app} caelestia shell music open"}
                 kopuz = ${luaString "${app} kopuz"}
-                btop = ${luaString (getExe pkgs.btop)}
+                btop = ${luaString (getExe config.programs.btop.package)}
                 screenshot = ${luaString (getExe (pkgs.callPackage ./scripts/screenshot.nix { }))}
                 night_mode = ${luaString "${backgroundApp} ${getExe pkgs.hyprsunset} --temperature 3500"}
                 clipboardTextCommand = ${luaString "uwsm app -s b -- ${getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch cliphist store"}
