@@ -53,6 +53,7 @@ hl.config({
   },
   input = {
     kb_layout = kbdLayout,
+    kb_variant = kbdVariant,
     numlock_by_default = true,
     repeat_delay = 250,
     repeat_rate = 35,

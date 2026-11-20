@@ -130,8 +130,29 @@ hl.bind(mainMod .. " + CTRL + S", workspace("special", false))
 hl.bind(mainMod .. " + ALT + S", workspace("special", false))
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("special"))
 
-hl.bind("F9", hl.dsp.pass({ window = "class:^(com.obsproject.Studio)$" }))
-hl.bind("F10", hl.dsp.pass({ window = "class:^(com.obsproject.Studio)$" }))
+-- F9/F10 are forwarded to OBS. Keep them bound only while an OBS window
+-- exists so the keys reach other apps when OBS is closed.
+local obsClass = "com.obsproject.Studio"
+local obsBinds = {
+  hl.bind("F9", hl.dsp.pass({ window = "class:^(com.obsproject.Studio)$" })),
+  hl.bind("F10", hl.dsp.pass({ window = "class:^(com.obsproject.Studio)$" })),
+}
+local function syncObsBinds(closing)
+  local open = false
+  for _, w in ipairs(hl.get_windows()) do
+    if w.class == obsClass and not (closing and w.address == closing.address) then
+      open = true
+      break
+    end
+  end
+  for _, b in ipairs(obsBinds) do
+    b:set_enabled(open)
+  end
+end
+syncObsBinds()
+hl.on("window.open", function() syncObsBinds() end)
+hl.on("window.class", function() syncObsBinds() end)
+hl.on("window.destroy", syncObsBinds)
 
 for i = 1, 10 do
   local key = i % 10

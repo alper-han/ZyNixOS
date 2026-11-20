@@ -39,6 +39,24 @@ in
 
   programs.gpu-screen-recorder.enable = true;
 
+  # Keep portals on the NixOS side. A Home Manager xdg.portal block points
+  # NIX_XDG_DESKTOP_PORTAL_DIR at the user profile, hiding the system portals
+  # (hyprland, gnome-keyring) from xdg-desktop-portal.
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+    configPackages = [ pkgs.hyprland ];
+    config.hyprland = {
+      default = [
+        "hyprland"
+        "gtk"
+      ];
+      "org.freedesktop.impl.portal.OpenURI" = "gtk";
+      "org.freedesktop.impl.portal.FileChooser" = "gtk";
+      "org.freedesktop.impl.portal.Print" = "gtk";
+    };
+  };
+
   home-manager.sharedModules =
     let
       inherit (lib) getExe getExe';
@@ -48,24 +66,6 @@ in
         { config, ... }:
         {
           services.hyprpolkitagent.enable = true;
-
-          xdg.portal = {
-            enable = true;
-            extraPortals = with pkgs; [
-              xdg-desktop-portal-gtk
-            ];
-            xdgOpenUsePortal = true;
-            configPackages = [ pkgs.hyprland ];
-            config.hyprland = {
-              default = [
-                "hyprland"
-                "gtk"
-              ];
-              "org.freedesktop.impl.portal.OpenURI" = "gtk";
-              "org.freedesktop.impl.portal.FileChooser" = "gtk";
-              "org.freedesktop.impl.portal.Print" = "gtk";
-            };
-          };
 
           home.packages = (
             with pkgs;
@@ -103,7 +103,6 @@ in
             export XDG_SESSION_DESKTOP=Hyprland
             export XDG_SESSION_TYPE=wayland
             export GDK_BACKEND=wayland,x11,*
-            export SDL_VIDEODRIVER=wayland
             export CLUTTER_BACKEND=wayland
             export ELECTRON_OZONE_PLATFORM_HINT=auto
             export MOZ_ENABLE_WAYLAND=1
@@ -134,12 +133,19 @@ in
             "hypr/binds.lua".source = ./lua/binds.lua;
             "hypr/rules.lua".source = ./lua/rules.lua;
             "hypr/monitors.lua".source = ./lua/monitors.lua;
+            "hypr/host-monitors.lua" =
+              let
+                hostMonitors = ./lua/monitors/${host}.lua;
+              in
+              if builtins.pathExists hostMonitors then
+                { source = hostMonitors; }
+              else
+                { text = "-- No host-specific monitor rules for ${host}.\n"; };
             "hypr/variables.lua".text =
               let
                 luaString = value: builtins.toJSON value;
-                editorExe = getExe' (
-                  if editor == "kate" || editor == "kwrite" then pkgs.kdePackages.kate else pkgs.${editor}
-                ) editor;
+                editorExe =
+                  if editor == "vscode" then getExe' pkgs.vscode "code" else getExe' pkgs.kdePackages.kate "kate";
                 app = "uwsm app --";
                 backgroundApp = "uwsm app -s b --";
                 serviceApp = "uwsm app -s s --";
@@ -147,7 +153,7 @@ in
                   if fileManager == "yazi" then
                     "${app} ${getExe pkgs.${terminal}} -- ${getExe' pkgs.yazi "yazi"}"
                   else
-                    "${app} ${getExe pkgs.thunar}";
+                    "${app} thunar";
                 caelestia = "${app} caelestia";
                 shellCommand = "${serviceApp} caelestia shell -d";
                 shellToggle = "pkill -f '[q]uickshell -p /nix/store/[^ ]*caelestia-shell[^ ]*/share/caelestia-shell -n -d$' || ${shellCommand}";
