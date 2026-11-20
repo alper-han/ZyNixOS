@@ -44,34 +44,9 @@ let
     fi
   '';
 
-  peazip-action = pkgs.writeShellScriptBin "thunar-peazip" ''
-    set -u
-    operation="''${1:-}"
-    shift || true
-
-    if [[ -z "$operation" || "$#" -lt 1 ]]; then
-      ${getExe pkgs.libnotify} "PeaZip" "No operation or file selected" -i dialog-error
-      exit 1
-    fi
-
-    case "$operation" in
-      -add2archive|-add2zip|-add27z|-ext2here|-ext2folder|-ext2smart|-ext2browse|-ext2test|-add2convert)
-        if ! ${getExe pkgs.peazip} "$operation" "$@"; then
-          ${getExe pkgs.libnotify} "PeaZip" "Operation failed: $operation" -i dialog-error
-          exit 1
-        fi
-        ;;
-      *)
-        ${getExe pkgs.libnotify} "PeaZip" "Unsupported operation: $operation" -i dialog-error
-        exit 1
-        ;;
-    esac
-  '';
-
   generalActions = import ./actions/general.nix { inherit copy-path open-terminal-here; };
   checksumActions = import ./actions/checksum.nix { };
   fileinfoActions = import ./actions/fileinfo.nix { };
-  peazipActions = import ./actions/peazip.nix { inherit peazip-action; };
 
   backendHelpers = {
     thunar-backend-helper = pkgs.callPackage ./scripts/thunar-backend-helper.nix { };
@@ -81,6 +56,7 @@ in
   programs.thunar = {
     enable = true;
     plugins = with pkgs; [
+      thunar-archive-plugin
       thunar-volman
       thunar-media-tags-plugin
     ];
@@ -89,13 +65,30 @@ in
   environment.systemPackages =
     (checksumActions.packages pkgs)
     ++ (fileinfoActions.packages pkgs)
-    ++ (peazipActions.packages pkgs)
     ++ [
       backendHelpers.thunar-backend-helper
       open-terminal-here
       copy-path
-      peazip-action
+      pkgs.file-roller
     ];
+
+  # System-wide defaults (/etc/xdg/mimeapps.list); ~/.config/mimeapps.list
+  # stays writable for apps that register URL handlers at runtime.
+  xdg.mime.defaultApplications =
+    {
+      "inode/directory" = "thunar.desktop";
+    }
+    // lib.genAttrs [
+      "application/zip"
+      "application/x-7z-compressed"
+      "application/x-rar"
+      "application/vnd.rar"
+      "application/x-tar"
+      "application/x-compressed-tar"
+      "application/x-bzip2-compressed-tar"
+      "application/x-xz-compressed-tar"
+      "application/x-zstd-compressed-tar"
+    ] (_: "org.gnome.FileRoller.desktop");
 
   home-manager.sharedModules = [
     {
@@ -105,7 +98,6 @@ in
           ${generalActions.xml}
           ${checksumActions.xml}
           ${fileinfoActions.xml}
-          ${peazipActions.xml}
         </actions>
       '';
     }

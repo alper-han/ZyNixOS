@@ -17,11 +17,13 @@
     lm_sensors
     microfetch
     ncdu
+    p7zip
     ripgrep
     tldr
     unrar
     unzip
     wget
     xxd
+    zstd
   ];
 }

@@ -8,7 +8,7 @@ window({ class = ".*" }, { suppress_event = "maximize" })
 window({ class = "org\\.quickshell|swappy" }, { opaque = true })
 window({ float = true, xwayland = false }, { center = true })
 
-for _, class in ipairs({ "org\\.gnome\\.FileRoller", "file-roller", "peazip", "PeaZip", "blueman-manager", "org\\.quickshell" }) do
+for _, class in ipairs({ "org\\.gnome\\.FileRoller", "file-roller", "blueman-manager", "org\\.quickshell" }) do
   window({ class = class }, { float = true })
 end
 
