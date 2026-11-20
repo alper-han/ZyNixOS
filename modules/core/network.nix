@@ -33,12 +33,6 @@ in
 
   boot = {
     kernel.sysctl = {
-      # Virtual Memory Tweaks (64GB RAM Optimization)
-      "vm.swappiness" = 10; # Delay swapping as long as possible
-      "vm.vfs_cache_pressure" = 50; # Keep filesystem cache in RAM longer
-      "vm.dirty_bytes" = 536870912; # 512MB dirty cache cap (prevents IO stutter)
-      "vm.dirty_background_bytes" = 268435456; # 256MB background writeback start
-
       # Network hardening
       "kernel.sysrq" = 0;
       "net.ipv4.conf.default.send_redirects" = 0;

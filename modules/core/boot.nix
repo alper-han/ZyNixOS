@@ -33,8 +33,6 @@
     consoleLogLevel = 3;
     initrd = {
       enable = true;
-      verbose = false;
-      systemd.enable = true;
     };
 
     loader = {

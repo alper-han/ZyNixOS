@@ -52,7 +52,6 @@ let
 in
 {
   services = {
-    dbus.apparmor = "enabled";
     libinput.enable = true;
     fstrim.enable = true;
 
@@ -76,10 +75,9 @@ in
       freeSwapKillThreshold = 5;
     };
 
-    scx = {
+    scx-loader = {
       enable = true;
-      package = pkgs.scx.full;
-      scheduler = "scx_rusty";
+      config.default_sched = "scx_bpfland";
     };
 
     tumbler.enable = true; # Image/video preview
@@ -93,6 +91,7 @@ in
     avahi.enable = false; # mDNS/Bonjour
     geoclue2.enable = false;
     fwupd.enable = false;
+    speechd.enable = false; # On by default; drags in espeak-ng and ~650 MB of mbrola voices
 
     pulseaudio.enable = false;
     pipewire = {
@@ -100,7 +99,6 @@ in
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
-      jack.enable = true;
       wireplumber = {
         enable = true;
         # Omit BlueZ policy when the host disables Bluetooth.
@@ -135,4 +133,8 @@ in
       # };
     };
   };
+
+  # earlyoom above is the OOM policy; disable the NixOS-default systemd-oomd
+  # so two killers do not act on the same memory pressure.
+  systemd.oomd.enable = false;
 }

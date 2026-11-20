@@ -52,21 +52,11 @@ in
       substituters = lib.mkForce [
         "https://cache.nixos.org?priority=10"
         "https://nix-community.cachix.org?priority=20"
-        "https://hyprland.cachix.org?priority=30"
-        "https://cachix.cachix.org?priority=40"
-        "https://cache.nixos-cuda.org?priority=50"
-        # xddxdd/nix-cachyos-kernel release artifacts. This is deliberately
-        # lowest priority because global substituters cannot be package-scoped.
-        "https://attic.xuyh0120.win/lantian?priority=120"
         # "https://nixpkgs-wayland.cachix.org"
         # "https://devenv.cachix.org"
       ];
       trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
-        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-        "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
-        "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
         # "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
         # "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
@@ -130,6 +120,7 @@ in
         || lib.hasPrefix "cudnn" name
         || name == "libnpp"
         || name == "nccl"
+        || name == "cccl"
         || builtins.elem name [
           "discord"
           "discord-unwrapped"
@@ -143,6 +134,7 @@ in
           "steam-original"
           "steam-run"
           "unrar"
+          "vscode"
         ];
     };
   };
