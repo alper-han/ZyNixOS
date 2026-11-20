@@ -17,9 +17,12 @@ let
       ;
   };
 
+  resolveFlake = import ./resolve-flake.nix { inherit pkgs; };
+
   scripts = [
-    (import ./rebuild.nix { inherit host pkgs; })
-    (import ./rollback.nix scriptArgs)
+    resolveFlake
+    (import ./rebuild.nix { inherit host pkgs resolveFlake; })
+    (import ./rollback.nix { inherit pkgs resolveFlake; })
     (import ./tmux-sessionizer.nix scriptArgs)
     (import ./driverinfo.nix scriptArgs)
   ];

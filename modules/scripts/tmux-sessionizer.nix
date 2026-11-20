@@ -11,8 +11,11 @@ pkgs.writeShellScriptBin "tmux-sessionizer" ''
   if [[ $# -eq 1 ]]; then
       selected="$1"
   else
-      # Quote the command to preserve spaces in paths
-      selected="$(${lib.getExe pkgs.fd} --min-depth 1 --max-depth 1 --type d . ~/ ~/Documents/ ~/git-clone/ /mnt/ /mnt/*/Projects/ /mnt/*/Media/ /mnt/*/Pimsleur/ /mnt/*/Languages/ | "$fzf" || true)"
+      roots=()
+      for dir in "$HOME" "$HOME/Documents"; do
+          if [[ -d "$dir" ]]; then roots+=("$dir"); fi
+      done
+      selected="$(${lib.getExe pkgs.fd} --min-depth 1 --max-depth 1 --type d . "''${roots[@]}" | "$fzf" || true)"
       if [[ -z "$selected" ]]; then
           exit 0
       fi
